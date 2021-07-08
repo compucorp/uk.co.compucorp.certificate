@@ -106,7 +106,8 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
   public function postProcess() {
     $values = $this->exportValues();
     
-    $result = CRM_Certificate_Service_StoreCertificateConfiguration::store($values);
+    $certificateCreator = new CRM_Certificate_Service_StoreCertificateConfiguration($values);
+    $result = $certificateCreator->store();
     if(!empty($result)) {
       $msg = sprintf('Certificate configuration %s successfully', 'created');
       CRM_Core_Session::setStatus($msg, 'success', 'success');
