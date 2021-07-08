@@ -24,4 +24,37 @@ class CRM_Certificate_BAO_CompuCertificateEntityType extends CRM_Certificate_DAO
     return $instance;
   }
 
+  /**
+   * Creates mulitple CompuCertificateEntityType and attach them to
+   * a certificate
+   * 
+   * @param int $CompuCertificateId
+   *    Id of the certificate instance
+   * 
+   * @param array $entityTypes
+   *    array of entityType ids 
+   */
+  public static function createEntityTypes($CompuCertificateId, $entityTypes) {
+    $result = array();
+
+    if (!is_array($entityTypes)) {
+      throw new API_Exception('Entity Types paramter must be an array');
+    }
+
+    //remove previously synced entitytypes if any
+    $entityTypeBAO = new CRM_Certificate_BAO_CompuCertificateEntityType();
+    $entityTypeBAO->whereAdd("certificate_id = $CompuCertificateId");
+    $entityTypeBAO->delete(true);
+
+    foreach ($entityTypes as $entityTypeId) {
+      $entityTypeDAO = self::create([
+        'certificate_id' => $CompuCertificateId,
+        'entity_type_id' => $entityTypeId
+      ]);
+
+      $result[] = $entityTypeDAO->toArray();
+    }
+    return $result;
+  }
+
 }

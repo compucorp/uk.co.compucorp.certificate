@@ -24,4 +24,37 @@ class CRM_Certificate_BAO_CompuCertificateStatus extends CRM_Certificate_DAO_Com
     return $instance;
   }
 
+  /**
+   * Creates mulitple CompuCertificateStatus and attach them to
+   * a certificate
+   * 
+   * @param int $CompuCertificateId
+   *    Id of the certificate instance
+   * 
+   * @param array $statuses
+   *    array of status ids 
+   */
+  public static function createStatuses($CompuCertificateId, $statuses) {
+    $result = array();
+
+    if (!is_array($statuses)) {
+      throw new API_Exception('Statuses paramter must be an array');
+    }
+
+    //remove previously synced statuses if any
+    $statusBAO = new CRM_Certificate_BAO_CompuCertificateStatus();
+    $statusBAO->whereAdd("certificate_id = $CompuCertificateId");
+    $statusBAO->delete(true);
+
+    foreach ($statuses as $statusId) {
+      $statusDAO = self::create([
+        'certificate_id' => $CompuCertificateId,
+        'status_id' => $statusId
+      ]);
+
+      $result[] = $statusDAO->toArray();
+    }
+    return $result;
+  }
+
 }
