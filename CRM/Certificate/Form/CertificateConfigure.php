@@ -19,7 +19,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       $titlePrefix = 'Update';
     }
 
-    $this->setTitle($titlePrefix.' Certificate');
+    $this->setTitle($titlePrefix . ' Certificate');
   }
 
   public function buildQuickForm() {
@@ -51,12 +51,13 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       'entity' => 'MessageTemplate',
       'placeholder' => ts('- Messgae Template -'),
       'select' => ['minimumInputLength' => 0],
-      'api' => ['params' => [
+      'api' => [
+        'params' => [
           "is_active" => 1,
           "workflow_id" => ["IS NULL" => 1]
         ],
-          'label_field' => "msg_title",
-          "search_field" => "msg_title"
+        'label_field' => "msg_title",
+        "search_field" => "msg_title"
       ]
     ], true);
 
@@ -83,7 +84,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     parent::buildQuickForm();
   }
 
-    /**
+  /**
    * Get the fields/elements defined in this form.
    *
    * @return array (string)
@@ -105,17 +106,24 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
    */
   public function postProcess() {
     $values = $this->exportValues();
-    
-    $certificateCreator = new CRM_Certificate_Service_StoreCertificateConfiguration($values);
-    $result = $certificateCreator->store();
-    if(!empty($result)) {
-      $msg = sprintf('Certificate configuration %s successfully', 'created');
-      CRM_Core_Session::setStatus($msg, 'success', 'success');
-      return ;
+
+    try {
+      $certificateCreator = new CRM_Certificate_Service_StoreCertificateConfiguration($values);
+      $result = $certificateCreator->store();
+    } catch (CRM_Certificate_Exception_ConfigurationExistException $e) {
+      CRM_Core_Session::setStatus($e->getMessage(), 'failed', 'error');
+      return;
     }
 
-    $msg = sprintf('Error %s certificate', 'creating');
-    CRM_Core_Session::setStatus($msg, 'failed', 'error');
-    
+    if (empty($result)) {
+      $msg = sprintf('Error %s certificate', 'creating');
+      CRM_Core_Session::setStatus($msg, 'failed', 'error');
+      return;
+    }
+
+    $msg = sprintf('Certificate configuration %s successfully', 'created');
+    $url = CRM_Utils_System::url('civicrm/admin/certificates', 'reset=1');
+    CRM_Core_Session::setStatus($msg, 'success', 'success');
+    CRM_Utils_System::redirect($url);
   }
 }

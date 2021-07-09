@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\VarDumper\VarDumper;
+
 /**
  * Fabricates ccertificate configuration for an entity.
  */
@@ -12,11 +14,13 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
       case CRM_Certificate_Enum_CertificateType::CASES:
         $certificate =  self::fabricateCaseCertificate($values);
         break;
+      default:
+        $certificate =  self::fabricateCaseCertificate($values);
     }
     return $certificate;
   }
 
-  public static function fabricateCaseCertificate($values = []) {
+  public static function fabricateCaseCertificate($values) {
     $values['certificate_type'] = CRM_Certificate_Enum_CertificateType::CASES;
 
     if (empty($values['certificate_linked_to'])) {

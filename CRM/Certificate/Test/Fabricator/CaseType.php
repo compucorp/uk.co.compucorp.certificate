@@ -6,31 +6,8 @@
  */
 class CRM_Certificate_Test_Fabricator_CaseType {
 
-  private static $defaultParams = array(
-    'title' => 'test case type',
-    'name' => 'test_case_type',
-    'is_active' => 1,
-    'sequential'   => 1,
-    'weight' => 100,
-    'definition' => array(
-      'activityTypes' => array(
-        array('name' => 'Test'),
-      ),
-      'activitySets' => array(
-        array(
-          'name' => 'set1',
-          'label' => 'Label 1',
-          'timeline' => 1,
-          'activityTypes' => array(
-            array('name' => 'Open Case', 'status' => 'Completed'),
-          ),
-        ),
-      ),
-    ),
-  );
-
   public static function fabricate($params = array()) {
-    $params = array_merge(self::$defaultParams, $params);
+    $params = array_merge(self::getDefaultParams(), $params);
     $result = civicrm_api3(
       'CaseType',
       'create',
@@ -40,4 +17,31 @@ class CRM_Certificate_Test_Fabricator_CaseType {
     return array_shift($result['values']);
   }
 
+  public static function getDefaultParams() {
+    $title = md5(mt_rand());
+    $activityTypes = md5(mt_rand());
+    $activity = md5(mt_rand());
+    return array(
+      'title' => $title,
+      'name' => $title,
+      'is_active' => 1,
+      'sequential'   => 1,
+      'weight' => 100,
+      'definition' => array(
+        'activityTypes' => array(
+          array('name' => $activityTypes),
+        ),
+        'activitySets' => array(
+          array(
+            'name' => $activity,
+            'label' => $activity,
+            'timeline' => 1,
+            'activityTypes' => array(
+              array('name' => 'Open Case', 'status' => 'Completed'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
