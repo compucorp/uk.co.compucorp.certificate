@@ -5,6 +5,6 @@ return [
   [
     'name' => 'CompuCertificate',
     'class' => 'CRM_Certificate_DAO_CompuCertificate',
-    'table' => 'civicrm_compu_certificate',
+    'table' => 'compucertificate_certificate',
   ],
 ];

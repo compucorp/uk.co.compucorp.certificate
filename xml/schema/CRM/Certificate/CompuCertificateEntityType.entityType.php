@@ -5,6 +5,6 @@ return [
   [
     'name' => 'CompuCertificateEntityType',
     'class' => 'CRM_Certificate_DAO_CompuCertificateEntityType',
-    'table' => 'civicrm_compu_certificate_entity_type',
+    'table' => 'compucertificate_certificate_entity_type',
   ],
 ];

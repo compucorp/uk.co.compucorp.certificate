@@ -453,17 +453,17 @@ function _certificate_civix_civicrm_entityTypes(&$entityTypes) {
     'CRM_Certificate_DAO_CompuCertificate' => [
       'name' => 'CompuCertificate',
       'class' => 'CRM_Certificate_DAO_CompuCertificate',
-      'table' => 'civicrm_compu_certificate',
+      'table' => 'compucertificate_certificate',
     ],
     'CRM_Certificate_DAO_CompuCertificateEntityType' => [
       'name' => 'CompuCertificateEntityType',
       'class' => 'CRM_Certificate_DAO_CompuCertificateEntityType',
-      'table' => 'civicrm_compu_certificate_entity_type',
+      'table' => 'compucertificate_certificate_entity_type',
     ],
     'CRM_Certificate_DAO_CompuCertificateStatus' => [
       'name' => 'CompuCertificateStatus',
       'class' => 'CRM_Certificate_DAO_CompuCertificateStatus',
-      'table' => 'civicrm_compu_certificate_status',
+      'table' => 'compucertificate_certificate_status',
     ],
   ]);
 }

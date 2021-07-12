@@ -60,10 +60,10 @@ class CRM_Certificate_Service_StoreCertificateConfiguration {
     $entityTypes = sprintf('(%s)', $values['certificate_linked_to']);
     $statuses = sprintf('(%s)', $values['certificate_status']);
 
-    $certificates = CRM_Utils_SQL_Select::from('civicrm_compu_certificate ccc')
+    $certificates = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::$_tableName . ' ccc')
       ->select('ccc.id')
-      ->join('cet', 'INNER JOIN `civicrm_compu_certificate_entity_type` cet ON (cet.certificate_id = ccc.id)')
-      ->join('cs', 'INNER JOIN `civicrm_compu_certificate_status` cs ON (cs.certificate_id = ccc.id)')
+      ->join('cet', 'INNER JOIN `' . CRM_Certificate_DAO_CompuCertificateEntityType::$_tableName . '` cet ON (cet.certificate_id = ccc.id)')
+      ->join('cs', 'INNER JOIN `' . CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '` cs ON (cs.certificate_id = ccc.id)')
       ->where('ccc.entity = @entity', ['entity' => $values['certificate_type']])
       ->where("cet.entity_type_id in $entityTypes AND cs.status_id in $statuses")
       ->execute()

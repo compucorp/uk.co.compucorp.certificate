@@ -3,7 +3,7 @@
 <table>
   <base>CRM/Certificate</base>
   <class>CompuCertificate</class>
-  <name>civicrm_compu_certificate</name>
+  <name>compucertificate_certificate</name>
   <comment>CompuCertificate table</comment>
   <log>true</log>
 
@@ -17,6 +17,11 @@
     </html>
   </field>
 
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
   <field>
     <name>name</name>
     <type>varchar</type>
@@ -27,11 +32,6 @@
       <type>Text</type>
     </html>
   </field>
-
-  <primaryKey>
-    <name>id</name>
-    <autoincrement>true</autoincrement>
-  </primaryKey>
 
   <field>
     <name>entity</name>
