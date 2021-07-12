@@ -1,9 +1,6 @@
 <?php
 
 require_once 'certificate.civix.php';
-// phpcs:disable
-use CRM_Certificate_ExtensionUtil as E;
-// phpcs:enable
 
 /**
  * Implements hook_civicrm_config().
