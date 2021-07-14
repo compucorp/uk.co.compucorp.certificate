@@ -23,9 +23,15 @@ class CRM_Certificate_Page_ConfigureCertificate extends CRM_Core_Page {
   }
 
   public function browse() {
+    $certificates = $this->getAllConfiguredCertificates();
+    $this->assign('rows', $certificates);
+  }
+
+  private function getAllConfiguredCertificates() {
     $certificates = [];
     $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
     $certificateBAO->find();
+
     while ($certificateBAO->fetch()) {
       $entity = CRM_Certificate_Entity_EntityFactory::create($certificateBAO->entity);
       $certificates[$certificateBAO->id] = [
@@ -37,7 +43,7 @@ class CRM_Certificate_Page_ConfigureCertificate extends CRM_Core_Page {
       ];
     }
 
-    $this->assign('rows', $certificates);
+    return $certificates;
   }
 
   public static function &actionLinks() {

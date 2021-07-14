@@ -11,7 +11,7 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
    * Test the appropraite types are returned
    *  i.e. only active types are returned
    */
-  public function testGetTypes() {
+  public function testGetTypesReturnsActiveOnes() {
     $inactiveType = CRM_Certificate_Test_Fabricator_CaseType::fabricate(['is_active' => 0])['id'];
     $activeType = CRM_Certificate_Test_Fabricator_CaseType::fabricate(['is_active' => 1])['id'];
 
@@ -27,7 +27,7 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
    * Test the appropraite statuses are returned
    *  i.e. only active statuses are returned
    */
-  public function testGetStatuses() {
+  public function testGetStatusesReturnsActiveOnes() {
     $inactiveStatus = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate(['is_active' => 0])['value'];
     $activeStatus = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate(['is_active' => 1])['value'];
 
@@ -89,7 +89,7 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
     $this->assertContains($expectedType, $types);
   }
 
-  public function createCertificate($values = []) {
+  private function createCertificate($values = []) {
     return CRM_Certificate_Test_Fabricator_CompuCertificate::fabricate(CRM_Certificate_Enum_CertificateType::CASES, $values);
   }
 }

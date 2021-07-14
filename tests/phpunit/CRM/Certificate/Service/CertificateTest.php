@@ -84,7 +84,7 @@ class CRM_Certificate_Service_CertificateTest extends BaseHeadlessTest {
     $this->assertTrue(is_array($result));
   }
 
-  public function createCertificate($values = []) {
+  private function createCertificate($values = []) {
     return CRM_Certificate_Test_Fabricator_CompuCertificate::fabricate(CRM_Certificate_Enum_CertificateType::CASES, $values);
   }
 }

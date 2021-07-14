@@ -2,7 +2,7 @@
   <h3>{$title}</h3>
   <div class="action-link">
     <a href="/civicrm/admin/certificates/add?reset=1" class="button"><span><i class="crm-i fa-plus-circle"
-          aria-hidden="true"></i>{ts}New{/ts}</span></a>
+          aria-hidden="true"></i> {ts}New{/ts}</span></a>
   </div>
   <div id='mainTabContainer'>
     {include file="CRM/common/enableDisableApi.tpl"}

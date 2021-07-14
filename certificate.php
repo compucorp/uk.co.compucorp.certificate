@@ -2,6 +2,8 @@
 
 require_once 'certificate.civix.php';
 
+use CRM_Certificate_ExtensionUtil as E;
+
 /**
  * Implements hook_civicrm_config().
  *
@@ -138,4 +140,17 @@ function certificate_civicrm_entityTypes(&$entityTypes) {
  */
 function certificate_civicrm_themes(&$themes) {
   _certificate_civix_civicrm_themes($themes);
+}
+
+/**
+ * Implements hook_civicrm_navigationMenu().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
+ */
+function certificate_civicrm_navigationMenu(&$menu) {
+  _certificate_civix_insert_navigation_menu($menu, 'Administer', array(
+    'label' => E::ts('Certificates'),
+    'name' => 'compu-configure-certificate',
+    'url' => 'civicrm/admin/certificates',
+  ));
 }
