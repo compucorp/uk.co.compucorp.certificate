@@ -18,4 +18,26 @@ interface CRM_Certificate_Entity_EntityInterface {
    * @return Array|NULL
    */
   public function getStatuses();
+
+  /**
+   * Returns the status(es) of the entity for which a certificate
+   * has been configured for
+   * 
+   * @param int $certificateId
+   *  Id of the certificate instance to retrieve entity types for
+   * 
+   * @return Array
+   */
+  public function getCertificateConfiguredStatuses($certificateId);
+
+  /**
+   * Returns the type(s) of the entity for which a certificate
+   * has been configured for
+   * 
+   * @param int $certificateId
+   *  Id of the certificate instance to retrieve entity types for
+   * 
+   * @return Array
+   */
+  public function getCertificateConfiguredTypes($certificateId);
 }
