@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Certificate</base>
+  <class>CompuCertificateStatus</class>
+  <name>compucertificate_certificate_status</name>
+  <comment>CompuCertificate Entity Status table that will morph to the appropraite status depending on the entity</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique CompuCertificateStatus ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+   <field>
+    <name>certificate_id</name>
+    <type>int unsigned</type>
+    <comment>FK to CompuCertificate</comment>
+  </field>
+
+  <foreignKey>
+    <name>certificate_id</name>
+    <table>compucertificate_certificate</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>status_id</name>
+    <type>int unsigned</type>
+    <comment>Entity status ID</comment>
+  </field>
+
+</table>

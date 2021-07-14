@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Certificate</base>
+  <class>CompuCertificateEntityType</class>
+  <name>compucertificate_certificate_entity_type</name>
+  <comment>CompuCertificate Entity Type table that will morph to the appropraite type depending on the entity</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique CompuCertificateEntityType ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>certificate_id</name>
+    <type>int unsigned</type>
+    <comment>FK to CompuCertificate</comment>
+  </field>
+
+  <foreignKey>
+    <name>certificate_id</name>
+    <table>compucertificate_certificate</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>entity_type_id</name>
+    <type>int unsigned</type>
+    <comment>Entity type ID</comment>
+  </field>
+
+</table>
