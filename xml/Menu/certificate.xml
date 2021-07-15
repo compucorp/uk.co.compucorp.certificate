@@ -6,4 +6,10 @@
     <title>CertificateConfigure</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/admin/certificates</path>
+    <page_callback>CRM_Certificate_Page_ConfigureCertificate</page_callback>
+    <title>ConfigureCertificate</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>
