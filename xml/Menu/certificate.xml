@@ -7,6 +7,13 @@
     <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
+    <path>civicrm/admin/certificates/delete</path>
+    <page_callback>CRM_Certificate_Form_CertificateConfigureDelete</page_callback>
+    <title>Delete Certificate Configuration</title>
+    <skipBreadCrumb>false</skipBreadCrumb>
+    <access_arguments>administer CiviCRM;configure certificates</access_arguments>
+  </item>
+  <item>
     <path>civicrm/admin/certificates</path>
     <page_callback>CRM_Certificate_Page_ConfigureCertificate</page_callback>
     <title>ConfigureCertificate</title>

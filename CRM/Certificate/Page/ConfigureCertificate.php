@@ -60,6 +60,7 @@ class CRM_Certificate_Page_ConfigureCertificate extends CRM_Core_Page {
           'url' => 'civicrm/admin/certificates/delete',
           'qs' => 'action=delete&id=%%id%%',
           'title' => ts('Delete Certificate configuration'),
+          'class' => 'crm-popup'
         ]
       ];
     }

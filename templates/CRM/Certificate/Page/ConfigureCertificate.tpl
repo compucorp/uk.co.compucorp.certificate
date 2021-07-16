@@ -35,3 +35,13 @@
     </div>
   </div>
 </div>
+
+<script language="javascript" type="text/javascript">
+  { literal }
+  CRM.$(function ($) {
+    $('a.crm-popup').on('crmPopupFormSuccess', function (e) {
+      CRM.refreshParent(e);
+    });
+  });
+  { /literal}
+</script>
