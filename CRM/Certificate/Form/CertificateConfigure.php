@@ -17,7 +17,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       $titlePrefix = 'Update';
     }
 
-    $this->setTitle($titlePrefix . ' Certificate');
+    $this->setTitle($titlePrefix . ' Certificate Configuration');
   }
 
   public function buildQuickForm() {
@@ -70,8 +70,12 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $this->addButtons(array(
       array(
         'type' => 'submit',
-        'name' => E::ts('Submit'),
+        'name' => E::ts('Save'),
         'isDefault' => TRUE,
+      ),
+      array(
+        'type' => 'cancel',
+        'name' => E::ts('Cancel')
       ),
     ));
 
@@ -113,10 +117,8 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     }
 
     $msg = sprintf('Certificate configuration %s successfully', !empty($this->_id) ? 'updated' : 'created');
-    $url = CRM_Utils_System::url('civicrm/admin/certificates', 'reset=1');
 
     CRM_Core_Session::setStatus($msg, 'success', 'success');
-    CRM_Utils_System::redirect($url);
   }
 
   public function setDefaultValues() {
