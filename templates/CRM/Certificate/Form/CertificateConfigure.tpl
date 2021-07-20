@@ -1,19 +1,24 @@
-<div class="crm-block crm-form-block crm-uf-field-form-block">
-  {* HEADER *}
+{crmStyle ext=uk.co.compucorp.certificate file=css/style.css}
 
-  <table class="form-layout-compressed">
-    {foreach from=$elementNames item=elementName}
-    <tr class="crm-uf-field-form-block-field_name">
-      <td class="label">{$form.$elementName.label}</td>
-      <td>{$form.$elementName.html}</td>
-    </tr>
-    {/foreach}
-  </table>
+<div id="bootstrap-theme">
+  <div class="panel panel-default certificate__create-form-panel"">
+    <div class=" panel-body">
+    <div class="form-hoizontal">
+      {foreach from=$elementNames item=elementName}
+      <div class="form-group row">
+        <label class="col-sm-2 control-label">{$form.$elementName.label}</label>
+        <div class="col-sm-7 col-md-5">
+          {$form.$elementName.html}
+        </div>
+      </div>
+      {/foreach}
+    </div>
+  </div>
 
-  {* FOOTER *}
-  <div class="crm-submit-buttons">
+  <div class="crm-submit-buttons panel-footer">
     {include file="CRM/common/formButtons.tpl" location="bottom"}
   </div>
+</div>
 </div>
 
 <script language="javascript" type="text/javascript">

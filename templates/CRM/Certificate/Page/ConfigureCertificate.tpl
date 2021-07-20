@@ -1,12 +1,16 @@
-<div class="crm-content-block crm-block">
-  <div class="action-link">
-    <a href="/civicrm/admin/certificates/add?reset=1" class="button crm-popup"><span><i class="crm-i fa-plus-circle"
-          aria-hidden="true"></i> {ts}New{/ts}</span></a>
+{crmStyle ext=uk.co.compucorp.certificate file=css/style.css}
+
+<div id="bootstrap-theme">
+  <div class="certificate__action-link">
+    <a href="/civicrm/admin/certificates/add?reset=1" class="btn btn-primary crm-popup">
+      <span class="btn-icon"><i class="fa fa-plus"></i></span> {ts}New Certificate{/ts}
+    </a>
   </div>
-  {include file="CRM/common/enableDisableApi.tpl"}
-  {include file="CRM/common/jsortable.tpl"}
-  <div id="all">
-    <table class="row-highlight">
+
+  <div class="panel panel-default">
+    {include file="CRM/common/enableDisableApi.tpl"}
+    {include file="CRM/common/jsortable.tpl"}
+    <table class="table">
       <thead>
         <tr>
           <th id="sortable">{ts}Certificate Name{/ts}</th>

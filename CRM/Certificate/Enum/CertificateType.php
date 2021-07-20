@@ -19,7 +19,7 @@ class CRM_Certificate_Enum_CertificateType {
    */
   public static function getOptions() {
     return array(
-      ''  => E::ts('- select -'),
+      ''  => E::ts('- Select -'),
       self::CASES   => E::ts('Cases')
     );
   }
