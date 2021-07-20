@@ -1,5 +1,4 @@
 <?php
-use CRM_Certificate_ExtensionUtil as E;
 
 class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCertificate {
 
@@ -24,4 +23,14 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
     return $instance;
   }
 
+  public static function deleteById($id) {
+    $className = 'CRM_Certificate_DAO_CompuCertificate';
+    $entityName = 'CompuCertificate';
+
+    CRM_Utils_Hook::pre('delete', $entityName, $id);
+    $instance = new $className();
+    $instance->id = $id;
+    $instance->delete();
+    CRM_Utils_Hook::post('delete', $entityName, $id);
+  }
 }

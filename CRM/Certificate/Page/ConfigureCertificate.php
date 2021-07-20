@@ -54,12 +54,14 @@ class CRM_Certificate_Page_ConfigureCertificate extends CRM_Core_Page {
           'url' => 'civicrm/admin/certificates/add',
           'qs' => 'action=update&id=%%id%%',
           'title' => ts('Edit Certificate configuration'),
+          'class' => 'crm-popup'
         ],
         CRM_Core_action::DELETE => [
           'name' => ts('Delete'),
           'url' => 'civicrm/admin/certificates/delete',
           'qs' => 'action=delete&id=%%id%%',
           'title' => ts('Delete Certificate configuration'),
+          'class' => 'crm-popup'
         ]
       ];
     }
