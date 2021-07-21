@@ -1,8 +1,8 @@
 <?php
 
-use \Civi\Token\AbstractTokenSubscriber;
-use Civi\Token\Event\TokenValueEvent;
 use Civi\Token\TokenRow;
+use Civi\Token\Event\TokenValueEvent;
+use \Civi\Token\AbstractTokenSubscriber;
 
 abstract class CRM_Certificate_Token_AbstractCertificateToken  extends AbstractTokenSubscriber {
 
@@ -66,8 +66,8 @@ abstract class CRM_Certificate_Token_AbstractCertificateToken  extends AbstractT
   }
 
   /**
-   * Given a token event object, i returns all the tokens that 
-   * are to be resolved by the current suscriber instance
+   * Given a token event object, it returns all the tokens that 
+   * are to be resolved by the suscriber instance
    * 
    * @param \Civi\Token\Event\TokenValueEvent $e
    * @return array
@@ -100,9 +100,10 @@ abstract class CRM_Certificate_Token_AbstractCertificateToken  extends AbstractT
   }
 
   /**
-   * Specifies the tokens to be defined
+   * Specifies the tokens defined by the subscriber instance
    * 
-   * @return array token name => token label
+   * @return array 
+   *  [token_name => token_label]
    * 
    */
   abstract public static function entityTokens();

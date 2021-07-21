@@ -1,8 +1,19 @@
 <?php
 
 use Civi\Token\Event\TokenValueEvent;
-use Symfony\Component\VarDumper\VarDumper;
 
+/**
+ * Class CRM_Certificate_Token_CaseActivty
+ *
+ * Generate "certificate_case_activity_type.*" tokens.
+ *
+ * This class defines the case ativity types that are supported as tokens in
+ * a certificate. e.g. if a certificate message template 
+ * uses token {certificate_case_activity_type.56_medical_evaluation} 
+ * and a client case as an activity of type medical_evaluation, 
+ * this would be resolved into a comma separated string of all the 
+ * activity subject of type medical_evaluation
+ */
 class CRM_Certificate_Token_CaseActivity extends CRM_Certificate_Token_AbstractCertificateToken {
 
   const TOKEN = 'certificate - case activity type';

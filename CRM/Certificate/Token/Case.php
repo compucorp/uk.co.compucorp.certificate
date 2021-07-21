@@ -2,10 +2,22 @@
 
 use Civi\Token\Event\TokenValueEvent;
 
+/**
+ * Class CRM_Certificate_Token_Case
+ *
+ * Generate "certificate_case.*" tokens.
+ *
+ * This class defines the case tokens (standard fields and custom fields)
+ * that are supported by a certificate
+ */
 class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertificateToken {
 
   const TOKEN = 'certificate case';
 
+  /**
+   * Here we define list of standard case fields
+   * that are supported as tokens
+   */
   const caseFields = [
     "id" => "Case ID",
     "subject" => "Case Subject",
@@ -88,7 +100,7 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
     $resolvedTokens['end_date'] = CRM_Utils_Date::customFormat(CRM_Utils_Array::value('end_date', $case, ''));
     $resolvedTokens['created_date'] = CRM_Utils_Date::customFormat(CRM_Utils_Array::value('created_date', $case, ''));
     $resolvedTokens['role'] = $role;
-    $resolvedTokens['status'] = array_pop($caseStatus) ?? "";
+    $resolvedTokens['status'] = array_pop($caseStatus) ?? '';
   }
 
   /**
