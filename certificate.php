@@ -11,6 +11,7 @@ use CRM_Certificate_ExtensionUtil as E;
  */
 function certificate_civicrm_config(&$config) {
   _certificate_civix_civicrm_config($config);
+  _add_token_subscribers();
 }
 
 /**
@@ -166,4 +167,25 @@ function certificate_civicrm_permission(&$permissions) {
     ts('CiviCRM: configure certificates'),
     ts('User can configure which message templates can be downloaded as certificates.')
   ];
+}
+
+/**
+ * Subscribes to token evaluate events, this enables
+ * each entity to resolve tokens with the appropraite value
+ * 
+ */
+function _add_token_subscribers() {
+  Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Case());
+  Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_CaseActivity());
+}
+
+/*
+* Implements hook_civicrm_tokens().
+* Adds token to the select interface 
+*
+* @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens
+*/
+function certificate_civicrm_tokens(&$tokens) {
+  $tokens[CRM_Certificate_Token_Case::TOKEN] = CRM_Certificate_Token_Case::prefixedEntityTokens();
+  $tokens[CRM_Certificate_Token_CaseActivity::TOKEN] = CRM_Certificate_Token_CaseActivity::prefixedEntityTokens();
 }
