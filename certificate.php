@@ -176,7 +176,6 @@ function certificate_civicrm_permission(&$permissions) {
  */
 function _add_token_subscribers() {
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Case());
-  Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_CaseActivity());
 }
 
 /*
@@ -187,5 +186,4 @@ function _add_token_subscribers() {
 */
 function certificate_civicrm_tokens(&$tokens) {
   $tokens[CRM_Certificate_Token_Case::TOKEN] = CRM_Certificate_Token_Case::prefixedEntityTokens();
-  $tokens[CRM_Certificate_Token_CaseActivity::TOKEN] = CRM_Certificate_Token_CaseActivity::prefixedEntityTokens();
 }
