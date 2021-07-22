@@ -18,14 +18,20 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     }
 
     $this->setTitle($titlePrefix . ' Certificate Configuration');
+    $url = CRM_Utils_System::url('civicrm/admin/certificates', 'reset=1');
+    $session = CRM_Core_Session::singleton();
+    $session->replaceUserContext($url);
   }
 
   public function buildQuickForm() {
     $this->add(
       'text',
       'name',
-      'Certificate Name',
-      NULL,
+      ts('Certificate Name'),
+      [
+        'placeholder' => ts('Certificate Name'),
+        'class' => 'form-control'
+      ],
       TRUE
     );
 
@@ -34,14 +40,18 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       'type',
       ts('Type'),
       CRM_Certificate_Enum_CertificateType::getOptions(),
-      TRUE
+      TRUE,
+      ['class' => 'form-control']
     );
 
     $this->add(
       'text',
       'linked_to',
       ts('Linked to'),
-      ['placeholder' => E::ts('- select type -'), 'disabled'],
+      [
+        'placeholder' => E::ts('- Select Type -'), 'disabled',
+        'class' => 'form-control'
+      ],
       TRUE
     );
 
@@ -56,14 +66,19 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
         ],
         'label_field' => "msg_title",
         "search_field" => "msg_title"
-      ]
+      ],
+      'class' => 'form-control'
     ], true);
 
     $this->add(
       'text',
       'statuses',
       ts('Status'),
-      ['placeholder' => E::ts('- select linked to -'), 'disabled'],
+      [
+        'placeholder' => E::ts('- Select Status -'),
+        'disabled',
+        'class' => 'form-control'
+      ],
       TRUE
     );
 
@@ -71,11 +86,12 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       array(
         'type' => 'submit',
         'name' => E::ts('Save'),
-        'isDefault' => TRUE,
+        'isDefault' => TRUE
       ),
       array(
         'type' => 'cancel',
-        'name' => E::ts('Cancel')
+        'name' => E::ts('Cancel'),
+        'class' => 'btn-secondary-outline'
       ),
     ));
 
