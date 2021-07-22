@@ -187,3 +187,19 @@ function _compucertificate_add_token_subscribers() {
 function certificate_civicrm_tokens(&$tokens) {
   $tokens[CRM_Certificate_Token_Case::TOKEN] = CRM_Certificate_Token_Case::prefixedEntityTokens();
 }
+
+/**
+ * Implements hook_civicrm_pageRun().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_pageRun
+ */
+function certificate_civicrm_pageRun(&$page) {
+
+  $hooks = [
+    new CRM_Certificate_Hook_PageRun_CaseDownloadButtonHook($page),
+  ];
+
+  array_walk($hooks, function ($hook) {
+    $hook->run();
+  });
+}

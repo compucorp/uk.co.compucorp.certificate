@@ -7,3 +7,10 @@ div.certificate__action-link {
 .crm-ajax-container #bootstrap-theme > .certificate__create-form-panel.panel > div.panel-body {
   border-top: unset;
 }
+a.action-item.certificate__case-download-link{
+  font-size: .95em;
+  color: #2786c2;
+}
+a.action-item.certificate__case-download-link:hover{
+  color: #0071bd !important;
+}
