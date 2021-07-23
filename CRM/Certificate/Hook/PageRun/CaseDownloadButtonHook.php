@@ -45,7 +45,7 @@ class CRM_Certificate_Hook_PageRun_CaseDownloadButtonHook {
     $id = $this->page->getVar('_id');
     $action = $this->page->getVar('_action');
 
-    if ($pageName == "CRM_Case_Page_Tab" && $action == 4 && !empty($id)) {
+    if ($pageName == "CRM_Case_Page_Tab" && $action == CRM_Core_Action::VIEW && !empty($id)) {
       return true;
     }
     return false;
