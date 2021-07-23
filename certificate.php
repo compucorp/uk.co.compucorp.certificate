@@ -152,5 +152,18 @@ function certificate_civicrm_navigationMenu(&$menu) {
     'label' => E::ts('Certificates'),
     'name' => 'compu-configure-certificate',
     'url' => 'civicrm/admin/certificates',
+    'permission' => 'configure certificates'
   ));
+}
+
+/**
+ * Implements hook_civicrm_permission().
+ * 
+ * Declare permissions used by the extension
+ */
+function certificate_civicrm_permission(&$permissions) {
+  $permissions['configure certificates'] = [
+    ts('CiviCRM: configure certificates'),
+    ts('User can configure which message templates can be downloaded as certificates.')
+  ];
 }
