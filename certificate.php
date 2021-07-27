@@ -11,7 +11,7 @@ use CRM_Certificate_ExtensionUtil as E;
  */
 function certificate_civicrm_config(&$config) {
   _certificate_civix_civicrm_config($config);
-  _add_token_subscribers();
+  _compucertificate_add_token_subscribers();
 }
 
 /**
@@ -174,7 +174,7 @@ function certificate_civicrm_permission(&$permissions) {
  * each entity to resolve tokens with the appropraite value
  * 
  */
-function _add_token_subscribers() {
+function _compucertificate_add_token_subscribers() {
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Case());
 }
 
