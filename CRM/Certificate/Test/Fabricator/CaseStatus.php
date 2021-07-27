@@ -5,7 +5,7 @@
  */
 class CRM_Certificate_Test_Fabricator_CaseStatus {
 
-  public static function fabricate($params = array()) {
+  public static function fabricate($params = []) {
     $params = array_merge(self::getDefaultParams(), $params);
     $result = civicrm_api3(
       'OptionValue',

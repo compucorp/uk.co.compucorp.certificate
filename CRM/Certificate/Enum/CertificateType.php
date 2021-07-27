@@ -18,10 +18,10 @@ class CRM_Certificate_Enum_CertificateType {
    * @return array
    */
   public static function getOptions() {
-    return array(
+    return [
       ''  => E::ts('- Select -'),
       self::CASES   => E::ts('Cases')
-    );
+    ];
   }
 
   /**
@@ -31,7 +31,7 @@ class CRM_Certificate_Enum_CertificateType {
    * @return string - json encoded array of the entity type field options
    */
   public static function getEnityRefs() {
-    return json_encode(array(
+    return json_encode([
       self::CASES => [
         'entity' => 'caseType',
         'placeholder' => ts('- Select Case Type -'),
@@ -45,7 +45,7 @@ class CRM_Certificate_Enum_CertificateType {
           'multiple' => true
         ],
       ]
-    ));
+    ]);
   }
 
   /**
@@ -55,7 +55,7 @@ class CRM_Certificate_Enum_CertificateType {
    * @return string - json encoded array of the entity status field options
    */
   public static function getEntityStatusRefs() {
-    return json_encode(array(
+    return json_encode([
       self::CASES => [
         'placeholder' => ts('- Select Case Status  -'),
         'entity' => 'OptionValue',
@@ -70,6 +70,6 @@ class CRM_Certificate_Enum_CertificateType {
           'multiple' => true
         ]
       ]
-    ));
+    ]);
   }
 }

@@ -5,7 +5,7 @@
  */
 class CRM_Certificate_Test_Fabricator_CaseType {
 
-  public static function fabricate($params = array()) {
+  public static function fabricate($params = []) {
     $params = array_merge(self::getDefaultParams(), $params);
     $result = civicrm_api3(
       'CaseType',
@@ -20,27 +20,27 @@ class CRM_Certificate_Test_Fabricator_CaseType {
     $title = md5(mt_rand());
     $activityTypes = md5(mt_rand());
     $activity = md5(mt_rand());
-    return array(
+    return [
       'title' => $title,
       'name' => $title,
       'is_active' => 1,
       'sequential'   => 1,
       'weight' => 100,
-      'definition' => array(
-        'activityTypes' => array(
-          array('name' => $activityTypes),
-        ),
-        'activitySets' => array(
-          array(
+      'definition' => [
+        'activityTypes' => [
+          ['name' => $activityTypes],
+        ],
+        'activitySets' => [
+          [
             'name' => $activity,
             'label' => $activity,
             'timeline' => 1,
-            'activityTypes' => array(
-              array('name' => 'Open Case', 'status' => 'Completed'),
-            ),
-          ),
-        ),
-      ),
-    );
+            'activityTypes' => [
+              ['name' => 'Open Case', 'status' => 'Completed'],
+            ],
+          ],
+        ],
+      ],
+    ];
   }
 }

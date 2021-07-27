@@ -5,11 +5,11 @@
  */
 class CRM_Certificate_Test_Fabricator_Case {
 
-  private static $defaultParams = array(
+  private static $defaultParams = [
     'subject' => 'test test',
-  );
+  ];
 
-  public static function fabricate($params = array()) {
+  public static function fabricate($params = []) {
     if (empty($params['contact_id'])) {
       throw new Exception('Please specify contact_id value');
     }
@@ -27,5 +27,4 @@ class CRM_Certificate_Test_Fabricator_Case {
 
     return array_shift($result['values']);
   }
-
 }

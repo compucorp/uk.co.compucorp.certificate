@@ -82,18 +82,18 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       TRUE
     );
 
-    $this->addButtons(array(
-      array(
+    $this->addButtons([
+      [
         'type' => 'submit',
         'name' => E::ts('Save'),
         'isDefault' => TRUE
-      ),
-      array(
+      ],
+      [
         'type' => 'cancel',
         'name' => E::ts('Cancel'),
         'class' => 'btn-secondary-outline'
-      ),
-    ));
+      ],
+    ]);
 
     $this->assign('elementNames', $this->getRenderableElementNames());
     $this->assign('entityRefs', CRM_Certificate_Enum_CertificateType::getEnityRefs());
@@ -107,7 +107,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
    * @return array (string)
    */
   public function getRenderableElementNames() {
-    $elementNames = array();
+    $elementNames = [];
     foreach ($this->_elements as $element) {
       /** @var HTML_QuickForm_Element $element */
       $label = $element->getLabel();
