@@ -35,7 +35,7 @@ class CRM_Certificate_BAO_CompuCertificateStatus extends CRM_Certificate_DAO_Com
    * @return Array
    */
   public static function assignCertificateEntityStatuses($certificate, $statuses) {
-    $result = array();
+    $result = [];
     $certificateId = $certificate->id;
 
     if (!is_array($statuses)) {

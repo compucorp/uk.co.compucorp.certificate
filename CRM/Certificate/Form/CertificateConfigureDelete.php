@@ -26,17 +26,17 @@ class CRM_Certificate_Form_CertificateConfigureDelete extends CRM_Core_Form {
   }
 
   public function buildQuickForm() {
-    $this->addButtons(array(
-      array(
+    $this->addButtons([
+      [
         'type' => 'submit',
         'name' => E::ts('Delete')
-      ),
-      array(
+      ],
+      [
         'type' => 'cancel',
         'name' => E::ts('Cancel'),
         'isDefault' => TRUE,
-      )
-    ));
+      ]
+    ]);
 
     parent::buildQuickForm();
   }
