@@ -89,6 +89,61 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
     $this->assertContains($expectedType, $types);
   }
 
+  /**
+   * Test that a certificate configuration is returned
+   * for a case that meets the status and type of the 
+   * certificate configuration
+   */
+  public function testCanGetCaseCertificateConfiguration() {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $caseStatus = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate();
+    $caseType = CRM_Certificate_Test_Fabricator_CaseType::fabricate();
+
+    $case = CRM_Certificate_Test_Fabricator_Case::fabricate(
+      [
+        'status_id' =>  $caseStatus['value'],
+        'contact_id' => $contact['id'],
+        'creator_id' => $contact['id'],
+        'case_type_id' => $caseType['id']
+      ]
+    );
+
+    $values = [
+      'type' => CRM_Certificate_Enum_CertificateType::CASES,
+      'linked_to' => [$caseType['id']],
+      'statuses' => [$caseStatus['value']]
+    ];
+    $this->createCertificate($values);
+
+    $caseEntity = new CRM_Certificate_Entity_Case();
+    $configuration = $caseEntity->getCertificateConfiguration($case["id"]);
+
+    $this->assertInstanceOf(CRM_Certificate_BAO_CompuCertificate::class, $configuration);
+  }
+
+  /**
+   * Test that a certificacte configuration is not returned
+   * when the case status and type of the certificate is not met
+   */
+  public function testCertificationConfigurationNotReturned() {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $caseStatus = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate();
+    $caseType = CRM_Certificate_Test_Fabricator_CaseType::fabricate();
+
+    $case = CRM_Certificate_Test_Fabricator_Case::fabricate(
+      [
+        'status_id' =>  $caseStatus['value'],
+        'contact_id' => $contact['id'],
+        'creator_id' => $contact['id'],
+        'case_type_id' => $caseType['id']
+      ]
+    );
+    $caseEntity = new CRM_Certificate_Entity_Case();
+    $configuration = $caseEntity->getCertificateConfiguration($case["id"]);
+
+    $this->assertFalse($configuration);
+  }
+
   private function createCertificate($values = []) {
     return CRM_Certificate_Test_Fabricator_CompuCertificate::fabricate(CRM_Certificate_Enum_CertificateType::CASES, $values);
   }

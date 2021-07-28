@@ -77,4 +77,27 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
 
     return $entityTypes;
   }
+
+  /**
+   * @inheritDoc
+   */
+  public function getCertificateConfiguration($entityId) {
+    $caseBAO = new CRM_Case_BAO_Case();
+    $case = $caseBAO->findById($entityId);
+
+    $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
+    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id']);
+    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id']);
+    $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::CASES);
+    $certificateBAO->whereAdd('entity_type_id = ' . $case->case_type_id);
+    $certificateBAO->whereAdd('status_id = ' . $case->status_id);
+    $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '.id Desc');
+    $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '.id');
+    $certificateBAO->find(TRUE);
+
+    if (empty($certificateBAO->id)) {
+      return FALSE;
+    }
+    return $certificateBAO;
+  }
 }
