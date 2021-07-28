@@ -47,8 +47,10 @@ interface CRM_Certificate_Entity_EntityInterface {
    * 
    * @param int $entityId
    *  Id of the entity to get a configured certificate for
+   * @param int $contactId
+   *  Id of the contact the entity belongs to
    * 
    * @return \CRM_Certificate_BAO_CompuCertificate|bool
    */
-  public function getCertificateConfiguration($entityId);
+  public function getCertificateConfiguration($entityId, $contactId);
 }

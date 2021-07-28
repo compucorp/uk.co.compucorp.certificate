@@ -13,7 +13,7 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
       $certificate = static::validateRequest(CRM_Certificate_Enum_CertificateType::CASES);
     } catch (CRM_Core_Exception $e) {
       CRM_Core_Session::setStatus($e->getMessage(), 'Error', 'error');
-      CRM_Utils_System::redirect('civicrm/admin/certificates');
+      CRM_Utils_System::redirect('/civicrm?reset=1');
     }
 
     $certificateDownload = new CRM_Certificate_Service_CertificateDownload();
@@ -36,14 +36,14 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
     $entityId = CRM_Utils_Request::retrieve('id', 'Positive');
 
     if (empty($contactId) || empty($entityId)) {
-      throw new CRM_Core_Exception(ts('contact Id and Entity Id are required to download a certificate'));
+      throw new CRM_Core_Exception(ts('Contact Id and Entity Id are required to download a certificate'));
     }
 
     $entity = CRM_Certificate_Entity_EntityFactory::create($certificateType);
-    $configuredCertificate = $entity->getCertificateConfiguration($entityId);
+    $configuredCertificate = $entity->getCertificateConfiguration($entityId, $contactId);
 
     if (!$configuredCertificate) {
-      throw new CRM_Core_Exception(ts('Certificate not available for contact: id=%1.', [1 => $contactId]));
+      throw new CRM_Core_Exception(ts('Certificate not available for contact'));
     }
 
     return $configuredCertificate;
