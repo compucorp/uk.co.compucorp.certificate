@@ -16,7 +16,7 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
       CRM_Utils_System::redirect('/civicrm?reset=1');
     }
 
-    $certificateDownload = new CRM_Certificate_Service_CertificateDownload();
+    $certificateDownload = new CRM_Certificate_Service_CertificateDownloader();
     $certificateDownload->download($certificate, $contactId, $entityId);
   }
 

@@ -3,34 +3,35 @@
 use Civi\Api4\MessageTemplate;
 use Civi\Token\TokenProcessor;
 
-class CRM_Certificate_Service_CertificateDownload {
+class CRM_Certificate_Service_CertificateGenerator {
 
   /**
-   * Gets the template associated with a certificate configuration and renders it
+   * Converts the message template to html and resolve tokens
+   * for the contact and entity
    * 
-   * @param \CRM_Certificate_BAO_CompuCertificate $certificate
-   * @param int $contactId
-   * @param int $entityId 
+   * @param int $templateId
+   * @param int $contactID
+   * @param int $enttityTypeId
+   * 
+   * @return array
    */
-  public function download($certificate, $contactId, $entityId) {
-    $content = $this->loadTemplate($certificate->template_id);
-    $content = $this->renderMessageTemplate($content, $contactId, $entityId);
-    $this->renderPDF($content);
+  public function generate($templateId, $contactId, $entityId) {
+    $content = $this->loadTemplate($templateId);
+    $generatedTemplate = $this->renderMessageTemplate($content, $contactId, $entityId);
+    return $generatedTemplate;
   }
 
   /**
-   * Load the specified template.
-   *
-   * @param int|null $messageTemplateID
-   *
+   * Loads the message template
+   * 
    * @return array
    * @throws \API_Exception
    * @throws \CRM_Core_Exception
    */
-  private function loadTemplate($template_id) {
+  private function loadTemplate($templateId) {
     $apiCall = MessageTemplate::get(FALSE)
       ->addSelect('msg_subject', 'msg_text', 'msg_html', 'pdf_format_id', 'id')
-      ->addWhere('id', '=', $template_id);
+      ->addWhere('id', '=', $templateId);
     $messageTemplate = $apiCall->execute()->first();
     $content = [
       'subject' => $messageTemplate['msg_subject'],
@@ -52,7 +53,7 @@ class CRM_Certificate_Service_CertificateDownload {
    *
    * @return array
    */
-  private function renderMessageTemplate(array $content, $contactId, $entityTypeId): array {
+  private function renderMessageTemplate(array $content, $contactId, $entityTypeId) {
     CRM_Core_Smarty::singleton()->pushScope([]);
     $tokenProcessor = new TokenProcessor(\Civi::dispatcher(), ['smarty' => !true]);
     $tokenProcessor->addMessage('html', $content['html'], 'text/html');
@@ -68,21 +69,5 @@ class CRM_Certificate_Service_CertificateDownload {
     CRM_Core_Smarty::singleton()->popScope();
     $content['subject'] = trim(preg_replace('/[\r\n]+/', ' ', $content['subject']));
     return $content;
-  }
-
-  /**
-   * Converts html content to PDF, and return PDF file to the browser
-   * 
-   * @param array $content
-   */
-  private function renderPDF(array $content) {
-    ob_end_clean();
-    CRM_Utils_PDF_Utils::html2pdf(
-      nl2br($content['html']),
-      'certificate.pdf',
-      FALSE,
-      ['orientation' => 'landscape']
-    );
-    CRM_Utils_System::civiExit();
   }
 }

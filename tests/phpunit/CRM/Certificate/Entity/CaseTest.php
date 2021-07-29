@@ -116,7 +116,7 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
     $this->createCertificate($values);
 
     $caseEntity = new CRM_Certificate_Entity_Case();
-    $configuration = $caseEntity->getCertificateConfiguration($case["id"]);
+    $configuration = $caseEntity->getCertificateConfiguration($case["id"], $contact['id']);
 
     $this->assertInstanceOf(CRM_Certificate_BAO_CompuCertificate::class, $configuration);
   }
@@ -125,7 +125,7 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
    * Test that a certificacte configuration is not returned
    * when the case status and type of the certificate is not met
    */
-  public function testCertificationConfigurationNotReturned() {
+  public function testCertificationConfigurationNotReturnedIfNoCertificateIsConfigured() {
     $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
     $caseStatus = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate();
     $caseType = CRM_Certificate_Test_Fabricator_CaseType::fabricate();
@@ -139,7 +139,7 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
       ]
     );
     $caseEntity = new CRM_Certificate_Entity_Case();
-    $configuration = $caseEntity->getCertificateConfiguration($case["id"]);
+    $configuration = $caseEntity->getCertificateConfiguration($case["id"], $contact['id']);
 
     $this->assertFalse($configuration);
   }
