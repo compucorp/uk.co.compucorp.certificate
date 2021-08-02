@@ -49,7 +49,7 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
    * @return mixed
    */
   public function prefetch(TokenValueEvent $e) {
-    $entityTypeId = $e->getTokenProcessor()->getContextValues('entityTypeId');
+    $entityTypeId = $e->getTokenProcessor()->getContextValues('entityId');
     $contactId =  $e->getTokenProcessor()->getContextValues('contactId');
 
     $resolvedTokens = [];

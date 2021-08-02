@@ -19,4 +19,10 @@
     <title>ConfigureCertificate</title>
     <access_arguments>configure certificates</access_arguments>
   </item>
+  <item>
+    <path>civicrm/certificates/case</path>
+    <page_callback>CRM_Certificate_Page_CertificateDownload::downloadCaseCertificate</page_callback>
+    <title>Download Certificate</title>
+    <access_arguments>access civicrm</access_arguments>
+  </item>
 </menu>
