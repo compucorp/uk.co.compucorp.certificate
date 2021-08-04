@@ -57,7 +57,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
 
     $this->addEntityRef('message_template_id', ts('Message Template'), [
       'entity' => 'MessageTemplate',
-      'placeholder' => ts('- Messgae Template -'),
+      'placeholder' => ts('- Message Template -'),
       'select' => ['minimumInputLength' => 0],
       'api' => [
         'params' => [
