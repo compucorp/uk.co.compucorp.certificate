@@ -25,7 +25,6 @@
      * @param {Array} cases cases
      * @param {object} action action
      * @param {Function} callbackFn call back function
-     * @returns {string} url
      */
     this.doAction = function (cases, action, callbackFn) {
       var selectedCase = cases[0];
