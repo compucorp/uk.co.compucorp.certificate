@@ -20,7 +20,7 @@ class CRM_Certificate_Hook_PageRun_CaseDownloadButtonHook {
     $id = $this->page->getVar('_id');
     $contactId = $this->page->getVar('_contactId');
     $entity = CRM_Certificate_Entity_EntityFactory::create(CRM_Certificate_Enum_CertificateType::CASES);
-    $certificateConfig = $entity->getCertificateConfiguration($id);
+    $certificateConfig = $entity->getCertificateConfiguration($id, $contactId);
 
     if ($certificateConfig) {
       $query = [
