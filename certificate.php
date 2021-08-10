@@ -193,3 +193,12 @@ function certificate_civicrm_tokens(&$tokens) {
 function certificate_addCiviCaseDependentAngularModules(&$dependentModules) {
   $dependentModules[] = "certificate";
 }
+
+/**
+ * Implements hook_civicrm_apiWrappers().
+ */
+function certificate_civicrm_apiWrappers(&$wrappers, $apiRequest) {
+  if ($apiRequest['entity'] == 'Case' & $apiRequest['action'] === 'getdetails') {
+    $wrappers[] = new CRM_Certificate_Api_Wrapper_Case();
+  }
+}

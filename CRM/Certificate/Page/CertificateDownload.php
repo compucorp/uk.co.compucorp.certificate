@@ -9,11 +9,10 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
     $contactId = CRM_Utils_Request::retrieve('cid', 'Positive');
     $entityId = CRM_Utils_Request::retrieve('id', 'Positive');
 
-    self::checkPermission($contactId, $entityId);
-
     try {
-      $certificate = self::validateCertificate($contactId, $entityId, CRM_Certificate_Enum_CertificateType::CASES);
-    } catch (CRM_Core_Exception $e) {
+      $certificate = self::checkIfCertificateAvailable($contactId, $entityId);
+    }
+    catch (CRM_Core_Exception $e) {
       CRM_Core_Session::setStatus($e->getMessage(), 'Error', 'error');
       CRM_Utils_System::redirect('/civicrm?reset=1');
     }
@@ -23,18 +22,32 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
   }
 
   /**
+   * Checks if certificates available for the given contact id and case id.
+   *
+   * @param int $contactId
+   * @param int $entityId
+   *
+   * @return int - contact id
+   */
+  public static function checkIfCertificateAvailable($contactId, $entityId) {
+    self::checkPermission($contactId, $entityId);
+
+    return self::validateCertificate($contactId, $entityId, CRM_Certificate_Enum_CertificateType::CASES);
+  }
+
+  /**
    * Performs access level check to ensure user has access to contact certificate
-   * 
+   *
    * The user would be granted access to the certificate if any of the condition below is true
    * - if the contact id is the same as the current logged in user
    * - if a checksum is provided in the URL and it is valid for the contact id
-   * - Lastly, the user is not logged in and no checksum is provided if the user has 
+   * - Lastly, the user is not logged in and no checksum is provided if the user has
    *   the express permission to view the contact
-   * 
+   *
    * - if all fails return error.
    * @param int $contactId
    * @param int $entityId
-   * 
+   *
    * @return int - contact id
    */
   private static function checkPermission($contactId, $entityId) {
@@ -62,13 +75,13 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
   /**
    * Validates user access to certificate, it enforces
    * that a configured certificate exists for the entity and contact
-   * 
+   *
    * @param $contactId
    * @param $entityId
    * @param int $certificateType
-   * 
+   *
    * @return \CRM_Certificate_BAO_CompuCertificate
-   * 
+   *
    * @throws CRM_Core_Exception;
    */
   private static function validateCertificate(int $contactId, int $entityId, int $certificateType) {
@@ -81,4 +94,5 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
 
     return $configuredCertificate;
   }
+
 }

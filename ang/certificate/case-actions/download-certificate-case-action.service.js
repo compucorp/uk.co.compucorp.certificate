@@ -15,8 +15,7 @@
      * @returns {boolean} if action is allowed
      */
     this.isActionAllowed = function (action, cases) {
-      // to be done, after the backend api is created to check for permissions.
-      return true;
+      return cases[0].is_download_certificate_available;
     };
 
     /**
