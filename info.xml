@@ -21,4 +21,7 @@
   <civix>
     <namespace>CRM/Certificate</namespace>
   </civix>
+  <requires>
+    <ext>uk.co.compucorp.civicase</ext>
+  </requires>
 </extension>

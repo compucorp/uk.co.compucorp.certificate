@@ -153,37 +153,52 @@ function certificate_civicrm_navigationMenu(&$menu) {
     'label' => E::ts('Certificates'),
     'name' => 'compu-configure-certificate',
     'url' => 'civicrm/admin/certificates',
-    'permission' => 'configure certificates'
+    'permission' => 'configure certificates',
   ));
 }
 
 /**
  * Implements hook_civicrm_permission().
- * 
+ *
  * Declare permissions used by the extension
  */
 function certificate_civicrm_permission(&$permissions) {
   $permissions['configure certificates'] = [
     ts('CompuCertificate: configure certificates'),
-    ts('User can configure which message templates can be downloaded as certificates.')
+    ts('User can configure which message templates can be downloaded as certificates.'),
   ];
 }
 
 /**
  * Subscribes to token evaluate events, this enables
  * each entity to resolve tokens with the appropraite value
- * 
+ *
  */
 function _compucertificate_add_token_subscribers() {
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Case());
 }
 
-/*
-* Implements hook_civicrm_tokens().
-* Adds token to the select interface 
-*
-* @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens
-*/
+/**
+ * Implements hook_civicrm_tokens().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens
+ */
 function certificate_civicrm_tokens(&$tokens) {
   $tokens[CRM_Certificate_Token_Case::TOKEN] = CRM_Certificate_Token_Case::prefixedEntityTokens();
+}
+
+/**
+ * Implements addCiviCaseDependentAngularModules().
+ */
+function certificate_addCiviCaseDependentAngularModules(&$dependentModules) {
+  $dependentModules[] = "certificate";
+}
+
+/**
+ * Implements hook_civicrm_apiWrappers().
+ */
+function certificate_civicrm_apiWrappers(&$wrappers, $apiRequest) {
+  if ($apiRequest['entity'] == 'Case' & $apiRequest['action'] === 'getdetails') {
+    $wrappers[] = new CRM_Certificate_Api_Wrapper_Case();
+  }
 }
