@@ -91,8 +91,8 @@ describe('DownloadCertificateCaseAction', () => {
 
     it('downloads the certificate', () => {
       expect(civicaseCrmUrl).toHaveBeenCalledWith('civicrm/certificates/case', {
-        id: '170',
-        cid: '141'
+        case_id: '141',
+        contact_id: '170'
       });
       expect($window.open).toHaveBeenCalledWith('CRM Mock URL', '_blank');
     });

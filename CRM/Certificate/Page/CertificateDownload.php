@@ -6,8 +6,8 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
    * Handles case certificate download
    */
   public static function downloadCaseCertificate() {
-    $contactId = CRM_Utils_Request::retrieve('cid', 'Positive');
-    $entityId = CRM_Utils_Request::retrieve('id', 'Positive');
+    $contactId = CRM_Utils_Request::retrieve('contact_id', 'Positive');
+    $entityId = CRM_Utils_Request::retrieve('case_id', 'Positive');
 
     try {
       $certificate = self::checkIfCertificateAvailable($contactId, $entityId);

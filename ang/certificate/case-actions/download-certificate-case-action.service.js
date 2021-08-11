@@ -34,8 +34,8 @@
     this.doAction = function (cases, action, callbackFn) {
       var selectedCase = cases[0];
       var url = civicaseCrmUrl('civicrm/certificates/case', {
-        id: selectedCase.client[0].contact_id,
-        cid: selectedCase.id
+        contact_id: selectedCase.client[0].contact_id,
+        case_id: selectedCase.id
       });
       $window.open(url, '_blank');
     };
