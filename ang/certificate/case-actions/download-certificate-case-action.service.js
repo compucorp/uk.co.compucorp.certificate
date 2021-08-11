@@ -5,16 +5,22 @@
 
   /**
    * @param {object} civicaseCrmUrl civicrm url service
+   * @param {object} $window window object
    */
-  function DownloadCertificateCaseAction (civicaseCrmUrl) {
+  function DownloadCertificateCaseAction (civicaseCrmUrl, $window) {
     /**
      * Checks if the Action is allowed
      *
      * @param {object} action action
      * @param {Array} cases cases
+     * @param {object} attributes - item attributes.
      * @returns {boolean} if action is allowed
      */
-    this.isActionAllowed = function (action, cases) {
+    this.isActionAllowed = function (action, cases, attributes) {
+      if (!cases[0] || attributes.mode !== 'case-details') {
+        return;
+      }
+
       return cases[0].is_download_certificate_available;
     };
 
@@ -31,9 +37,7 @@
         id: selectedCase.client[0].contact_id,
         cid: selectedCase.id
       });
-      var win = window.open(url, '_blank');
-
-      win.focus();
+      $window.open(url, '_blank');
     };
   }
 })(angular);
