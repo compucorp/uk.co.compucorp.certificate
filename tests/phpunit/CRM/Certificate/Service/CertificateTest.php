@@ -8,7 +8,7 @@
 class CRM_Certificate_Service_CertificateTest extends BaseHeadlessTest {
 
   /**
-   * Test new instance of certificate configuration is created
+   * Test new instance of case certificate configuration is created.
    */
   public function testCreateCaseCertificateConfiguration() {
     $caseStatus[] = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate()['value'];
@@ -82,6 +82,48 @@ class CRM_Certificate_Service_CertificateTest extends BaseHeadlessTest {
     ];
     $result = $this->createCertificate($values);
     $this->assertTrue(is_array($result));
+  }
+
+  /**
+   * Test create new instance of event certificate configuration
+   */
+  public function testCreateEventCertificateConfiguration() {
+    $statuses[] = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate()['id'];
+    $types[] = CRM_Certificate_Test_Fabricator_Event::fabricate()['id'];
+    
+    $certificateConfiguration = [
+      'name' => 'test cert',
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'message_template_id'  => 1,
+      'statuses' => $statuses,
+      'linked_to' => $types
+    ];
+
+    $certificateCreator = new CRM_Certificate_Service_Certificate();
+    $result = $certificateCreator->store($certificateConfiguration);
+
+    $this->assertTrue(is_array($result));
+    $this->assertArrayHasKey('certificate', $result);
+  }
+
+  /**
+   * Test new instance of event certificate configuration is created
+   * for empty status and type
+   */
+  public function testCreateEventCertificateConfigurationForEmptyStatusAndType() {
+    $certificateConfiguration = [
+      'name' => 'test cert',
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'message_template_id'  => 1,
+      'statuses' => [],
+      'linked_to' => []
+    ];
+
+    $certificateCreator = new CRM_Certificate_Service_Certificate();
+    $result = $certificateCreator->store($certificateConfiguration);
+
+    $this->assertTrue(is_array($result));
+    $this->assertArrayHasKey('certificate', $result);
   }
 
   private function createCertificate($values = []) {
