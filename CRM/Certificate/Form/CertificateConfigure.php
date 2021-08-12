@@ -52,7 +52,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
         'placeholder' => E::ts('- Select Type -'), 'disabled',
         'class' => 'form-control'
       ],
-      TRUE
+      FALSE
     );
 
     $this->addEntityRef('message_template_id', ts('Message Template'), [
@@ -79,7 +79,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
         'disabled',
         'class' => 'form-control'
       ],
-      TRUE
+      FALSE
     );
 
     $this->addButtons([
@@ -154,8 +154,8 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
         $values['id'] = $this->_id;
       }
 
-      $values['statuses'] = explode(',', $values['statuses']);
-      $values['linked_to'] = explode(',', $values['linked_to']);
+      $values['statuses'] = empty($values['statuses'])? [] : explode(',', $values['statuses']);
+      $values['linked_to'] = empty($values['linked_to'])? [] : explode(',', $values['linked_to']);
 
       $result = $certificateCreator->store($values);
     } catch (CRM_Certificate_Exception_ConfigurationExistException $e) {
@@ -188,5 +188,38 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $values['linked_to'] = implode(',', array_column($types, 'id'));
 
     return $values;
+  }
+
+  public function addRules() {
+    $this->addFormRule([$this, 'certificateRule']);
+  }
+
+  public function certificateRule($values) {
+    $errors = [];
+
+    // only validate statuses and linked_to if the certificate is attached to cases. 
+    if ($values['type'] != CRM_Certificate_Enum_CertificateType::CASES) {
+      return $errors;
+    }
+    
+    $this->validateCertificateFields($values, $errors);
+
+    return $errors ?: TRUE;
+  }
+
+  /**
+   * Validates the statuses and linked_to field.
+   *
+   * @param array $values
+   * @param array $errors
+   */
+  public function validateCertificateFields(&$values, &$errors) {
+    if (empty($values['linked_to'])) {
+      $errors['linked_to'] = ts('The linked to field is required');
+    }
+
+    if (empty($values['statuses'])) {
+      $errors['statuses'] = ts('The status field is required');
+    }
   }
 }

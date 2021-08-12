@@ -29,8 +29,13 @@ class CRM_Certificate_Service_Certificate {
       $entityTypes = (array)$values['linked_to'];
 
       $result['certificate'] = CRM_Certificate_BAO_CompuCertificate::create($params);
-      $result['statuses'] = CRM_Certificate_BAO_CompuCertificateStatus::assignCertificateEntityStatuses($result['certificate'], $statuses);
-      $result['entityTypes'] = CRM_Certificate_BAO_CompuCertificateEntityType::assignCertificateEntityTypes($result['certificate'], $entityTypes);
+
+      if (!empty($statuses)) {
+        $result['statuses'] = CRM_Certificate_BAO_CompuCertificateStatus::assignCertificateEntityStatuses($result['certificate'], $statuses);
+      }
+      if (!empty($entityTypes)) {
+        $result['entityTypes'] = CRM_Certificate_BAO_CompuCertificateEntityType::assignCertificateEntityTypes($result['certificate'], $entityTypes);
+      }
     });
 
     return $result;
@@ -47,15 +52,20 @@ class CRM_Certificate_Service_Certificate {
    *  false config doesnt exist
    */
   public function configurationExist($values) {
-    $entityTypes = sprintf('(%s)', implode(',', (array)$values['linked_to']));
-    $statuses = sprintf('(%s)', implode(',', (array)$values['statuses']));
+    $optionsCondition = [];
 
     $query = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::$_tableName . ' ccc')
       ->select('ccc.id')
-      ->join('cet', 'INNER JOIN `' . CRM_Certificate_DAO_CompuCertificateEntityType::$_tableName . '` cet ON (cet.certificate_id = ccc.id)')
-      ->join('cs', 'INNER JOIN `' . CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '` cs ON (cs.certificate_id = ccc.id)')
-      ->where('ccc.entity = @entity', ['entity' => $values['type']])
-      ->where("cet.entity_type_id in $entityTypes AND cs.status_id in $statuses");
+      ->join('cet', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateEntityType::$_tableName . '` cet ON (cet.certificate_id = ccc.id)')
+      ->join('cs', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '` cs ON (cs.certificate_id = ccc.id)')
+      ->where('ccc.entity = @entity', ['entity' => $values['type']]);
+
+    $this->linkedToCondition($optionsCondition, $values['linked_to']);
+    $this->statusesCondition($optionsCondition, $values['statuses']);
+
+    if (!empty($optionsCondition)) {
+      $query = $query->where(implode(' AND ', $optionsCondition));
+    }
 
     if (!empty($values['id'])) {
       $query = $query->where('ccc.id <> ' . $values['id']);
@@ -64,5 +74,45 @@ class CRM_Certificate_Service_Certificate {
     $certificates = $query->execute()->fetchAll();
 
     return !empty($certificates);
+  }
+
+  /**
+   * Appends sql query condition for linked_to,
+   * only if the linked_to array contains values.
+   * 
+   * @param array &$optionsCondition
+   *  The array to append sql query to.
+   * @param array $linkedTo
+   *  The array containing ids of an entity type
+   *  
+   */
+  private function linkedToCondition(&$optionsCondition, $linkedTo) {
+    if (empty($linkedTo)) {
+      $optionsCondition[] = "cet.entity_type_id IS NULL";
+      return;
+    }
+
+    $entityTypes = sprintf('(%s)', implode(',', (array)$linkedTo));
+    $optionsCondition[] = "cet.entity_type_id in $entityTypes";
+  }
+
+  /**
+   * Appends sql query condition for statuses,
+   * only if the statuses array contains values.
+   * 
+   * @param array &$optionsCondition
+   *  The array to append sql query to.
+   * @param array $statuses
+   *  The array containing ids of statuses
+   *  
+   */
+  private function statusesCondition(&$optionsCondition, $statuses) {
+    if (empty($statuses)) {
+      $optionsCondition[] = "cs.status_id IS NULL";
+      return;
+    }
+
+    $statuses = sprintf('(%s)', implode(',', (array)$statuses));
+    $optionsCondition[] = "cs.status_id in $statuses";
   }
 }

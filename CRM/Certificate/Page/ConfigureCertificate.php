@@ -37,13 +37,29 @@ class CRM_Certificate_Page_ConfigureCertificate extends CRM_Core_Page {
       $certificates[$certificateBAO->id] = [
         "name" => $certificateBAO->name,
         "type" =>  CRM_Utils_Array::value($certificateBAO->entity, CRM_Certificate_Enum_CertificateType::getOptions(), ts('unknown')),
-        "linked_to" => implode(', ', array_column($entity->getCertificateConfiguredTypes($certificateBAO->id), 'label')),
-        "status" => implode(', ', array_column($entity->getCertificateConfiguredStatuses($certificateBAO->id), 'label')),
+        "linked_to" => $this->getCertificateConfiguredTypes($entity->getCertificateConfiguredTypes($certificateBAO->id)),
+        "status" => $this->getCertificateConfiguredStatuses($entity->getCertificateConfiguredStatuses($certificateBAO->id)),
         "action" => CRM_Core_Action::formLink($this->actionLinks(), NULL, ['id' => $certificateBAO->id])
       ];
     }
 
     return $certificates;
+  }
+
+  public function getCertificateConfiguredTypes($configuredTypes) {
+    if (empty($configuredTypes)) {
+      return "ALL";
+    }
+
+    return implode(', ', array_column($configuredTypes, 'label'));
+  }
+
+  public function getCertificateConfiguredStatuses($configuredStatuses) {
+    if (empty($configuredStatuses)) {
+      return "ALL";
+    }
+
+    return implode(', ', array_column($configuredStatuses, 'label'));
   }
 
   public static function &actionLinks() {
