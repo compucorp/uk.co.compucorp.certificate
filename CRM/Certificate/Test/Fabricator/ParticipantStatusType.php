@@ -12,7 +12,7 @@ class CRM_Certificate_Test_Fabricator_ParticipantStatusType {
       'create',
       $params
     );
-    
+
     return array_shift($result['values']);
   }
 
@@ -22,7 +22,8 @@ class CRM_Certificate_Test_Fabricator_ParticipantStatusType {
       'name' => $name,
       'label' => $name,
       'class' => 'Positive',
-      'weight' => rand(1,10),
+      'weight' => rand(1, 10),
     ];
   }
+
 }

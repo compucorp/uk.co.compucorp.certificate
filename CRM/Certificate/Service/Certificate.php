@@ -4,12 +4,12 @@ class CRM_Certificate_Service_Certificate {
 
   /**
    * Stores a certificate configuration
-   *  
+   *
    * @param array $values
    *    Configuration data
-   * 
+   *
    * @return array
-   *    New Certificate configuration values
+   *   New Certificate configuration values
    */
   public function store($values) {
     $result = NULL;
@@ -25,8 +25,8 @@ class CRM_Certificate_Service_Certificate {
       $params['name'] = $values['name'];
       $params['entity'] = $values['type'];
       $params['template_id'] = $values['message_template_id'];
-      $statuses = (array)$values['statuses'];
-      $entityTypes = (array)$values['linked_to'];
+      $statuses = (array) $values['statuses'];
+      $entityTypes = (array) $values['linked_to'];
 
       $result['certificate'] = CRM_Certificate_BAO_CompuCertificate::create($params);
 
@@ -46,10 +46,10 @@ class CRM_Certificate_Service_Certificate {
    * satisfy the new configuration to be created,
    * this is to avoid having more than one entity certificate
    * configured for the same status or entity type
-   * 
+   *
    * @return bool
-   *  true config exist,
-   *  false config doesnt exist
+   *   true config exist,
+   *   false config doesnt exist
    */
   public function configurationExist($values) {
     $optionsCondition = [];
@@ -79,12 +79,12 @@ class CRM_Certificate_Service_Certificate {
   /**
    * Appends sql query condition for linked_to,
    * only if the linked_to array contains values.
-   * 
+   *
    * @param array &$optionsCondition
    *  The array to append sql query to.
    * @param array $linkedTo
    *  The array containing ids of an entity type
-   *  
+   *
    */
   private function linkedToCondition(&$optionsCondition, $linkedTo) {
     if (empty($linkedTo)) {
@@ -92,19 +92,19 @@ class CRM_Certificate_Service_Certificate {
       return;
     }
 
-    $entityTypes = sprintf('(%s)', implode(',', (array)$linkedTo));
+    $entityTypes = sprintf('(%s)', implode(',', (array) $linkedTo));
     $optionsCondition[] = "cet.entity_type_id in $entityTypes";
   }
 
   /**
    * Appends sql query condition for statuses,
    * only if the statuses array contains values.
-   * 
+   *
    * @param array &$optionsCondition
    *  The array to append sql query to.
    * @param array $statuses
    *  The array containing ids of statuses
-   *  
+   *
    */
   private function statusesCondition(&$optionsCondition, $statuses) {
     if (empty($statuses)) {
@@ -112,7 +112,8 @@ class CRM_Certificate_Service_Certificate {
       return;
     }
 
-    $statuses = sprintf('(%s)', implode(',', (array)$statuses));
+    $statuses = sprintf('(%s)', implode(',', (array) $statuses));
     $optionsCondition[] = "cs.status_id in $statuses";
   }
+
 }

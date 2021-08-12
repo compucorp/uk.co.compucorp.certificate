@@ -2,7 +2,7 @@
 
 /**
  * Test events entity class
- * 
+ *
  * @group headless
  */
 class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
@@ -38,4 +38,5 @@ class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
     $this->assertTrue(!empty(array_diff([$inactiveStatus], $statuses)));
     $this->assertTrue(empty(array_diff([$activeStatus], $statuses)));
   }
+
 }

@@ -30,7 +30,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       ts('Certificate Name'),
       [
         'placeholder' => ts('Certificate Name'),
-        'class' => 'form-control'
+        'class' => 'form-control',
       ],
       TRUE
     );
@@ -49,8 +49,9 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       'linked_to',
       ts('Linked to'),
       [
-        'placeholder' => E::ts('- Select Type -'), 'disabled',
-        'class' => 'form-control'
+        'placeholder' => E::ts('- Select Type -'),
+        1 => 'disabled',
+        'class' => 'form-control',
       ],
       FALSE
     );
@@ -62,13 +63,13 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       'api' => [
         'params' => [
           "is_active" => 1,
-          "workflow_id" => ["IS NULL" => 1]
+          "workflow_id" => ["IS NULL" => 1],
         ],
         'label_field' => "msg_title",
-        "search_field" => "msg_title"
+        "search_field" => "msg_title",
       ],
-      'class' => 'form-control'
-    ], true);
+      'class' => 'form-control',
+    ], TRUE);
 
     $this->add(
       'text',
@@ -76,8 +77,8 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       ts('Status'),
       [
         'placeholder' => E::ts('- Select Status -'),
-        'disabled',
-        'class' => 'form-control'
+        1 => 'disabled',
+        'class' => 'form-control',
       ],
       FALSE
     );
@@ -86,12 +87,12 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       [
         'type' => 'submit',
         'name' => E::ts('Save'),
-        'isDefault' => TRUE
+        'isDefault' => TRUE,
       ],
       [
         'type' => 'cancel',
         'name' => E::ts('Cancel'),
-        'class' => 'btn-secondary-outline'
+        'class' => 'btn-secondary-outline',
       ],
     ]);
 
@@ -154,11 +155,12 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
         $values['id'] = $this->_id;
       }
 
-      $values['statuses'] = empty($values['statuses'])? [] : explode(',', $values['statuses']);
-      $values['linked_to'] = empty($values['linked_to'])? [] : explode(',', $values['linked_to']);
+      $values['statuses'] = empty($values['statuses']) ? [] : explode(',', $values['statuses']);
+      $values['linked_to'] = empty($values['linked_to']) ? [] : explode(',', $values['linked_to']);
 
       $result = $certificateCreator->store($values);
-    } catch (CRM_Certificate_Exception_ConfigurationExistException $e) {
+    }
+    catch (CRM_Certificate_Exception_ConfigurationExistException $e) {
       CRM_Core_Session::setStatus($e->getMessage(), 'failed', 'error');
       return;
     }
@@ -171,7 +173,8 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
 
     try {
       $certificateDAO = CRM_Certificate_BAO_CompuCertificate::findById($id);
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       CRM_Core_Session::setStatus("Certificate configuration with ID $this->_id not found", 'failed', 'error');
       CRM_Utils_System::redirect('civicrm/admin/certificates');
       return;
@@ -194,14 +197,25 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $this->addFormRule([$this, 'certificateRule']);
   }
 
+  /**
+   * This enforces the rule whereby,
+   * linked_to and status field are only
+   * required for certificate of type 'case'
+   * but not required for other types as blank/empty
+   * translates to all.
+   *
+   * @param array $values
+   *
+   * @return array|bool
+   */
   public function certificateRule($values) {
     $errors = [];
 
-    // only validate statuses and linked_to if the certificate is attached to cases. 
+    // only validate statuses and linked_to if the certificate is attached to cases.
     if ($values['type'] != CRM_Certificate_Enum_CertificateType::CASES) {
       return $errors;
     }
-    
+
     $this->validateCertificateFields($values, $errors);
 
     return $errors ?: TRUE;
@@ -222,4 +236,5 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       $errors['statuses'] = ts('The status field is required');
     }
   }
+
 }

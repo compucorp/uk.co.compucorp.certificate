@@ -9,7 +9,8 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
     $result = civicrm_api3('event', 'get', [
       'sequential' => 1,
       'is_active' => 1,
-      'return' => ["id"]
+      'return' => ["id"],
+      'options' => ['limit' => 0],
     ]);
 
     if ($result["is_error"]) {
@@ -26,7 +27,8 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
     $result = civicrm_api3('ParticipantStatusType', 'get', [
       'sequential' => 1,
       'is_active' => 1,
-      'return' => ["id"]
+      'return' => ["id"],
+      'options' => ['limit' => 0],
     ]);
 
     if ($result["is_error"]) {
@@ -41,7 +43,7 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
    */
   public function getCertificateConfiguredStatuses($certificateId) {
     $statusBAO = new CRM_Certificate_BAO_CompuCertificateStatus();
-    
+
     $statusBAO->whereAdd("certificate_id = " . $certificateId);
     $statusBAO->joinAdd(['status_id', new CRM_Event_DAO_ParticipantStatusType(), 'id']);
     $statusBAO->find();
@@ -49,8 +51,8 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
 
     $statuses = array_map(function ($status) {
         return [
-            "id" => $status["id"],
-            "label" => $status["label"]
+          "id" => $status["id"],
+          "label" => $status["label"],
         ];
     }, $statuses);
 
@@ -72,7 +74,7 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
     $entityTypes = array_map(function ($entityType) {
       return [
         "id" => $entityType["id"],
-        "label" => $entityType["title"]
+        "label" => $entityType["title"],
       ];
     }, $entityTypes);
 
@@ -84,4 +86,5 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
    */
   public function getCertificateConfiguration($entityId, $contactId) {
   }
+
 }

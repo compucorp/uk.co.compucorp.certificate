@@ -22,4 +22,5 @@ class CRM_Certificate_Test_Fabricator_Event {
       'description' => md5(mt_rand()),
     ];
   }
+
 }
