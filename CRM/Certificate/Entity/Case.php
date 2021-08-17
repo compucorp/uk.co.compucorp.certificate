@@ -48,7 +48,7 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
       ->select('`civicrm_option_value`.`value` id, `civicrm_option_value`.`label`')
       ->param([
         'groupName' => 'case_status',
-        'certificateId' => $certificateId
+        'certificateId' => $certificateId,
       ])
       ->execute()
       ->fetchAll();
@@ -71,7 +71,7 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
     $entityTypes = array_map(function ($entityType) {
       return [
         "id" => $entityType["id"],
-        "label" => $entityType["name"]
+        "label" => $entityType["name"],
       ];
     }, $entityTypes);
 
@@ -86,7 +86,7 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
       $case = civicrm_api3('Case', 'getsingle', [
         'id' => $entityId,
         'contact_id' => $contactId,
-        'is_active' => 1
+        'is_active' => 1,
       ]);
 
       $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
@@ -100,10 +100,12 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
       $certificateBAO->find(TRUE);
 
       if (!empty($certificateBAO->id)) {
-        return $certificateBAO;;
+        return $certificateBAO;
       }
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
     }
     return FALSE;
   }
+
 }

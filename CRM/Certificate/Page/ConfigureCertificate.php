@@ -35,16 +35,16 @@ class CRM_Certificate_Page_ConfigureCertificate extends CRM_Core_Page {
     while ($certificateBAO->fetch()) {
       $entity = CRM_Certificate_Entity_EntityFactory::create($certificateBAO->entity);
 
-      $type = CRM_Utils_Array::value($certificateBAO->entity, CRM_Certificate_Enum_CertificateType::getOptions(), ts('unknown'));
-      $linkedTo = $this->getCertificateConfiguredTypes($entity->getCertificateConfiguredTypes($certificateBAO->id));
-      $status = $this->getCertificateConfiguredStatuses($entity->getCertificateConfiguredStatuses($certificateBAO->id));
+      $options = CRM_Certificate_Enum_CertificateType::getOptions();
+      $configuredTypes = $entity->getCertificateConfiguredTypes($certificateBAO->id);
+      $configuredStatuses = $entity->getCertificateConfiguredStatuses($certificateBAO->id);
       $action = CRM_Core_Action::formLink($this->actionLinks(), NULL, ['id' => $certificateBAO->id]);
 
       $certificates[$certificateBAO->id] = [
         "name" => $certificateBAO->name,
-        "type" => $type,
-        "linked_to" => $linkedTo,
-        "status" => $status,
+        "type" => CRM_Utils_Array::value($certificateBAO->entity, $options, ts('unknown')),
+        "linked_to" => $this->transformCertificateConfiguredTypes($configuredTypes),
+        "status" => $this->transformCertificateConfiguredStatuses($configuredStatuses),
         "action" => $action,
       ];
     }
@@ -52,7 +52,7 @@ class CRM_Certificate_Page_ConfigureCertificate extends CRM_Core_Page {
     return $certificates;
   }
 
-  public function getCertificateConfiguredTypes($configuredTypes) {
+  public function transformCertificateConfiguredTypes($configuredTypes) {
     if (empty($configuredTypes)) {
       return "ALL";
     }
@@ -60,7 +60,7 @@ class CRM_Certificate_Page_ConfigureCertificate extends CRM_Core_Page {
     return implode(', ', array_column($configuredTypes, 'label'));
   }
 
-  public function getCertificateConfiguredStatuses($configuredStatuses) {
+  public function transformCertificateConfiguredStatuses($configuredStatuses) {
     if (empty($configuredStatuses)) {
       return "ALL";
     }

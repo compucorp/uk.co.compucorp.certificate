@@ -31,8 +31,8 @@ class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
     $inactiveStatus = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate(['is_active' => 0])['id'];
     $activeStatus = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate(['is_active' => 1])['id'];
 
-    $caseEntity = new CRM_Certificate_Entity_Event();
-    $statuses = $caseEntity->getStatuses();
+    $eventEntity = new CRM_Certificate_Entity_Event();
+    $statuses = $eventEntity->getStatuses();
 
     $this->assertTrue(is_array($statuses));
     $this->assertTrue(!empty(array_diff([$inactiveStatus], $statuses)));
