@@ -64,7 +64,7 @@ class CRM_Certificate_Service_Certificate {
     $this->statusesCondition($optionsCondition, $values['statuses']);
 
     if (!empty($optionsCondition)) {
-      $query = $query->where(implode(' AND ', $optionsCondition));
+      $query = $query->where(implode(' OR ', $optionsCondition));
     }
 
     if (!empty($values['id'])) {
