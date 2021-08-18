@@ -9,8 +9,13 @@ class CRM_Certificate_Entity_EntityFactory {
     switch ($entity) {
       case CRM_Certificate_Enum_CertificateType::CASES:
         return new CRM_Certificate_Entity_Case();
+
+      case CRM_Certificate_Enum_CertificateType::EVENTS:
+        return new CRM_Certificate_Entity_Event();
+
       default:
         throw new CRM_Core_Exception("Unsupported certificate entity type");
     }
   }
+
 }

@@ -35,6 +35,10 @@
      */
     CRM.$('[name=type]').on('change', function (e) {
       if (e.target.value > 0) {
+
+        $('[name=linked_to]').val('');
+        $('[name=statuses]').val('');
+
         $('[name=linked_to]')
           .attr('placeholder', ref[e.target.value]['placeholder'])
           .attr('disabled', false)
