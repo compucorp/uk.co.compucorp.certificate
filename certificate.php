@@ -202,3 +202,14 @@ function certificate_civicrm_apiWrappers(&$wrappers, $apiRequest) {
     $wrappers[] = new CRM_Certificate_Api_Wrapper_Case();
   }
 }
+
+/**
+ * Implements hook_civicrm_pageRun().
+ */
+function certificate_civicrm_pageRun( &$page ) {
+  $hooks = [
+    new CRM_Certificate_Hook_PageRun_EventPageTab($page),
+  ];
+
+  array_walk($hooks, function ($hook) { $hook->run(); });
+}
