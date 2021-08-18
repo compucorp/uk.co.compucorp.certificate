@@ -12,6 +12,9 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
       case CRM_Certificate_Enum_CertificateType::CASES:
         $certificate =  self::fabricateCaseCertificate($values);
         break;
+      case CRM_Certificate_Enum_CertificateType::EVENTS:
+        $certificate =  self::fabricateEventCertificate($values);
+        break;
       default:
         $certificate =  self::fabricateCaseCertificate($values);
     }
@@ -28,6 +31,24 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
 
     if (empty($values['statuses'])) {
       $status = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate();
+      $values['statuses'] = (array)$status['id'];
+    }
+
+    $values = array_merge(self::getDefaultParams(), $values);
+    $storeCertificate = new CRM_Certificate_Service_Certificate();
+    return $storeCertificate->store($values);
+  }
+
+  public static function fabricateEventCertificate($values) {
+    $values['type'] = CRM_Certificate_Enum_CertificateType::EVENTS;
+
+    if (empty($values['linked_to'])) {
+      $event = CRM_Certificate_Test_Fabricator_Event::fabricate(['is_active' => 1]);
+      $values['linked_to'] = (array)$event['id'];
+    }
+
+    if (empty($values['statuses'])) {
+      $status = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate(['is_active' => 1]);
       $values['statuses'] = (array)$status['id'];
     }
 
