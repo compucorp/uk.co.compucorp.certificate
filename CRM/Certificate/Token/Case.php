@@ -69,7 +69,6 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
       }
     } catch (Exception $e) {
       CRM_Core_Session::setStatus('Error resolving tokens');
-      throw new CRM_Core_Exception($e->getMessage());
     }
 
     return $resolvedTokens;
