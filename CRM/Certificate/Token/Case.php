@@ -25,7 +25,7 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
     "end_date" => "Case End Date",
     "created_date" => "Created Date",
     "role" => "Role in Case",
-    "status" => "Case Status"
+    "status" => "Case Status",
   ];
 
   public function __construct($tokenNames = []) {
@@ -50,7 +50,7 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
    */
   public function prefetch(TokenValueEvent $e) {
     $entityTypeId = $e->getTokenProcessor()->getContextValues('entityId');
-    $contactId =  $e->getTokenProcessor()->getContextValues('contactId');
+    $contactId = $e->getTokenProcessor()->getContextValues('contactId');
 
     $resolvedTokens = [];
 
@@ -61,13 +61,14 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
         $case = civicrm_api3('Case', 'getsingle', [
           'contact_id' => $contactId,
           'id' => $entityTypeId,
-          'is_active' => 1
+          'is_active' => 1,
         ]);
 
         $this->resolveFields($e, $case, $resolvedTokens);
         $this->resolveCustomFields($case, $resolvedTokens);
       }
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       CRM_Core_Session::setStatus('Error resolving tokens');
     }
 
@@ -76,7 +77,7 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
 
   /**
    * Resolve the value of case standard fields in the token event
-   * 
+   *
    * @param \Civi\Token\Event\TokenValueEvent $e
    * @param array $case
    * @param array &$resolvedTokens
@@ -104,7 +105,7 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
 
   /**
    * Resolve the value of case custom fields in the token event
-   * 
+   *
    * @param array $case
    * @param array &$resolvedTokens
    */
@@ -120,4 +121,5 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
       }
     }
   }
+
 }

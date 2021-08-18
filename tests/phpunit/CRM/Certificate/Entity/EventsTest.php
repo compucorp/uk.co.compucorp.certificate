@@ -41,7 +41,7 @@ class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
 
   /**
    * Test that a certificate configuration is returned
-   * for a participant that meets the status and type of the 
+   * for a participant that meets the status and type of the
    * certificate configuration
    */
   public function testCanGetParticipantCertificateConfiguration() {
@@ -52,14 +52,14 @@ class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
     $params = [
       'contact_id' => $contactId,
       'event_id' => $eventId,
-      'status_id' => $statusId
+      'status_id' => $statusId,
     ];
     $participantId = CRM_Certificate_Test_Fabricator_Participant::fabricate($params)['id'];
 
     $values = [
       'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
       'linked_to' => [$eventId],
-      'statuses' => [$statusId]
+      'statuses' => [$statusId],
     ];
     $this->createCertificate($values);
 
@@ -81,7 +81,7 @@ class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
     $params = [
       'contact_id' => $contactId,
       'event_id' => $eventId,
-      'status_id' => $statusId
+      'status_id' => $statusId,
     ];
     $participantId = CRM_Certificate_Test_Fabricator_Participant::fabricate($params)['id'];
 

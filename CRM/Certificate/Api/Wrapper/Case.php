@@ -25,7 +25,7 @@ class CRM_Certificate_Api_Wrapper_Case implements API_Wrapper {
       $clientID = $this->getClientID($header['contacts']);
 
       try {
-        CertificateDownload::checkIfCertificateAvailable($clientID, $header['id']);
+        CertificateDownload::checkIfCertificateAvailable($clientID, $header['id'], CRM_Certificate_Enum_CertificateType::CASES);
         $header['is_download_certificate_available'] = TRUE;
       }
       catch (CRM_Core_Exception $e) {

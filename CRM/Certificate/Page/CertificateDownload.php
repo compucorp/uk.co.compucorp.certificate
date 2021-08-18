@@ -10,7 +10,26 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
     $entityId = CRM_Utils_Request::retrieve('case_id', 'Positive');
 
     try {
-      $certificate = self::checkIfCertificateAvailable($contactId, $entityId);
+      $certificate = self::checkIfCertificateAvailable($contactId, $entityId, CRM_Certificate_Enum_CertificateType::CASES);
+    }
+    catch (CRM_Core_Exception $e) {
+      CRM_Core_Session::setStatus($e->getMessage(), 'Error', 'error');
+      CRM_Utils_System::redirect('/civicrm?reset=1');
+    }
+
+    $certificateDownload = new CRM_Certificate_Service_CertificateDownloader();
+    $certificateDownload->download($certificate, $contactId, $entityId);
+  }
+
+  /**
+   * Handles event certificate download
+   */
+  public static function downloadEventCertificate() {
+    $contactId = CRM_Utils_Request::retrieve('contact_id', 'Positive');
+    $entityId = CRM_Utils_Request::retrieve('participant_id', 'Positive');
+
+    try {
+      $certificate = self::checkIfCertificateAvailable($contactId, $entityId, CRM_Certificate_Enum_CertificateType::EVENTS);
     }
     catch (CRM_Core_Exception $e) {
       CRM_Core_Session::setStatus($e->getMessage(), 'Error', 'error');
@@ -26,13 +45,14 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
    *
    * @param int $contactId
    * @param int $entityId
+   * @param int $certificateType
    *
    * @return int - contact id
    */
-  public static function checkIfCertificateAvailable($contactId, $entityId) {
+  public static function checkIfCertificateAvailable($contactId, $entityId, $certificateType) {
     self::checkPermission($contactId, $entityId);
 
-    return self::validateCertificate($contactId, $entityId, CRM_Certificate_Enum_CertificateType::CASES);
+    return self::validateCertificate($contactId, $entityId, $certificateType);
   }
 
   /**
