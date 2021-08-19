@@ -25,6 +25,7 @@
 
   let ref = { $entityRefs }
   let statusRef = { $entityStatusRefs }
+  let performingUpdate = false
 
   { literal }
   CRM.$(function ($) {
@@ -36,9 +37,13 @@
     CRM.$('[name=type]').on('change', function (e) {
       if (e.target.value > 0) {
 
-        $('[name=linked_to]').val('');
-        $('[name=statuses]').val('');
+        if (!performingUpdate) {
+          $('[name=linked_to]').val('')
+          $('[name=statuses]').val('')
+        }
 
+        performingUpdate = false;
+        
         $('[name=linked_to]')
           .attr('placeholder', ref[e.target.value]['placeholder'])
           .attr('disabled', false)
@@ -53,6 +58,7 @@
 
     //this is to trigger the entity ref, when value of certifcate type is set from the backend
     if ($('[name=type]')[0].value) {
+      performingUpdate = true;
       $('[name=type]').change();
     }
   });

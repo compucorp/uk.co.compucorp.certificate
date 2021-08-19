@@ -63,8 +63,14 @@ class CRM_Certificate_Service_Certificate {
     $this->linkedToCondition($optionsCondition, $values['linked_to']);
     $this->statusesCondition($optionsCondition, $values['statuses']);
 
+    // This is to avoid an entity having multiple certificate configuration,
+    // i.e. in a case where a configuration that has linked_to 'all' and statuses for a specific status,
+    // and the user attepmts to create another configuration with linked_to for a specific type and statuses for 'all',
+    // then a ConfigurationExistException would be thrown.
+    $conjuction = empty($values['linked_to']) || empty($values['statuses']) ? ' OR ' : ' AND ';
+
     if (!empty($optionsCondition)) {
-      $query = $query->where(implode(' AND ', $optionsCondition));
+      $query = $query->where(implode($conjuction, $optionsCondition));
     }
 
     if (!empty($values['id'])) {
