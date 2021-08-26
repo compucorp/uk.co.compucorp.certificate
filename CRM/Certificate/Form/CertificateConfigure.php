@@ -211,6 +211,8 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
   public function certificateRule($values) {
     $errors = [];
 
+    $this->validateCertificateName($values, $errors);
+
     // only validate statuses and linked_to if the certificate is attached to cases.
     if ($values['type'] != CRM_Certificate_Enum_CertificateType::CASES) {
       return $errors;
@@ -234,6 +236,19 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
 
     if (empty($values['statuses'])) {
       $errors['statuses'] = ts('The status field is required');
+    }
+  }
+
+  /**
+   * Validates certificate name is unique.
+   *
+   * @param array $values
+   * @param array $errors
+   */
+  public function validateCertificateName($values, &$errors) {
+    $certificateService = new CRM_Certificate_Service_Certificate();
+    if ($certificateService->certificateNameExist($values['name'], $this->_id)) {
+      $errors['name'] = ts('The certificate name already exists');
     }
   }
 

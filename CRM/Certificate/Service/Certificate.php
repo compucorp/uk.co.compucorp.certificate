@@ -122,4 +122,30 @@ class CRM_Certificate_Service_Certificate {
     $optionsCondition[] = "cs.status_id in $statuses";
   }
 
+  /**
+   * Checks that a certificate name already exists or not.
+   *
+   * @param string $name
+   *  The certificate name to check.
+   * @param array $exclude
+   *  Array of certificate ids to exclude from the check.
+   *
+   * @return bool
+   *   true if the certificate name exists,
+   *   false otherwise.
+   */
+  public function certificateNameExist($name, $exclude = []) {
+    $query = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::$_tableName . ' ccc')
+      ->where('ccc.name = @name', ['name' => $name]);
+
+    if (!empty($exclude)) {
+      $excludedIds = sprintf('(%s)', implode(',', (array) $exclude));
+      $query->where('ccc.id not in ' . $excludedIds);
+    }
+
+    $certificateWithName = $query->execute()->fetchAll();
+
+    return !empty($certificateWithName);
+  }
+
 }
