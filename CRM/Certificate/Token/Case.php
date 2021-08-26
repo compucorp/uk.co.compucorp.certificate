@@ -58,11 +58,17 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
       if (is_array($entityTypeId)) {
         $entityTypeId = $entityTypeId[0];
         $contactId = $contactId[0];
-        $case = civicrm_api3('Case', 'getsingle', [
+        $result = civicrm_api3('Case', 'getdetails', [
           'contact_id' => $contactId,
           'id' => $entityTypeId,
           'is_active' => 1,
         ]);
+
+        if ($result['is_error']) {
+          return $resolvedTokens;
+        }
+
+        $case = array_shift($result['values']);
 
         $this->resolveFields($e, $case, $resolvedTokens);
         $this->resolveCustomFields($case, $resolvedTokens);
