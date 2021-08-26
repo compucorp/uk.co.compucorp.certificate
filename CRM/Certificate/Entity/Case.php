@@ -10,6 +10,7 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
       'sequential' => 1,
       'is_active' => 1,
       'return' => ["id"],
+      'options' => ['limit' => 0],
     ]);
 
     if ($result["is_error"]) {
@@ -27,6 +28,7 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
       'sequential' => 1,
       'is_active' => 1,
       'return' => ["value"],
+      'options' => ['limit' => 0],
       'option_group_id' => "case_status",
     ]);
 
