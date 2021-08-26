@@ -9,17 +9,19 @@ trait CRM_Certificate_Test_Helper_Case {
     $params = array_merge([
       'contact_id' => $contact['id'],
       'creator_id' => $contact['id'],
-      'case_type_id' => $caseType['id']
+      'case_type_id' => $caseType['id'],
     ], $params);
 
     $case = CRM_Certificate_Test_Fabricator_Case::fabricate($params);
 
-    $case = civicrm_api3('Case', 'getsingle', [
+    $result = civicrm_api3('Case', 'getdetails', [
       'contact_id' => $contact['id'],
       'id' => $case['id'],
-      'is_active' => 1
+      'is_active' => 1,
     ]);
 
+    $case = array_shift($result['values']);
     return $case;
   }
+
 }
