@@ -23,12 +23,12 @@
     <path>civicrm/certificates/case</path>
     <page_callback>CRM_Certificate_Page_CertificateDownload::downloadCaseCertificate</page_callback>
     <title>Download Certificate</title>
-    <access_arguments>access civicrm</access_arguments>
+    <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
     <path>civicrm/certificates/event</path>
     <page_callback>CRM_Certificate_Page_CertificateDownload::downloadEventCertificate</page_callback>
     <title>Download Certificate</title>
-    <access_arguments>access civicrm</access_arguments>
+    <access_arguments>access CiviCRM</access_arguments>
   </item>
 </menu>
