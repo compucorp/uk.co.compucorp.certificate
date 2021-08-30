@@ -185,6 +185,25 @@ function _compucertificate_add_token_subscribers() {
  */
 function certificate_civicrm_tokens(&$tokens) {
   $tokens[CRM_Certificate_Token_Case::TOKEN] = CRM_Certificate_Token_Case::prefixedEntityTokens();
+
+  $hooks = [
+    new CRM_Certificate_Hook_Token_CertificateUrlTokens(new CRM_Certificate_Service_CaseIdFromUrl()),
+  ];
+  foreach ($hooks as &$hook) {
+    $hook->run($tokens);
+  }
+}
+
+/**
+ * Implements hook_civicrm_tokenvalues().
+ */
+function certificate_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = [], $context = NULL) {
+  $hooks = [
+    new CRM_Certificate_Hook_Token_CertificateUrlTokensValues(new CRM_Certificate_Service_CaseIdFromUrl()),
+  ];
+  foreach ($hooks as &$hook) {
+    $hook->run($values, $cids, $job, $tokens, $context);
+  }
 }
 
 /**
