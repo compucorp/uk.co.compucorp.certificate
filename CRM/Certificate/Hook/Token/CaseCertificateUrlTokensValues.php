@@ -7,14 +7,14 @@ class CRM_Certificate_Hook_Token_CaseCertificateUrlTokensValues {
   const TOKEN = 'certificate_url';
 
   /**
-   * The service to get case id from the url
+   * Current case id
    *
-   * @var CRM_Certificate_Service_CaseIdFromUrl
+   * @var int
    */
-  private $caseIdFromUrl;
+  private $caseId;
 
-  public function __construct($caseIdFromUrl) {
-    $this->caseIdFromUrl = $caseIdFromUrl;
+  public function __construct($caseId) {
+    $this->caseId = $caseId;
   }
 
   /**
@@ -38,9 +38,8 @@ class CRM_Certificate_Hook_Token_CaseCertificateUrlTokensValues {
       return;
     }
 
-    $caseId = $this->caseIdFromUrl->get();
-    if (in_array('case', $tokens[$prefix]) && !empty($caseId)) {
-      $this->resolveCaseCertificateURLToken($values, $cids, $caseId);
+    if (in_array('case', $tokens[$prefix]) && !empty($this->caseId)) {
+      $this->resolveCaseCertificateURLToken($values, $cids, $this->caseId);
     }
   }
 

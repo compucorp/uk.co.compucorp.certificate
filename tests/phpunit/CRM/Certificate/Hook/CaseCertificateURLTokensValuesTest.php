@@ -20,10 +20,7 @@ class CaseCertificateUrlTokensValuesTest extends BaseHeadlessTest {
     ['case' => $case, 'contact' => $contact] = $this->createCertificate();
     $contactValues = [$contact['id'] => []];
 
-    $caseIdFromUrlMock = $this->createMock(CRM_Certificate_Service_CaseIdFromUrl::class);
-    $caseIdFromUrlMock->method('get')->willReturn($case['id']);
-
-    $service = new CaseCertificateUrlTokensValues($caseIdFromUrlMock);
+    $service = new CaseCertificateUrlTokensValues($case['id']);
     $service->run($contactValues, [$contact['id']], 1, [CaseCertificateUrlTokensValues::TOKEN => ['case']], '');
 
     $contactCaseUrl = $contactValues[$contact['id']]['certificate_url.case'] ?? "";
@@ -39,15 +36,33 @@ class CaseCertificateUrlTokensValuesTest extends BaseHeadlessTest {
   public function testCertificateCaseUrlTokensWillNotResolveWhenCertificateDoesntExist() {
     $contactValues = [1 => []];
 
-    $caseIdFromUrlMock = $this->createMock(CRM_Certificate_Service_CaseIdFromUrl::class);
-    $caseIdFromUrlMock->method('get')->willReturn(1);
-
-    $service = new CaseCertificateUrlTokensValues($caseIdFromUrlMock);
+    $service = new CaseCertificateUrlTokensValues(1);
     $service->run($contactValues, [1], 1, [CaseCertificateUrlTokensValues::TOKEN => ['case']], '');
 
     $contactCaseUrl = $contactValues[1]['certificate_url.case'] ?? "";
 
     $this->assertTrue(empty($contactCaseUrl));
+  }
+
+  /**
+   * Test the run method will resoolve the token into a valid url.
+   */
+  public function testValidCertificateUrlIsGenerated() {
+    ['case' => $case, 'contact' => $contact] = $this->createCertificate();
+    $contactValues = [$contact['id'] => []];
+
+    $service = new CaseCertificateUrlTokensValues($case['id']);
+    $service->run($contactValues, [$contact['id']], 1, [CaseCertificateUrlTokensValues::TOKEN => ['case']], '');
+
+    $contactCaseUrl = $contactValues[$contact['id']]['certificate_url.case'] ?? "";
+
+    $contactCaseUrl = parse_url($contactCaseUrl);
+    $contactCaseUrl = explode("q=", $contactCaseUrl["query"])[1];
+    parse_str($contactCaseUrl, $parsedUrl);
+
+    $this->assertEquals($contact['id'], $parsedUrl["cid"]);
+    $this->assertEquals($case['id'], $parsedUrl['id']);
+
   }
 
   public function createCertificate() {
