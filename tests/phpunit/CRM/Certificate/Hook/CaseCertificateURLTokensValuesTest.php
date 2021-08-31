@@ -1,14 +1,13 @@
 <?php
 
-use CRM_Certificate_Hook_Token_CertificateUrlTokens as CertificateUrlTokens;
-use CRM_Certificate_Hook_Token_CertificateUrlTokensValues as CertificateUrlTokensValues;
+use CRM_Certificate_Hook_Token_CaseCertificateUrlTokensValues as CaseCertificateUrlTokensValues;
 
 /**
  * Test class for the CRM_Certificate_Hook_Token_CertificateUrlTokensValues.
  *
  * @group headless
  */
-class CertificateUrlTokensValuesTest extends BaseHeadlessTest {
+class CaseCertificateUrlTokensValuesTest extends BaseHeadlessTest {
 
   use CRM_Certificate_Test_Helper_Case;
 
@@ -24,8 +23,8 @@ class CertificateUrlTokensValuesTest extends BaseHeadlessTest {
     $caseIdFromUrlMock = $this->createMock(CRM_Certificate_Service_CaseIdFromUrl::class);
     $caseIdFromUrlMock->method('get')->willReturn($case['id']);
 
-    $service = new CertificateUrlTokensValues($caseIdFromUrlMock);
-    $service->run($contactValues, [$contact['id']], 1, [CertificateUrlTokens::TOKEN => ['case']], '');
+    $service = new CaseCertificateUrlTokensValues($caseIdFromUrlMock);
+    $service->run($contactValues, [$contact['id']], 1, [CaseCertificateUrlTokensValues::TOKEN => ['case']], '');
 
     $contactCaseUrl = $contactValues[$contact['id']]['certificate_url.case'] ?? "";
 
@@ -43,8 +42,8 @@ class CertificateUrlTokensValuesTest extends BaseHeadlessTest {
     $caseIdFromUrlMock = $this->createMock(CRM_Certificate_Service_CaseIdFromUrl::class);
     $caseIdFromUrlMock->method('get')->willReturn(1);
 
-    $service = new CertificateUrlTokensValues($caseIdFromUrlMock);
-    $service->run($contactValues, [1], 1, [CertificateUrlTokens::TOKEN => ['case']], '');
+    $service = new CaseCertificateUrlTokensValues($caseIdFromUrlMock);
+    $service->run($contactValues, [1], 1, [CaseCertificateUrlTokensValues::TOKEN => ['case']], '');
 
     $contactCaseUrl = $contactValues[1]['certificate_url.case'] ?? "";
 

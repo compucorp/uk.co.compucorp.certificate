@@ -1,9 +1,10 @@
 <?php
 
 use CRM_Certificate_Enum_CertificateType as CertificateType;
-use CRM_Certificate_Hook_Token_CertificateUrlTokens as CertificateURLTokens;
 
-class CRM_Certificate_Hook_Token_CertificateUrlTokensValues {
+class CRM_Certificate_Hook_Token_CaseCertificateUrlTokensValues {
+
+  const TOKEN = 'certificate_url';
 
   /**
    * The service to get case id from the url
@@ -31,7 +32,7 @@ class CRM_Certificate_Hook_Token_CertificateUrlTokensValues {
    *   Context name.
    */
   public function run(array &$values, array $cids, $job, array $tokens, $context) {
-    $prefix = CertificateURLTokens::TOKEN;
+    $prefix = self::TOKEN;
 
     if (!isset($tokens[$prefix]) || empty($values)) {
       return;
@@ -54,7 +55,7 @@ class CRM_Certificate_Hook_Token_CertificateUrlTokensValues {
    *   Case Id.
    */
   private function resolveCaseCertificateURLToken(&$values, $cids, $caseId) {
-    $prefix = CertificateURLTokens::TOKEN;
+    $prefix = self::TOKEN;
 
     foreach ($cids as $cid) {
       $entity = CRM_Certificate_Entity_EntityFactory::create(CertificateType::CASES);
