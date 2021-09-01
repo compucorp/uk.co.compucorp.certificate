@@ -29,6 +29,19 @@
   const TYPE_CASES = "1";
 
   { literal }
+
+  let toggleRequiredMarker = ($, val) => {
+    if (val === TYPE_CASES) {
+      if (!$('.linked_to > label > span.crm-marker').length) {
+        $('.linked_to > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
+        $('.statuses > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
+      }
+    } else {
+      $('.linked_to > label > span.crm-marker').remove()
+      $('.statuses > label > span.crm-marker').remove()
+    }
+  }
+  
   CRM.$(function ($) {
     /**
      * if entity is selected we want to populate the 
@@ -66,18 +79,6 @@
     }
 
   });
-
-  let toggleRequiredMarker = ($, val) => {
-    if (val === TYPE_CASES) {
-      if (!$('.linked_to > label > span.crm-marker').length) {
-        $('.linked_to > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
-        $('.statuses > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
-      }
-    } else {
-      $('.linked_to > label > span.crm-marker').remove()
-      $('.statuses > label > span.crm-marker').remove()
-    }
-  }
 
   { /literal}
 </script>
