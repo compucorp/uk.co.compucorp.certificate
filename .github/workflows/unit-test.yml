@@ -42,6 +42,7 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/civicrm/org.civicrm.shoreditch.git
           git clone --depth 1 --no-single-branch https://github.com/compucorp/uk.co.compucorp.civicase.git
+          git clone --depth 1 https://github.com/compucorp/uk.co.compucorp.usermenu.git
 
       - name: Switch Civicase Branch
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}/uk.co.compucorp.civicase
@@ -58,7 +59,7 @@ jobs:
       - name: Install Certificate and its dependencies
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}
         run: |
-          cv en shoreditch civicase
+          cv en shoreditch usermenu civicase
           cv en uk.co.compucorp.certificate
 
       - name: Run JS unit tests

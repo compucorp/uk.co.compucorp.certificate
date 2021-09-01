@@ -178,6 +178,15 @@ function _compucertificate_add_token_subscribers() {
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Case());
 }
 
+function _compucertificate_getCaseIdFromUrlIfExist() {
+  $caseId = NULL;
+  if (!empty($_GET['caseid'])) {
+    $caseId = (int) $_GET['caseid'];
+  }
+
+  return $caseId;
+}
+
 /**
  * Implements hook_civicrm_tokens().
  *
@@ -185,6 +194,23 @@ function _compucertificate_add_token_subscribers() {
  */
 function certificate_civicrm_tokens(&$tokens) {
   $tokens[CRM_Certificate_Token_Case::TOKEN] = CRM_Certificate_Token_Case::prefixedEntityTokens();
+
+  if (_compucertificate_getCaseIdFromUrlIfExist()) {
+    $tokens['certificate_url']['certificate_url.case'] = 'Case Certificate URL';
+  }
+}
+
+/**
+ * Implements hook_civicrm_tokenvalues().
+ */
+function certificate_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = [], $context = NULL) {
+  $caseId = _compucertificate_getCaseIdFromUrlIfExist();
+
+  $hooks = [new CRM_Certificate_Hook_Token_CaseCertificateUrlTokensValues($caseId)];
+
+  foreach ($hooks as &$hook) {
+    $hook->run($values, $cids, $job, $tokens, $context);
+  }
 }
 
 /**

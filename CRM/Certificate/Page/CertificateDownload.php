@@ -6,8 +6,8 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
    * Handles case certificate download
    */
   public static function downloadCaseCertificate() {
-    $contactId = CRM_Utils_Request::retrieve('contact_id', 'Positive');
-    $entityId = CRM_Utils_Request::retrieve('case_id', 'Positive');
+    $contactId = CRM_Utils_Request::retrieve('contact_id', 'Positive') ?? CRM_Utils_Request::retrieve('cid', 'Positive');
+    $entityId = CRM_Utils_Request::retrieve('case_id', 'Positive') ?? CRM_Utils_Request::retrieve('id', 'Positive');
     $certificateType = CRM_Certificate_Enum_CertificateType::CASES;
 
     self::downloadCertificate($contactId, $entityId, $certificateType);
@@ -17,8 +17,8 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
    * Handles event certificate download
    */
   public static function downloadEventCertificate() {
-    $contactId = CRM_Utils_Request::retrieve('contact_id', 'Positive');
-    $entityId = CRM_Utils_Request::retrieve('participant_id', 'Positive');
+    $contactId = CRM_Utils_Request::retrieve('contact_id', 'Positive') ?? CRM_Utils_Request::retrieve('cid', 'Positive');
+    $entityId = CRM_Utils_Request::retrieve('participant_id', 'Positive') ?? CRM_Utils_Request::retrieve('id', 'Positive');
     $certificateType = CRM_Certificate_Enum_CertificateType::EVENTS;
 
     self::downloadCertificate($contactId, $entityId, $certificateType);
