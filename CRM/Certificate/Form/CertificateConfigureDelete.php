@@ -11,7 +11,7 @@ class CRM_Certificate_Form_CertificateConfigureDelete extends CRM_Core_Form {
 
   /**
    * certificate configuration to delete
-   * @var int $id
+   * @var int
    */
   public $id;
 
@@ -29,13 +29,13 @@ class CRM_Certificate_Form_CertificateConfigureDelete extends CRM_Core_Form {
     $this->addButtons([
       [
         'type' => 'submit',
-        'name' => E::ts('Delete')
+        'name' => E::ts('Delete'),
       ],
       [
         'type' => 'cancel',
         'name' => E::ts('Cancel'),
         'isDefault' => TRUE,
-      ]
+      ],
     ]);
 
     parent::buildQuickForm();
@@ -44,7 +44,8 @@ class CRM_Certificate_Form_CertificateConfigureDelete extends CRM_Core_Form {
   public function postProcess() {
     if (!empty($this->id)) {
       CRM_Certificate_BAO_CompuCertificate::deleteById($this->id);
-      CRM_Core_Session::setStatus(E::ts('Certificate configuration deleted sucessfully.'), ts('Item Deleted'), 'success');
+      CRM_Core_Session::setStatus(E::ts('Certificate configuration deleted successfully.'), ts('Item Deleted'), 'success');
     }
   }
+
 }
