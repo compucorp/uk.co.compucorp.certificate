@@ -449,5 +449,21 @@ function _certificate_civix_civicrm_alterSettingsFolders(&$metaDataFolders = NUL
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
  */
 function _certificate_civix_civicrm_entityTypes(&$entityTypes) {
-  $entityTypes = array_merge($entityTypes, []);
+  $entityTypes = array_merge($entityTypes, [
+    'CRM_Certificate_DAO_CompuCertificate' => [
+      'name' => 'CompuCertificate',
+      'class' => 'CRM_Certificate_DAO_CompuCertificate',
+      'table' => 'compucertificate_certificate',
+    ],
+    'CRM_Certificate_DAO_CompuCertificateEntityType' => [
+      'name' => 'CompuCertificateEntityType',
+      'class' => 'CRM_Certificate_DAO_CompuCertificateEntityType',
+      'table' => 'compucertificate_certificate_entity_type',
+    ],
+    'CRM_Certificate_DAO_CompuCertificateStatus' => [
+      'name' => 'CompuCertificateStatus',
+      'class' => 'CRM_Certificate_DAO_CompuCertificateStatus',
+      'table' => 'compucertificate_certificate_status',
+    ],
+  ]);
 }

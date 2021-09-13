@@ -1,9 +1,8 @@
 <?php
 
 require_once 'certificate.civix.php';
-// phpcs:disable
+
 use CRM_Certificate_ExtensionUtil as E;
-// phpcs:enable
 
 /**
  * Implements hook_civicrm_config().
@@ -12,6 +11,7 @@ use CRM_Certificate_ExtensionUtil as E;
  */
 function certificate_civicrm_config(&$config) {
   _certificate_civix_civicrm_config($config);
+  _compucertificate_add_token_subscribers();
 }
 
 /**
@@ -141,4 +141,103 @@ function certificate_civicrm_entityTypes(&$entityTypes) {
  */
 function certificate_civicrm_themes(&$themes) {
   _certificate_civix_civicrm_themes($themes);
+}
+
+/**
+ * Implements hook_civicrm_navigationMenu().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
+ */
+function certificate_civicrm_navigationMenu(&$menu) {
+  _certificate_civix_insert_navigation_menu($menu, 'Administer', array(
+    'label' => E::ts('Certificates'),
+    'name' => 'compu-configure-certificate',
+    'url' => 'civicrm/admin/certificates',
+    'permission' => 'configure certificates',
+  ));
+}
+
+/**
+ * Implements hook_civicrm_permission().
+ *
+ * Declare permissions used by the extension
+ */
+function certificate_civicrm_permission(&$permissions) {
+  $permissions['configure certificates'] = [
+    ts('CompuCertificate: configure certificates'),
+    ts('User can configure which message templates can be downloaded as certificates.'),
+  ];
+}
+
+/**
+ * Subscribes to token evaluate events, this enables
+ * each entity to resolve tokens with the appropraite value
+ *
+ */
+function _compucertificate_add_token_subscribers() {
+  Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Case());
+}
+
+function _compucertificate_getCaseIdFromUrlIfExist() {
+  $caseId = NULL;
+  if (!empty($_GET['caseid'])) {
+    $caseId = (int) $_GET['caseid'];
+  }
+
+  return $caseId;
+}
+
+/**
+ * Implements hook_civicrm_tokens().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens
+ */
+function certificate_civicrm_tokens(&$tokens) {
+  $tokens[CRM_Certificate_Token_Case::TOKEN] = CRM_Certificate_Token_Case::prefixedEntityTokens();
+
+  if (_compucertificate_getCaseIdFromUrlIfExist()) {
+    $tokens['certificate_url']['certificate_url.case'] = 'Case Certificate URL';
+  }
+}
+
+/**
+ * Implements hook_civicrm_tokenvalues().
+ */
+function certificate_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = [], $context = NULL) {
+  $caseId = _compucertificate_getCaseIdFromUrlIfExist();
+
+  $hooks = [new CRM_Certificate_Hook_Token_CaseCertificateUrlTokensValues($caseId)];
+
+  foreach ($hooks as &$hook) {
+    $hook->run($values, $cids, $job, $tokens, $context);
+  }
+}
+
+/**
+ * Implements addCiviCaseDependentAngularModules().
+ */
+function certificate_addCiviCaseDependentAngularModules(&$dependentModules) {
+  $dependentModules[] = "certificate";
+}
+
+/**
+ * Implements hook_civicrm_apiWrappers().
+ */
+function certificate_civicrm_apiWrappers(&$wrappers, $apiRequest) {
+  if ($apiRequest['entity'] == 'Case' & $apiRequest['action'] === 'getdetails') {
+    $wrappers[] = new CRM_Certificate_Api_Wrapper_Case();
+  }
+}
+
+/**
+ * Implements hook_civicrm_pageRun().
+ */
+function certificate_civicrm_pageRun(&$page) {
+  $hooks = [
+    new CRM_Certificate_Hook_PageRun_EventPageTab($page),
+  ];
+
+  array_walk($hooks, function ($hook) {
+    $hook->run();
+  });
 }

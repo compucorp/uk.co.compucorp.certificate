@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Certificate</base>
+  <class>CompuCertificate</class>
+  <name>compucertificate_certificate</name>
+  <comment>CompuCertificate table</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique CompuCertificate ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>name</name>
+    <type>varchar</type>
+    <length>255</length>
+    <required>true</required>
+    <comment>Certificate name</comment>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>entity</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Predefined CompuCertificate Entity ID (1 - CASE, 2 - MEMBERSHIP, 3 - EVENT) </comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <field>
+    <name>template_id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>FK to message template</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <foreignKey>
+    <name>template_id</name>
+    <table>civicrm_msg_template</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+</table>

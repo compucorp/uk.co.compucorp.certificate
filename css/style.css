@@ -1,0 +1,9 @@
+div.certificate__action-link {
+  margin-bottom: 20px;
+}
+.crm-ajax-container #bootstrap-theme > .certificate__create-form-panel.panel{
+  box-shadow: none;
+}
+.crm-ajax-container #bootstrap-theme > .certificate__create-form-panel.panel > div.panel-body {
+  border-top: unset;
+}
