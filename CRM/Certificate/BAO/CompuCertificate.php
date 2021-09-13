@@ -33,4 +33,5 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
     $instance->delete();
     CRM_Utils_Hook::post('delete', $entityName, $id);
   }
+
 }

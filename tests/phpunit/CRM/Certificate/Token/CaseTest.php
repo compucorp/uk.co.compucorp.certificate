@@ -4,7 +4,7 @@ use Civi\Test\Invasive;
 
 /**
  * Test case token fields are resolved
- * 
+ *
  * @group headless
  */
 class CRM_Certificate_Token_CaseTest extends BaseHeadlessTest {
@@ -76,4 +76,5 @@ class CRM_Certificate_Token_CaseTest extends BaseHeadlessTest {
   private function createCaseCustomField($params = []) {
     return CRM_Certificate_Test_Fabricator_CustomField::fabricate($params);
   }
+
 }

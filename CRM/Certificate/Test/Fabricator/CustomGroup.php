@@ -9,7 +9,7 @@ class CRM_Certificate_Test_Fabricator_CustomGroup {
     $params = array_merge(static::getDefaultParams(), $params);
     $group = civicrm_api3('CustomGroup', 'create', [
       'title' => $params['title'],
-      'extends' => $params['extends']
+      'extends' => $params['extends'],
     ]);
 
     return array_shift($group['values']);
@@ -18,4 +18,5 @@ class CRM_Certificate_Test_Fabricator_CustomGroup {
   public static function getDefaultParams() {
     return ['title' => md5(mt_rand()), 'extends' => ['0' => 'Case']];
   }
+
 }

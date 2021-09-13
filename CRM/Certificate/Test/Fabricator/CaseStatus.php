@@ -24,4 +24,5 @@ class CRM_Certificate_Test_Fabricator_CaseStatus {
       'weight' => 99,
     ];
   }
+
 }

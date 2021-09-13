@@ -4,10 +4,10 @@ class CRM_Certificate_Service_CertificateDownloader {
 
   /**
    * Gets the template associated with a certificate configuration and renders it
-   * 
+   *
    * @param \CRM_Certificate_BAO_CompuCertificate $certificate
    * @param int $contactId
-   * @param int $entityId 
+   * @param int $entityId
    */
   public function download($certificate, $contactId, $entityId) {
     $certificateGenerator = new CRM_Certificate_Service_CertificateGenerator($certificate->template_id);
@@ -17,7 +17,7 @@ class CRM_Certificate_Service_CertificateDownloader {
 
   /**
    * Converts html content to PDF, and return PDF file to the browser
-   * 
+   *
    * @param array $content
    */
   private function renderPDF(array $content) {
@@ -30,4 +30,5 @@ class CRM_Certificate_Service_CertificateDownloader {
     );
     CRM_Utils_System::civiExit();
   }
+
 }

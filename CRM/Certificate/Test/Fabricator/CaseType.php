@@ -43,4 +43,5 @@ class CRM_Certificate_Test_Fabricator_CaseType {
       ],
     ];
   }
+
 }

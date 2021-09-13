@@ -16,7 +16,7 @@ class CRM_Certificate_Test_Fabricator_CustomField {
       'custom_group_id' => $params['custom_group_id'],
       'name' => $params['name'],
       'label' => $params['label'],
-      'html_type' => $params['html_type']
+      'html_type' => $params['html_type'],
     ]);
 
     return array_shift($field['values']);
@@ -26,7 +26,8 @@ class CRM_Certificate_Test_Fabricator_CustomField {
     return [
       'name' => md5(mt_rand()),
       'label' => md5(mt_rand()),
-      'html_type' => 'Text'
+      'html_type' => 'Text',
     ];
   }
+
 }

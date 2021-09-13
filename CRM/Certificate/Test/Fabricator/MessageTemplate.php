@@ -25,4 +25,5 @@ class CRM_Certificate_Test_Fabricator_MessageTemplate {
       'is_reserved' => $template['is_reserved'],
     ];
   }
+
 }

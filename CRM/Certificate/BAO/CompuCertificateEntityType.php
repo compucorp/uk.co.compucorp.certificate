@@ -6,7 +6,7 @@ class CRM_Certificate_BAO_CompuCertificateEntityType extends CRM_Certificate_DAO
    * Create a new CertificateEntityType based on array-data
    *
    * @param array $params key-value pairs
-   * 
+   *
    * @return CRM_Certificate_DAO_CompuCertificateEntityType|NULL
    */
   public static function create($params) {
@@ -26,12 +26,12 @@ class CRM_Certificate_BAO_CompuCertificateEntityType extends CRM_Certificate_DAO
   /**
    * Creates multiple CertificateEntityType and attach them to
    * a certificate
-   * 
+   *
    * @param CRM_Certificate_DAO_CompuCertificate $certificate
    *    certificate instance to attach entity types to
    * @param array $entityTypeIds
-   *    array of entityType ids 
-   * 
+   *    array of entityType ids
+   *
    * @return Array
    */
   public static function assignCertificateEntityTypes($certificate, $entityTypeIds) {
@@ -49,7 +49,7 @@ class CRM_Certificate_BAO_CompuCertificateEntityType extends CRM_Certificate_DAO
     foreach ($entityTypeIds as $entityTypeId) {
       $entityTypeDAO = self::create([
         'certificate_id' => $certificateId,
-        'entity_type_id' => $entityTypeId
+        'entity_type_id' => $entityTypeId,
       ]);
 
       $result[] = $entityTypeDAO->toArray();
@@ -60,14 +60,14 @@ class CRM_Certificate_BAO_CompuCertificateEntityType extends CRM_Certificate_DAO
 
   /**
    * Ensure only allowed entity type ids are allowed per the configured entity
-   * 
-   * @param CRM_Certificate_DAO_CompuCertificate
+   *
+   * @param CRM_Certificate_DAO_CompuCertificate $certificate
    *    certificate instance to attach entity types to
    * @param array $entityTypeIds
-   *    array of entityType ids 
-   * 
+   *    array of entityType ids
+   *
    * @return bool
-   * 
+   *
    * @throws CRM_Core_Exception
    */
   private static function validateEntityTypeIds($certificate, $entityTypeIds) {
@@ -79,19 +79,20 @@ class CRM_Certificate_BAO_CompuCertificateEntityType extends CRM_Certificate_DAO
       throw new CRM_Core_Exception("entity types are not supported by the selected entity");
     }
 
-    return true;
+    return TRUE;
   }
 
   /**
-   * Unassign all previously assigned entity types 
+   * Unassign all previously assigned entity types
    * from a certificate
-   * 
+   *
    * @param int $certificateId
    *    id of the certificate instance
    */
   private static function removeCertificateCurrentEntityType($certificateId) {
     $entityTypeBAO = new CRM_Certificate_BAO_CompuCertificateEntityType();
     $entityTypeBAO->whereAdd("certificate_id = $certificateId");
-    $entityTypeBAO->delete(true);
+    $entityTypeBAO->delete(TRUE);
   }
+
 }

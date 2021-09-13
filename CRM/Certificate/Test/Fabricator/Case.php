@@ -27,4 +27,5 @@ class CRM_Certificate_Test_Fabricator_Case {
 
     return array_shift($result['values']);
   }
+
 }

@@ -8,11 +8,11 @@ class CRM_Certificate_Service_CertificateGenerator {
   /**
    * Converts the message template to html and resolve tokens
    * for the contact and entity
-   * 
+   *
    * @param int $templateId
-   * @param int $contactID
-   * @param int $enttityTypeId
-   * 
+   * @param int $contactId
+   * @param int $entityId
+   *
    * @return array
    */
   public function generate($templateId, $contactId, $entityId) {
@@ -23,7 +23,7 @@ class CRM_Certificate_Service_CertificateGenerator {
 
   /**
    * Loads the message template
-   * 
+   *
    * @return array
    * @throws \API_Exception
    * @throws \CRM_Core_Exception
@@ -48,14 +48,14 @@ class CRM_Certificate_Service_CertificateGenerator {
    * Render the message template, and resolve tokens.
    *
    * @param array $content
-   * @param int $contactID
-   * @param int $enttityTypeId
+   * @param int $contactId
+   * @param int $entityTypeId
    *
    * @return array
    */
   private function renderMessageTemplate(array $content, $contactId, $entityTypeId) {
     CRM_Core_Smarty::singleton()->pushScope([]);
-    $tokenProcessor = new TokenProcessor(\Civi::dispatcher(), ['smarty' => !true]);
+    $tokenProcessor = new TokenProcessor(\Civi::dispatcher(), ['smarty' => !TRUE]);
     $tokenProcessor->addMessage('html', $content['html'], 'text/html');
     $tokenProcessor->addMessage('text', $content['text'], 'text/plain');
     $tokenProcessor->addMessage('subject', $content['subject'], 'text/plain');
@@ -70,4 +70,5 @@ class CRM_Certificate_Service_CertificateGenerator {
     $content['subject'] = trim(preg_replace('/[\r\n]+/', ' ', $content['subject']));
     return $content;
   }
+
 }

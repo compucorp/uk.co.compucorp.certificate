@@ -7,7 +7,7 @@ class CRM_Certificate_BAO_CompuCertificateStatus extends CRM_Certificate_DAO_Com
    *
    * @param array $params key-value pairs
    * @return CRM_Certificate_DAO_CompuCertificateStatus|NULL
-   * 
+   *
    */
   public static function create($params) {
     $className = 'CRM_Certificate_DAO_CompuCertificateStatus';
@@ -26,12 +26,12 @@ class CRM_Certificate_BAO_CompuCertificateStatus extends CRM_Certificate_DAO_Com
   /**
    * Creates mulitple CertificateEntityStatus and attach them to
    * a certificate
-   * 
+   *
    * @param CRM_Certificate_DAO_CompuCertificate $certificate
    *    certificate instance to attach entity statuses to
    * @param array $statuses
-   *    array of status ids 
-   * 
+   *    array of status ids
+   *
    * @return Array
    */
   public static function assignCertificateEntityStatuses($certificate, $statuses) {
@@ -49,7 +49,7 @@ class CRM_Certificate_BAO_CompuCertificateStatus extends CRM_Certificate_DAO_Com
     foreach ($statuses as $statusId) {
       $statusDAO = self::create([
         'certificate_id' => $certificateId,
-        'status_id' => $statusId
+        'status_id' => $statusId,
       ]);
 
       $result[] = $statusDAO->toArray();
@@ -60,14 +60,14 @@ class CRM_Certificate_BAO_CompuCertificateStatus extends CRM_Certificate_DAO_Com
 
   /**
    * Ensure only allowed status ids are allowed per the configured entity
-   * 
-   * @param CRM_Certificate_DAO_CompuCertificate
+   *
+   * @param CRM_Certificate_DAO_CompuCertificate $certificate
    *    certificate instance to attach entity statuses to
    * @param array $entityStatusIds
-   *    array of entityStatus ids 
-   * 
+   *    array of entityStatus ids
+   *
    * @return bool
-   * 
+   *
    * @throws CRM_Core_Exception
    */
   private static function validateStatusIds($certificate, $entityStatusIds) {
@@ -79,19 +79,20 @@ class CRM_Certificate_BAO_CompuCertificateStatus extends CRM_Certificate_DAO_Com
       throw new CRM_Core_Exception("entity statuses are not supported by the selected entity");
     }
 
-    return true;
+    return TRUE;
   }
 
   /**
    * Unassign all previously assigned statuses
    * from a certificate
-   * 
+   *
    * @param int $certificateId
    *    id of the certificate instance
    */
   private static function removeCertificateCurrentEntityStatus($certificateId) {
     $statusBAO = new CRM_Certificate_BAO_CompuCertificateStatus();
     $statusBAO->whereAdd("certificate_id = $certificateId");
-    $statusBAO->delete(true);
+    $statusBAO->delete(TRUE);
   }
+
 }

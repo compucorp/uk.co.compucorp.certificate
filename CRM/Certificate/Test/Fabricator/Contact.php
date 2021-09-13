@@ -9,7 +9,7 @@ class CRM_Certificate_Test_Fabricator_Contact {
     'contact_type' => 'Individual',
     'first_name'   => 'John',
     'last_name'    => 'Doe',
-    'sequential'   => 1
+    'sequential'   => 1,
   ];
 
   public static function fabricate($params = []) {
@@ -22,4 +22,5 @@ class CRM_Certificate_Test_Fabricator_Contact {
     );
     return array_shift($result['values']);
   }
+
 }
