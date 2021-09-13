@@ -22,7 +22,6 @@ class CRM_Certificate_Enum_CertificateType {
     return [
       ''  => E::ts('- Select -'),
       self::CASES   => E::ts('Cases'),
-      self::EVENTS  => E::ts('Events'),
     ];
   }
 
