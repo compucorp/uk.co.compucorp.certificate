@@ -144,8 +144,55 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
     $this->assertFalse($configuration);
   }
 
+  /**
+   * Test that only the case certificate for contact with the Id
+   * passed is returned.
+   */
+  public function testOnlyCaseCertificateForContactIsReturned() {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $contactCases = array_map(function () use ($contact) {
+      return $this->createCaseCertificateForContact($contact["id"]);
+    }, [1, 2]);
+
+    $otherContact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $this->createCaseCertificateForContact($otherContact["id"]);
+
+    $caseEntity = new CRM_Certificate_Entity_Case();
+    $avaliableCertificates = $caseEntity->getContactCertificates($contact["id"]);
+
+    $this->assertEquals(count($contactCases), count($avaliableCertificates));
+
+    $expectedCasesId = array_column($contactCases, "id");
+    $avaliableCertificatesCaseId = array_column($avaliableCertificates, "case_id");
+    $this->assertCount(0, array_diff($expectedCasesId, $avaliableCertificatesCaseId));
+  }
+
   private function createCertificate($values = []) {
     return CRM_Certificate_Test_Fabricator_CompuCertificate::fabricate(CRM_Certificate_Enum_CertificateType::CASES, $values);
+  }
+
+  private function createCaseCertificateForContact($contactId) {
+    $caseType = CRM_Certificate_Test_Fabricator_CaseType::fabricate();
+    $caseStatus = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate();
+
+    $case = CRM_Certificate_Test_Fabricator_Case::fabricate(
+      [
+        'contact_id' => $contactId,
+        'creator_id' => $contactId,
+        'case_type_id' => $caseType['id'],
+        'status_id' => $caseStatus['value'],
+      ]
+    );
+
+    $values = [
+      'type' => CRM_Certificate_Enum_CertificateType::CASES,
+      'linked_to' => [$caseType['id']],
+      'statuses' => [$caseStatus['value']],
+    ];
+
+    $this->createCertificate($values);
+
+    return $case;
   }
 
 }
