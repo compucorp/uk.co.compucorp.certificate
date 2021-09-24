@@ -1,5 +1,8 @@
 <?php
 
+use CRM_Certificate_BAO_CompuCertificateStatus as CompuCertificateStatus;
+use CRM_Certificate_BAO_CompuCertificateEntityType as CompuCertificateEntityType;
+
 class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCertificate {
 
   /**
@@ -32,6 +35,24 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
     $instance->id = $id;
     $instance->delete();
     CRM_Utils_Hook::post('delete', $entityName, $id);
+  }
+
+  /**
+   * Returns all the certificate(s) configured for an entity.
+   *
+   * @param int $entity
+   * @return array
+   */
+  public static function getEntityCertificates($entity) {
+    $certificateBAO = new self();
+    $certificateBAO->joinAdd(['id', new CompuCertificateEntityType(), 'certificate_id'], 'INNER', 'cert_type');
+    $certificateBAO->joinAdd(['id', new CompuCertificateStatus(), 'certificate_id'], 'INNER', 'cert_status');
+    $certificateBAO->whereAdd('entity = ' . $entity);
+    $certificateBAO->find();
+
+    $configuredCertificates = $certificateBAO->fetchAll();
+
+    return $configuredCertificates;
   }
 
 }

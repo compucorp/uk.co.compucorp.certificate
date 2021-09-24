@@ -1,5 +1,8 @@
 <?php
 
+use CRM_Certificate_Enum_CertificateType as CertificateType;
+use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
+
 class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterface {
 
   /**
@@ -116,13 +119,7 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
   public function getContactCertificates($contactId) {
     $certificates = [];
 
-    $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
-    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id'], 'INNER', 'cert_type');
-    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id'], 'INNER', 'cert_status');
-    $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::CASES);
-    $certificateBAO->find();
-
-    $configuredCertificates = $certificateBAO->fetchAll();
+    $configuredCertificates = CompuCertificate::getEntityCertificates(CertificateType::CASES);
 
     foreach ($configuredCertificates as $configuredCertificate) {
       $result = civicrm_api3('CaseContact', 'get', [
