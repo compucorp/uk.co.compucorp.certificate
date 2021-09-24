@@ -18,15 +18,18 @@ class CRM_Certificate_Api_Wrapper_CompuCertificate implements API_Wrapper {
    */
   public function getContactCertificates(array $params) {
     $loggedContactID = CRM_Core_Session::singleton()->getLoggedInContactID();
+    // If no contact_id is provided we default to the logged in contact ID.
+    $contactId = $params['contact_id'] ?? $loggedContactID;
+
     $certificates = [];
 
     switch (TRUE) {
       case empty($params['entity']):
-        $certificates = $this->getContactCasesCertificates($loggedContactID);
+        $certificates = $this->getContactCasesCertificates($contactId);
         break;
 
       case $params['entity'] === 'case':
-        $certificates = $this->getContactCasesCertificates($loggedContactID);
+        $certificates = $this->getContactCasesCertificates($contactId);
         break;
 
       default:

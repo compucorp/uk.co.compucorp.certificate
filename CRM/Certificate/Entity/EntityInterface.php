@@ -55,7 +55,7 @@ interface CRM_Certificate_Entity_EntityInterface {
   public function getCertificateConfiguration($entityId, $contactId);
 
   /**
-   * Gets all entity certfificates vailable for a contact.
+   * Gets all entity certificates vailable for a contact.
    *
    * @param int $contactId
    *  Id of the contact to retrieve certificates for.

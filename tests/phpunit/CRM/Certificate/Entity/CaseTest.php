@@ -7,6 +7,8 @@
  */
 class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
 
+  use CRM_Certificate_Test_Helper_Case;
+
   /**
    * Test the appropraite types are returned
    *  i.e. only active types are returned
@@ -151,11 +153,11 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
   public function testOnlyCaseCertificateForContactIsReturned() {
     $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
     $contactCases = array_map(function () use ($contact) {
-      return $this->createCaseCertificateForContact($contact["id"]);
+      return $this->createCaseCertificate(['client_id' => $contact["id"]]);
     }, [1, 2]);
 
     $otherContact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
-    $this->createCaseCertificateForContact($otherContact["id"]);
+    $this->createCaseCertificate(['client_id' => $otherContact["id"]]);
 
     $caseEntity = new CRM_Certificate_Entity_Case();
     $avaliableCertificates = $caseEntity->getContactCertificates($contact["id"]);
@@ -169,30 +171,6 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
 
   private function createCertificate($values = []) {
     return CRM_Certificate_Test_Fabricator_CompuCertificate::fabricate(CRM_Certificate_Enum_CertificateType::CASES, $values);
-  }
-
-  private function createCaseCertificateForContact($contactId) {
-    $caseType = CRM_Certificate_Test_Fabricator_CaseType::fabricate();
-    $caseStatus = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate();
-
-    $case = CRM_Certificate_Test_Fabricator_Case::fabricate(
-      [
-        'contact_id' => $contactId,
-        'creator_id' => $contactId,
-        'case_type_id' => $caseType['id'],
-        'status_id' => $caseStatus['value'],
-      ]
-    );
-
-    $values = [
-      'type' => CRM_Certificate_Enum_CertificateType::CASES,
-      'linked_to' => [$caseType['id']],
-      'statuses' => [$caseStatus['value']],
-    ];
-
-    $this->createCertificate($values);
-
-    return $case;
   }
 
 }

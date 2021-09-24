@@ -14,6 +14,11 @@ function _civicrm_api3_compu_certificate_Getcontactcertificates_spec(&$spec) {
     'description' => 'Retrieve certificates for specific entity',
     'type' => CRM_Utils_Type::T_STRING,
   ];
+  $spec['contact_id'] = [
+    'title' => 'Contact ID',
+    'description' => 'Id of the contact to retrieve certificates for',
+    'type' => CRM_Utils_Type::T_INT,
+  ];
 }
 
 /**
@@ -29,7 +34,7 @@ function _civicrm_api3_compu_certificate_Getcontactcertificates_spec(&$spec) {
  * @throws API_Exception
  */
 function civicrm_api3_compu_certificate_Getcontactcertificates($params) {
-  $ceertificateWrapper = new CRM_Certificate_Api_Wrapper_CompuCertificate();
-  $certificateList = $ceertificateWrapper->getContactCertificates($params);
+  $certificateWrapper = new CRM_Certificate_Api_Wrapper_CompuCertificate();
+  $certificateList = $certificateWrapper->getContactCertificates($params);
   return civicrm_api3_create_success($certificateList, $params, 'CompuCertificate', 'Getcontactcertificates');
 }

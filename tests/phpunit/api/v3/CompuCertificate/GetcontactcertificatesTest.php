@@ -1,8 +1,6 @@
 <?php
 
-use CRM_Certificate_Enum_CertificateType as CertificateType;
 use CRM_Certificate_Test_Fabricator_Contact as ContactFabricator;
-use CRM_Certificate_Test_Fabricator_CompuCertificate as CompuCertificateFabricator;
 
 /**
  * CompuCert.Getcontactcertificates API Test Case
@@ -13,6 +11,7 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
 
   use \Civi\Test\Api3TestTrait;
   use CRM_Certificate_Test_Helper_Session;
+  use CRM_Certificate_Test_Helper_Case;
 
   /**
    * Holds logged in contact/case client id.
@@ -33,27 +32,29 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
    * the logged-in contact.
    */
   public function testCaseCertficateIsReturnedForLoggedInContact() {
-    $creator = CRM_Certificate_Test_Fabricator_Contact::fabricate();
-    $caseType = CRM_Certificate_Test_Fabricator_CaseType::fabricate();
-    $caseStatus = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate();
+    $caseParam = ['client_id' => $this->client_id];
+    $case = $this->createCaseCertificate($caseParam);
 
-    $case = CRM_Certificate_Test_Fabricator_Case::fabricate(
-      [
-        'status_id' => $caseStatus['value'],
-        'contact_id' => $this->client_id,
-        'creator_id' => $creator['id'],
-        'case_type_id' => $caseType['id'],
-      ]
-    );
-
-    $values = [
-      'type' => CertificateType::CASES,
-      'linked_to' => [$caseType['id']],
-      'statuses' => [$caseStatus['value']],
-    ];
-
-    CompuCertificateFabricator::fabricate(CertificateType::CASES, $values);
     $param = ['entity' => 'case'];
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
+
+    $this->assertEquals(1, $results['count']);
+    $this->assertEquals($case['id'], $results['values'][0]['case_id']);
+  }
+
+  /**
+   * Test that the api returns available configured certificate for
+   * the contact ID passed to the API request.
+   */
+  public function testCaseCertficateIsReturnedForContactIdPassedInAPIParam() {
+    $client = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $creator = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+
+    $caseParam = ['creator_id' => $creator['id'], 'client_id' => $client['id']];
+    $case = $this->createCaseCertificate($caseParam);
+
+    $param = ['entity' => 'case', 'contact_id' => $client['id']];
 
     $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
 
