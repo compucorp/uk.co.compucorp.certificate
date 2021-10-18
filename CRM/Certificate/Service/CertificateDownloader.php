@@ -26,7 +26,7 @@ class CRM_Certificate_Service_CertificateDownloader {
       nl2br($content['html']),
       'certificate.pdf',
       FALSE,
-      ['orientation' => 'landscape']
+      $content["format"]
     );
     CRM_Utils_System::civiExit();
   }
