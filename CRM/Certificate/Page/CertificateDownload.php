@@ -93,7 +93,7 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
       return $contactId;
     }
 
-    CRM_Core_Error::statusBounce(ts('You do not have permission to access this contact.'));
+    throw new CRM_Core_Exception('You do not have permission to access this contact.', 403);
   }
 
   /**

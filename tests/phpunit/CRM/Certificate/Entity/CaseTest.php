@@ -7,6 +7,8 @@
  */
 class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
 
+  use CRM_Certificate_Test_Helper_Case;
+
   /**
    * Test the appropraite types are returned
    *  i.e. only active types are returned
@@ -142,6 +144,29 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
     $configuration = $caseEntity->getCertificateConfiguration($case["id"], $contact['id']);
 
     $this->assertFalse($configuration);
+  }
+
+  /**
+   * Test that only the case certificate for contact with the Id
+   * passed is returned.
+   */
+  public function testOnlyCaseCertificateForContactIsReturned() {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $contactCases = array_map(function () use ($contact) {
+      return $this->createCaseCertificate(['client_id' => $contact["id"]]);
+    }, [1, 2]);
+
+    $otherContact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $this->createCaseCertificate(['client_id' => $otherContact["id"]]);
+
+    $caseEntity = new CRM_Certificate_Entity_Case();
+    $avaliableCertificates = $caseEntity->getContactCertificates($contact["id"]);
+
+    $this->assertEquals(count($contactCases), count($avaliableCertificates));
+
+    $expectedCasesId = array_column($contactCases, "id");
+    $avaliableCertificatesCaseId = array_column($avaliableCertificates, "case_id");
+    $this->assertCount(0, array_diff($expectedCasesId, $avaliableCertificatesCaseId));
   }
 
   private function createCertificate($values = []) {

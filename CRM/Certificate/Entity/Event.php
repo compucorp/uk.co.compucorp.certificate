@@ -1,9 +1,12 @@
 <?php
 
+use CRM_Certificate_Enum_CertificateType as CertificateType;
+use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
+
 class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInterface {
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function getTypes() {
     $result = civicrm_api3('event', 'get', [
@@ -21,7 +24,7 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function getStatuses() {
     $result = civicrm_api3('ParticipantStatusType', 'get', [
@@ -39,7 +42,7 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function getCertificateConfiguredStatuses($certificateId) {
     $statusBAO = new CRM_Certificate_BAO_CompuCertificateStatus();
@@ -60,7 +63,7 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function getCertificateConfiguredTypes($certificateId) {
     $entityTypeBAO = new CRM_Certificate_BAO_CompuCertificateEntityType();
@@ -82,7 +85,7 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function getCertificateConfiguration($entityId, $contactId) {
     try {
@@ -109,6 +112,57 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
     catch (Exception $e) {
     }
     return FALSE;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getContactCertificates($contactId) {
+    $certificates = [];
+
+    $configuredCertificates = CompuCertificate::getEntityCertificates(CertificateType::EVENTS);
+
+    foreach ($configuredCertificates as $configuredCertificate) {
+      $result = civicrm_api3('Participant', 'get', [
+        'event_id' => $configuredCertificate['entity_type_id'],
+        'status_id' => $configuredCertificate['status_id'],
+        'api.Event.get' => ['is_active' => 1],
+      ]);
+
+      if ($result['is_error']) {
+        continue;
+      }
+
+      array_walk($result['values'], function ($participant) use (&$certificates, $configuredCertificate, $contactId) {
+        if (empty($participant['api.Event.get']['values'])) {
+          return;
+        }
+        $certificate = [
+          'participant_id' => $participant['id'],
+          'name' => $configuredCertificate['name'],
+          'type' => 'Event',
+          'linked_to' => $participant['event_title'],
+          'download_link' => $this->getCertificateDownloadUrl($participant['id'], $contactId, TRUE),
+        ];
+        array_push($certificates, $certificate);
+      });
+    }
+
+    return $certificates;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getCertificateDownloadUrl($entityId, $contactId, $absolute = FALSE) {
+    $query = [
+      "contact_id" => $contactId,
+      "participant_id" => $entityId,
+    ];
+
+    $downloadUrl = htmlspecialchars_decode(CRM_Utils_System::url('civicrm/certificates/event', $query, $absolute));
+
+    return $downloadUrl;
   }
 
 }

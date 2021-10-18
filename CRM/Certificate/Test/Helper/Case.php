@@ -1,5 +1,8 @@
 <?php
 
+use CRM_Certificate_Enum_CertificateType as CertificateType;
+use CRM_Certificate_Test_Fabricator_CompuCertificate as CompuCertificateFabricator;
+
 trait CRM_Certificate_Test_Helper_Case {
 
   private function createCase($params = []) {
@@ -21,6 +24,33 @@ trait CRM_Certificate_Test_Helper_Case {
     ]);
 
     $case = array_shift($result['values']);
+    return $case;
+  }
+
+  private function createCaseCertificate($params = []) {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $clientId = $params['client_id'] ?? $contact['id'];
+    $creatorId = $params['creator_id'] ?? $contact['id'];
+    $caseType = CRM_Certificate_Test_Fabricator_CaseType::fabricate();
+    $caseStatus = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate();
+
+    $case = CRM_Certificate_Test_Fabricator_Case::fabricate(
+      [
+        'status_id' => $caseStatus['value'],
+        'contact_id' => $clientId,
+        'creator_id' => $creatorId,
+        'case_type_id' => $caseType['id'],
+      ]
+    );
+
+    $values = [
+      'type' => CertificateType::CASES,
+      'linked_to' => [$caseType['id']],
+      'statuses' => [$caseStatus['value']],
+    ];
+
+    CompuCertificateFabricator::fabricate(CertificateType::CASES, $values);
+
     return $case;
   }
 

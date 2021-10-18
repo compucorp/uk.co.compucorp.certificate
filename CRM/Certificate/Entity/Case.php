@@ -1,9 +1,12 @@
 <?php
 
+use CRM_Certificate_Enum_CertificateType as CertificateType;
+use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
+
 class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterface {
 
   /**
-   * @inheritdoc
+   * {@inheritDoc}
    */
   public function getTypes() {
     $result = civicrm_api3('CaseType', 'get', [
@@ -40,7 +43,7 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function getCertificateConfiguredStatuses($certificateId) {
     $statuses = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . ' ccs')
@@ -59,7 +62,7 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function getCertificateConfiguredTypes($certificateId) {
     $entityTypeBAO = new CRM_Certificate_BAO_CompuCertificateEntityType();
@@ -81,7 +84,7 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function getCertificateConfiguration($entityId, $contactId) {
     try {
@@ -108,6 +111,59 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
     catch (Exception $e) {
     }
     return FALSE;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getContactCertificates($contactId) {
+    $certificates = [];
+
+    $configuredCertificates = CompuCertificate::getEntityCertificates(CertificateType::CASES);
+
+    foreach ($configuredCertificates as $configuredCertificate) {
+      $result = civicrm_api3('CaseContact', 'get', [
+        'sequential' => 1,
+        'return' => ['case_id.case_type_id.title', 'case_id.status_id.label', 'case_id'],
+        'case_id.case_type_id' => $configuredCertificate['entity_type_id'],
+        'case_id.status_id' => $configuredCertificate['status_id'],
+        'contact_id' => $contactId,
+        'case_id.is_deleted' => 0,
+      ]);
+
+      if ($result['is_error']) {
+        continue;
+      }
+
+      array_walk(
+        $result['values'],
+        function ($caseContact) use (&$certificates, $configuredCertificate, $contactId) {
+          $certificate = [
+            'case_id' => $caseContact['case_id'],
+            'name' => $configuredCertificate['name'],
+            'type' => 'Case',
+            'linked_to' => $caseContact['case_id.case_type_id.title'],
+            'download_link' => $this->getCertificateDownloadUrl($caseContact['case_id'], $contactId, TRUE),
+          ];
+          array_push($certificates, $certificate);
+        });
+    }
+
+    return $certificates;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getCertificateDownloadUrl($entityId, $contactId, $absolute = FALSE) {
+    $query = [
+      "cid" => $contactId,
+      "id" => $entityId,
+    ];
+
+    $downloadUrl = htmlspecialchars_decode(CRM_Utils_System::url('civicrm/certificates/case', $query, $absolute));
+
+    return $downloadUrl;
   }
 
 }
