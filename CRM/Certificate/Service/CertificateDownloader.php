@@ -23,7 +23,7 @@ class CRM_Certificate_Service_CertificateDownloader {
   private function renderPDF(array $content) {
     ob_end_clean();
     CRM_Utils_PDF_Utils::html2pdf(
-      nl2br($content['html']),
+      $content['html'],
       'certificate.pdf',
       FALSE,
       $content["format"]
