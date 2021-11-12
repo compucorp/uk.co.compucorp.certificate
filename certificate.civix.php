@@ -460,6 +460,11 @@ function _certificate_civix_civicrm_entityTypes(&$entityTypes) {
       'class' => 'CRM_Certificate_DAO_CompuCertificateEntityType',
       'table' => 'compucertificate_certificate_entity_type',
     ],
+    'CRM_Certificate_DAO_CompuCertificateEventAttribute' => [
+      'name' => 'CompuCertificateEventAttribute',
+      'class' => 'CRM_Certificate_DAO_CompuCertificateEventAttribute',
+      'table' => 'civicrm_compu_certificate_event_attribute',
+    ],
     'CRM_Certificate_DAO_CompuCertificateStatus' => [
       'name' => 'CompuCertificateStatus',
       'class' => 'CRM_Certificate_DAO_CompuCertificateStatus',
