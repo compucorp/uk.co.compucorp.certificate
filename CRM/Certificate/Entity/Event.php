@@ -6,6 +6,13 @@ use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
 class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInterface {
 
   /**
+   * {@inheritDoc}
+   */
+  public function store($values) {
+    return (new CRM_Certificate_Service_CertificateEvent())->store($values);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getTypes() {

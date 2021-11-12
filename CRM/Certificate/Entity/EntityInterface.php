@@ -6,6 +6,17 @@
 interface CRM_Certificate_Entity_EntityInterface {
 
   /**
+   * Stores a certificate configuration
+   *
+   * @param array $values
+   *    Configuration data
+   *
+   * @return array
+   *   New Certificate configuration values
+   */
+  public function store($values);
+
+  /**
    * Returns array of type ids supported by the entity
    *
    * @return Array|NULL
