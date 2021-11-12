@@ -36,6 +36,8 @@ class CRM_Certificate_Service_Certificate {
       if (!empty($entityTypes)) {
         $result['entityTypes'] = CRM_Certificate_BAO_CompuCertificateEntityType::assignCertificateEntityTypes($result['certificate'], $entityTypes);
       }
+
+      $this->storeExtraValues($result, $values);
     });
 
     return $result;
@@ -68,6 +70,7 @@ class CRM_Certificate_Service_Certificate {
     // and the user attepmts to create another configuration with linked_to for a specific type and statuses for 'all',
     // then a ConfigurationExistException would be thrown.
     $conjuction = empty($values['linked_to']) || empty($values['statuses']) ? ' OR ' : ' AND ';
+    $this->extraCondition($query, $optionsCondition, $values, $conjuction);
 
     if (!empty($optionsCondition)) {
       $query = $query->where(implode($conjuction, $optionsCondition));
@@ -146,6 +149,35 @@ class CRM_Certificate_Service_Certificate {
     $certificateWithName = $query->execute()->fetchAll();
 
     return !empty($certificateWithName);
+  }
+
+  /**
+   * Appends extra condition that are required per entities,
+   * Entity extending this class should override this,
+   * if it needs to add an extra condition.
+   *
+   * @param CRM_Utils_SQL_Select $query
+   *  The query object
+   * @param array &$optionsCondition
+   *  The array to append sql query to.
+   * @param array $values
+   *  An Array of certificate values.
+   * @param string $conjuction
+   *   String to join the conditions.
+   *
+   */
+  protected function extraCondition(&$query, &$optionsCondition, $values, &$conjuction) {
+  }
+
+  /**
+   * Stores extra values that are peculiar to an entity.
+   *
+   * @param array &$result
+   *  The array to append result to.
+   * @param array $values
+   *  An Array of certificate values.
+   */
+  protected function storeExtraValues(&$result, $values) {
   }
 
 }

@@ -8,6 +8,13 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
   /**
    * {@inheritDoc}
    */
+  public function store($values) {
+    return (new CRM_Certificate_Service_CertificateCase())->store($values);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public function getTypes() {
     $result = civicrm_api3('CaseType', 'get', [
       'sequential' => 1,
