@@ -28,7 +28,30 @@ class CRM_Certificate_Service_CertificateEventTest extends BaseHeadlessTest {
 
     $this->assertTrue(is_array($result));
     $this->assertArrayHasKey('certificate', $result);
+  }
+
+  /**
+   * Test event attribute is created when creating a new event certificate configuration.
+   */
+  public function testEventAttributeIsCreatedForEventCertificateConfiguration() {
+
+    $statuses[] = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate()['id'];
+    $types[] = CRM_Certificate_Test_Fabricator_Event::fabricate()['id'];
+
+    $certificateConfiguration = [
+      'name' => 'test cert',
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'message_template_id'  => 1,
+      'statuses' => $statuses,
+      'linked_to' => $types,
+      'participant_type_id' => 1,
+    ];
+
+    $certificateCreator = new CRM_Certificate_Service_CertificateEvent();
+    $result = $certificateCreator->store($certificateConfiguration);
+
     $this->assertArrayHasKey('eventAttribute', $result);
+    $this->assertArrayHasKey('participant_type_id', $result['eventAttribute']);
   }
 
   /**
