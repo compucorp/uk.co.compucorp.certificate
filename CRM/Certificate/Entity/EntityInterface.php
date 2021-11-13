@@ -53,6 +53,14 @@ interface CRM_Certificate_Entity_EntityInterface {
   public function getCertificateConfiguredTypes($certificateId);
 
   /**
+   * Returns a configured certificate by ID
+   *
+   * @param int $certificateId
+   *  Id of the certificate instance to retrieve.
+   */
+  public function getCertificateConfigurationById($certificateId);
+
+  /**
    * Gets a certificate configuration, if a configured certificate for the entity exists
    * whose type and status corresponds with the entityId passed, if not it returns false
    *

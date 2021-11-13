@@ -23,4 +23,33 @@ class CRM_Certificate_BAO_CompuCertificateEventAttribute extends CRM_Certificate
     return $instance;
   }
 
+  public static function assignCertificateEventAttribute($certificateId, $participantTypeId) {
+    self::removeCertificateCurrentEventAttribute($certificateId);
+
+    if (empty($participantTypeId)) {
+      return NULL;
+    }
+
+    $values = [
+      'certificate_id' => $certificateId,
+      'participant_type_id' => (int) $participantTypeId,
+    ];
+
+    $eventAttributeDAO = CRM_Certificate_BAO_CompuCertificateEventAttribute::create($values);
+    return $eventAttributeDAO->toArray();
+  }
+
+  /**
+   * Unassign all previously assigned statuses
+   * from a certificate
+   *
+   * @param int $certificateId
+   *    id of the certificate instance
+   */
+  private static function removeCertificateCurrentEventAttribute($certificateId) {
+    $statusBAO = new self();
+    $statusBAO->whereAdd("certificate_id = $certificateId");
+    $statusBAO->delete(TRUE);
+  }
+
 }
