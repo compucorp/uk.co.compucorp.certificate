@@ -1,6 +1,6 @@
 <?php
 
-use CRM_Certificate_DAO_CompuCertificateEventAttribute as CertificateEventAttribute;
+use CRM_Certificate_BAO_CompuCertificateEventAttribute as CertificateEventAttribute;
 
 class CRM_Certificate_Service_CertificateEvent extends CRM_Certificate_Service_Certificate {
 
@@ -28,13 +28,9 @@ class CRM_Certificate_Service_CertificateEvent extends CRM_Certificate_Service_C
    * {@inheritDoc}
    */
   protected function storeExtraValues(&$result, $values) {
-    $values = [
-      'certificate_id' => $result['certificate']->id,
-      'participant_type_id' => (int) $values['participant_type_id'],
-    ];
-
-    $eventAttributeDAO = CRM_Certificate_BAO_CompuCertificateEventAttribute::create($values);
-    $result['eventAttribute'] = $eventAttributeDAO->toArray();
+    $participantTypeId = $values['participant_type_id'];
+    $certificateId = $result['certificate']->id;
+    $result['eventAttribute'] = CertificateEventAttribute::assignCertificateEventAttribute($certificateId, $participantTypeId);
   }
 
 }
