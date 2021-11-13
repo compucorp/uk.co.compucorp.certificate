@@ -3,7 +3,7 @@
 <table>
   <base>CRM/Certificate</base>
   <class>CompuCertificateEventAttribute</class>
-  <name>civicrm_compu_certificate_event_attribute</name>
+  <name>compucertificate_event_attribute</name>
   <comment>Table to store attributes peculiar to CompuCertificate of type event </comment>
   <log>true</log>
 

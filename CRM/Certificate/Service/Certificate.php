@@ -56,10 +56,10 @@ class CRM_Certificate_Service_Certificate {
   public function configurationExist($values) {
     $optionsCondition = [];
 
-    $query = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::$_tableName . ' ccc')
+    $query = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::getTableName() . ' ccc')
       ->select('ccc.id')
-      ->join('cet', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateEntityType::$_tableName . '` cet ON (cet.certificate_id = ccc.id)')
-      ->join('cs', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '` cs ON (cs.certificate_id = ccc.id)')
+      ->join('cet', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateEntityType::getTableName() . '` cet ON (cet.certificate_id = ccc.id)')
+      ->join('cs', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateStatus::getTableName() . '` cs ON (cs.certificate_id = ccc.id)')
       ->where('ccc.entity = @entity', ['entity' => $values['type']]);
 
     $this->linkedToCondition($optionsCondition, $values['linked_to']);
@@ -138,7 +138,7 @@ class CRM_Certificate_Service_Certificate {
    *   false otherwise.
    */
   public function certificateNameExist($name, $exclude = []) {
-    $query = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::$_tableName . ' ccc')
+    $query = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::getTableName() . ' ccc')
       ->where('ccc.name = @name', ['name' => $name]);
 
     if (!empty($exclude)) {

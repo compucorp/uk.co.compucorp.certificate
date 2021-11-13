@@ -22,7 +22,7 @@ class CRM_Certificate_DAO_CompuCertificateEventAttribute extends CRM_Core_DAO {
    *
    * @var string
    */
-  public static $_tableName = 'civicrm_compu_certificate_event_attribute';
+  public static $_tableName = 'compucertificate_event_attribute';
 
   /**
    * Should CiviCRM log any modifications to this table in the civicrm_log table.
@@ -56,7 +56,7 @@ class CRM_Certificate_DAO_CompuCertificateEventAttribute extends CRM_Core_DAO {
    * Class constructor.
    */
   public function __construct() {
-    $this->__table = 'civicrm_compu_certificate_event_attribute';
+    $this->__table = 'compucertificate_event_attribute';
     parent::__construct();
   }
 
@@ -98,8 +98,8 @@ class CRM_Certificate_DAO_CompuCertificateEventAttribute extends CRM_Core_DAO {
           'type' => CRM_Utils_Type::T_INT,
           'description' => E::ts('Unique CompuCertificateEventAttribute ID'),
           'required' => TRUE,
-          'where' => 'civicrm_compu_certificate_event_attribute.id',
-          'table_name' => 'civicrm_compu_certificate_event_attribute',
+          'where' => 'compucertificate_event_attribute.id',
+          'table_name' => 'compucertificate_event_attribute',
           'entity' => 'CompuCertificateEventAttribute',
           'bao' => 'CRM_Certificate_DAO_CompuCertificateEventAttribute',
           'localizable' => 0,
@@ -112,8 +112,8 @@ class CRM_Certificate_DAO_CompuCertificateEventAttribute extends CRM_Core_DAO {
           'name' => 'certificate_id',
           'type' => CRM_Utils_Type::T_INT,
           'description' => E::ts('FK to CompuCertificate'),
-          'where' => 'civicrm_compu_certificate_event_attribute.certificate_id',
-          'table_name' => 'civicrm_compu_certificate_event_attribute',
+          'where' => 'compucertificate_event_attribute.certificate_id',
+          'table_name' => 'compucertificate_event_attribute',
           'entity' => 'CompuCertificateEventAttribute',
           'bao' => 'CRM_Certificate_DAO_CompuCertificateEventAttribute',
           'localizable' => 0,
@@ -124,8 +124,8 @@ class CRM_Certificate_DAO_CompuCertificateEventAttribute extends CRM_Core_DAO {
           'name' => 'participant_type_id',
           'type' => CRM_Utils_Type::T_INT,
           'description' => E::ts('Particiapnt Type ID'),
-          'where' => 'civicrm_compu_certificate_event_attribute.participant_type_id',
-          'table_name' => 'civicrm_compu_certificate_event_attribute',
+          'where' => 'compucertificate_event_attribute.participant_type_id',
+          'table_name' => 'compucertificate_event_attribute',
           'entity' => 'CompuCertificateEventAttribute',
           'bao' => 'CRM_Certificate_DAO_CompuCertificateEventAttribute',
           'localizable' => 0,

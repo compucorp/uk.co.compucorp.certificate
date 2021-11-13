@@ -28,7 +28,7 @@ class CRM_Certificate_Service_CertificateEventTest extends BaseHeadlessTest {
 
     $this->assertTrue(is_array($result));
     $this->assertArrayHasKey('certificate', $result);
-    $this->assertArrayHasKey('eventAttrbute', $result);
+    $this->assertArrayHasKey('eventAttribute', $result);
   }
 
   /**

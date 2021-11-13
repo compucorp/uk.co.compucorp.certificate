@@ -8,7 +8,7 @@ class CRM_Certificate_Service_CertificateEvent extends CRM_Certificate_Service_C
    * {@inheritDoc}
    */
   protected function extraCondition(&$query, &$optionsCondition, $values, &$conjuction) {
-    $query->join('cert_event_attr', 'LEFT JOIN `' . CertificateEventAttribute::$_tableName . '` cert_event_attr ON (cert_event_attr.certificate_id = ccc.id)');
+    $query->join('cert_event_attr', 'LEFT JOIN `' . CertificateEventAttribute::getTableName() . '` cert_event_attr ON (cert_event_attr.certificate_id = ccc.id)');
 
     $optionsCondition[] = "cert_event_attr.participant_type_id IS NULL";
 
@@ -34,7 +34,7 @@ class CRM_Certificate_Service_CertificateEvent extends CRM_Certificate_Service_C
     ];
 
     $eventAttributeDAO = CRM_Certificate_BAO_CompuCertificateEventAttribute::create($values);
-    $result['eventAttrbute'] = $eventAttributeDAO->toArray();
+    $result['eventAttribute'] = $eventAttributeDAO->toArray();
   }
 
 }
