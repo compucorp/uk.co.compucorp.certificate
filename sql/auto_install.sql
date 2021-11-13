@@ -7,7 +7,7 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `compucertificate_certificate_status`;
-DROP TABLE IF EXISTS `civicrm_compu_certificate_event_attribute`;
+DROP TABLE IF EXISTS `compucertificate_event_attribute`;
 DROP TABLE IF EXISTS `compucertificate_certificate_entity_type`;
 DROP TABLE IF EXISTS `compucertificate_certificate`;
 
@@ -61,12 +61,12 @@ CREATE TABLE `compucertificate_certificate_entity_type` (
 
 -- /*******************************************************
 -- *
--- * civicrm_compu_certificate_event_attribute
+-- * compucertificate_event_attribute
 -- *
 -- * Table to store attributes peculiar to CompuCertificate of type event 
 -- *
 -- *******************************************************/
-CREATE TABLE `civicrm_compu_certificate_event_attribute` (
+CREATE TABLE `compucertificate_event_attribute` (
 
 
      `id` int unsigned NOT NULL AUTO_INCREMENT  COMMENT 'Unique CompuCertificateEventAttribute ID',
@@ -76,7 +76,7 @@ CREATE TABLE `civicrm_compu_certificate_event_attribute` (
         PRIMARY KEY (`id`)
  
  
-,          CONSTRAINT FK_civicrm_compu_certificate_event_attribute_certificate_id FOREIGN KEY (`certificate_id`) REFERENCES `compucertificate_certificate`(`id`) ON DELETE CASCADE  
+,          CONSTRAINT FK_compucertificate_event_attribute_certificate_id FOREIGN KEY (`certificate_id`) REFERENCES `compucertificate_certificate`(`id`) ON DELETE CASCADE  
 )  ENGINE=InnoDB  ;
 
 -- /*******************************************************

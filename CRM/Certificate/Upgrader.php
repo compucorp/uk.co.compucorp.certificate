@@ -6,7 +6,7 @@
 class CRM_Certificate_Upgrader extends CRM_Certificate_Upgrader_Base {
 
   /**
-   * This upgrade creates civicrm_compu_certificate_event_attribute table
+   * This upgrade creates compucertificate_event_attribute table
    */
   public function upgrade_0001() {
     $this->ctx->log->info('Applying update 0001');

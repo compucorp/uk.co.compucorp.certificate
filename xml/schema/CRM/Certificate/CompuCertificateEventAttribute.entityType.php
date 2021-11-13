@@ -5,6 +5,6 @@ return [
   [
     'name' => 'CompuCertificateEventAttribute',
     'class' => 'CRM_Certificate_DAO_CompuCertificateEventAttribute',
-    'table' => 'civicrm_compu_certificate_event_attribute',
+    'table' => 'compucertificate_event_attribute',
   ],
 ];
