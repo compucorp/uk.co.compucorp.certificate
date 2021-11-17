@@ -16,9 +16,9 @@ var downloadLink = function () {
     <span class="ui-button-icon-space">Print Certificate</span>`
   );
   btn.setAttribute('type', 'button');
-  btn.setAttribute('onclick', "window.open('"+CRM.vars.certificate.download_url+"')");
+  btn.setAttribute('onclick', "window.open('" + CRM.vars.certificate.download_url + "')");
   btn.setAttribute('target', '_blank');
-  btn.classList.add("ui-button", "ui-corner-all", "ui-widget");
+  btn.classList.add('ui-button', 'ui-corner-all', 'ui-widget');
   btn.style.marginRight = '5px';
   return btn;
 };
