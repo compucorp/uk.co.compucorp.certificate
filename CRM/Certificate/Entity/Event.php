@@ -6,6 +6,13 @@ use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
 class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInterface {
 
   /**
+   * {@inheritDoc}
+   */
+  public function store($values) {
+    return (new CRM_Certificate_Service_CertificateEvent())->store($values);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getTypes() {
@@ -82,6 +89,33 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
     }, $entityTypes);
 
     return $entityTypes;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getCertificateConfigurationById($certificateId) {
+    $certificateDAO = CRM_Certificate_BAO_CompuCertificate::findById($certificateId);
+    $statuses = $this->getCertificateConfiguredStatuses($certificateDAO->id);
+    $types = $this->getCertificateConfiguredTypes($certificateDAO->id);
+    $eventAttribute = $this->getCertificateEventAttribute($certificateDAO->id);
+
+    return [
+      'name' => $certificateDAO->name,
+      'type' => $certificateDAO->entity,
+      'message_template_id' => $certificateDAO->template_id,
+      'statuses' => implode(',', array_column($statuses, 'id')),
+      'linked_to' => implode(',', array_column($types, 'id')),
+      'participant_type_id' => implode(', ', array_column($eventAttribute, 'participant_type_id')),
+    ];
+  }
+
+  private function getCertificateEventAttribute($certificateId) {
+    $eventAttribute = new CRM_Certificate_BAO_CompuCertificateEventAttribute();
+    $eventAttribute->whereAdd("certificate_id = " . $certificateId);
+    $eventAttribute->find();
+
+    return $eventAttribute->fetchAll();
   }
 
   /**

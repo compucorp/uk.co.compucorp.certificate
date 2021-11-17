@@ -22,6 +22,7 @@ class CRM_Certificate_Enum_CertificateType {
     return [
       ''  => E::ts('- Select -'),
       self::CASES   => E::ts('Cases'),
+      self::EVENTS  => E::ts('Events'),
     ];
   }
 
@@ -48,7 +49,7 @@ class CRM_Certificate_Enum_CertificateType {
       ],
       self::EVENTS => [
         'entity' => 'event',
-        'placeholder' => ts('- Select Event Type -'),
+        'placeholder' => ts('- Select Event Name -'),
         'api' => [
           'params' => [
             'is_active' => 1,
@@ -56,7 +57,6 @@ class CRM_Certificate_Enum_CertificateType {
         ],
         'select' => [
           'minimumInputLength' => 0,
-          'multiple' => TRUE,
         ],
       ],
     ]);
@@ -87,9 +87,13 @@ class CRM_Certificate_Enum_CertificateType {
       self::EVENTS => [
         'entity' => 'ParticipantStatusType',
         'placeholder' => ts('- Select Participant Status -'),
+        'api' => [
+          'params' => [
+            'is_active' => 1,
+          ],
+        ],
         'select' => [
           'minimumInputLength' => 0,
-          'multiple' => TRUE,
         ],
       ],
     ]);

@@ -6,6 +6,17 @@
 interface CRM_Certificate_Entity_EntityInterface {
 
   /**
+   * Stores a certificate configuration
+   *
+   * @param array $values
+   *    Configuration data
+   *
+   * @return array
+   *   New Certificate configuration values
+   */
+  public function store($values);
+
+  /**
    * Returns array of type ids supported by the entity
    *
    * @return Array|NULL
@@ -40,6 +51,14 @@ interface CRM_Certificate_Entity_EntityInterface {
    * @return Array
    */
   public function getCertificateConfiguredTypes($certificateId);
+
+  /**
+   * Returns a configured certificate by ID
+   *
+   * @param int $certificateId
+   *  Id of the certificate instance to retrieve.
+   */
+  public function getCertificateConfigurationById($certificateId);
 
   /**
    * Gets a certificate configuration, if a configured certificate for the entity exists

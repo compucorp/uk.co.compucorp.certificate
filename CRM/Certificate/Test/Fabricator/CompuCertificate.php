@@ -37,7 +37,7 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
     }
 
     $values = array_merge(self::getDefaultParams(), $values);
-    $storeCertificate = new CRM_Certificate_Service_Certificate();
+    $storeCertificate = new CRM_Certificate_Service_CertificateCase();
     return $storeCertificate->store($values);
   }
 
@@ -55,7 +55,7 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
     }
 
     $values = array_merge(self::getDefaultParams(), $values);
-    $storeCertificate = new CRM_Certificate_Service_Certificate();
+    $storeCertificate = new CRM_Certificate_Service_CertificateEvent();
     return $storeCertificate->store($values);
   }
 

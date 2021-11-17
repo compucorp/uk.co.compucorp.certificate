@@ -36,6 +36,8 @@ class CRM_Certificate_Service_Certificate {
       if (!empty($entityTypes)) {
         $result['entityTypes'] = CRM_Certificate_BAO_CompuCertificateEntityType::assignCertificateEntityTypes($result['certificate'], $entityTypes);
       }
+
+      $this->storeExtraValues($result, $values);
     });
 
     return $result;
@@ -54,10 +56,10 @@ class CRM_Certificate_Service_Certificate {
   public function configurationExist($values) {
     $optionsCondition = [];
 
-    $query = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::$_tableName . ' ccc')
+    $query = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::getTableName() . ' ccc')
       ->select('ccc.id')
-      ->join('cet', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateEntityType::$_tableName . '` cet ON (cet.certificate_id = ccc.id)')
-      ->join('cs', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '` cs ON (cs.certificate_id = ccc.id)')
+      ->join('cet', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateEntityType::getTableName() . '` cet ON (cet.certificate_id = ccc.id)')
+      ->join('cs', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateStatus::getTableName() . '` cs ON (cs.certificate_id = ccc.id)')
       ->where('ccc.entity = @entity', ['entity' => $values['type']]);
 
     $this->linkedToCondition($optionsCondition, $values['linked_to']);
@@ -68,6 +70,7 @@ class CRM_Certificate_Service_Certificate {
     // and the user attepmts to create another configuration with linked_to for a specific type and statuses for 'all',
     // then a ConfigurationExistException would be thrown.
     $conjuction = empty($values['linked_to']) || empty($values['statuses']) ? ' OR ' : ' AND ';
+    $this->extraCondition($query, $optionsCondition, $values, $conjuction);
 
     if (!empty($optionsCondition)) {
       $query = $query->where(implode($conjuction, $optionsCondition));
@@ -135,7 +138,7 @@ class CRM_Certificate_Service_Certificate {
    *   false otherwise.
    */
   public function certificateNameExist($name, $exclude = []) {
-    $query = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::$_tableName . ' ccc')
+    $query = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::getTableName() . ' ccc')
       ->where('ccc.name = @name', ['name' => $name]);
 
     if (!empty($exclude)) {
@@ -146,6 +149,35 @@ class CRM_Certificate_Service_Certificate {
     $certificateWithName = $query->execute()->fetchAll();
 
     return !empty($certificateWithName);
+  }
+
+  /**
+   * Appends extra condition that are required per entities,
+   * Entity extending this class should override this,
+   * if it needs to add an extra condition.
+   *
+   * @param CRM_Utils_SQL_Select $query
+   *  The query object
+   * @param array &$optionsCondition
+   *  The array to append sql query to.
+   * @param array $values
+   *  An Array of certificate values.
+   * @param string $conjuction
+   *   String to join the conditions.
+   *
+   */
+  protected function extraCondition(&$query, &$optionsCondition, $values, &$conjuction) {
+  }
+
+  /**
+   * Stores extra values that are peculiar to an entity.
+   *
+   * @param array &$result
+   *  The array to append result to.
+   * @param array $values
+   *  An Array of certificate values.
+   */
+  protected function storeExtraValues(&$result, $values) {
   }
 
 }

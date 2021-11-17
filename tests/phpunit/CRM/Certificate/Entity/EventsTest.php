@@ -60,6 +60,7 @@ class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
       'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
       'linked_to' => [$eventId],
       'statuses' => [$statusId],
+      'participant_type_id' => NULL,
     ];
     $this->createCertificate($values);
 

@@ -56,6 +56,18 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       FALSE
     );
 
+    $this->add(
+      'text',
+      'participant_type_id',
+      ts('Linked to'),
+      [
+        'placeholder' => E::ts('- Select Participant Type -'),
+        1 => 'disabled',
+        'class' => 'form-control',
+      ],
+      FALSE
+    );
+
     $this->addEntityRef('message_template_id', ts('Message Template'), [
       'entity' => 'MessageTemplate',
       'placeholder' => ts('- Message Template -'),
@@ -150,7 +162,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
 
   private function saveConfiguration($values) {
     try {
-      $certificateCreator = new CRM_Certificate_Service_Certificate();
+      $entity = CRM_Certificate_Entity_EntityFactory::create($values['type']);
       if (!empty($this->_id)) {
         $values['id'] = $this->_id;
       }
@@ -158,7 +170,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       $values['statuses'] = empty($values['statuses']) ? [] : explode(',', $values['statuses']);
       $values['linked_to'] = empty($values['linked_to']) ? [] : explode(',', $values['linked_to']);
 
-      $result = $certificateCreator->store($values);
+      $result = $entity->store($values);
     }
     catch (CRM_Certificate_Exception_ConfigurationExistException $e) {
       CRM_Core_Session::setStatus($e->getMessage(), 'failed', 'error');
@@ -181,14 +193,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     }
 
     $entity = CRM_Certificate_Entity_EntityFactory::create($certificateDAO->entity);
-    $statuses = $entity->getCertificateConfiguredStatuses($certificateDAO->id);
-    $types = $entity->getCertificateConfiguredTypes($certificateDAO->id);
-
-    $values['name'] = $certificateDAO->name;
-    $values['type'] = $certificateDAO->entity;
-    $values['message_template_id'] = $certificateDAO->template_id;
-    $values['statuses'] = implode(',', array_column($statuses, 'id'));
-    $values['linked_to'] = implode(',', array_column($types, 'id'));
+    $values = $entity->getCertificateConfigurationById($certificateDAO->id);
 
     return $values;
   }
