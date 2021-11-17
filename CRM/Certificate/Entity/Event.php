@@ -132,9 +132,11 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
       $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
       $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id'], 'LEFT');
       $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id'], 'LEFT');
+      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEventAttribute(), 'certificate_id'], 'LEFT');
       $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::EVENTS);
       $certificateBAO->whereAdd('entity_type_id = ' . $participant['event_id'] . ' OR entity_type_id IS NULL');
       $certificateBAO->whereAdd('status_id = ' . $participant['participant_status_id'] . ' OR status_id IS NULL');
+      $certificateBAO->whereAdd('participant_type_id = ' . $participant['participant_role_id'] . ' OR participant_type_id IS NULL');
       $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id Desc');
       $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id');
       $certificateBAO->find(TRUE);
