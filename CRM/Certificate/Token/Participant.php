@@ -3,16 +3,16 @@
 use Civi\Token\Event\TokenValueEvent;
 
 /**
- * Class CRM_Certificate_Token_Event
+ * Class CRM_Certificate_Token_Participant
  *
- * Generate "certificate_event.*" tokens.
+ * Generate "certificate_participant.*" tokens.
  *
- * This class defines the event tokens (standard fields and custom fields)
+ * This class defines the participant tokens (standard fields and custom fields)
  * that are supported by a certificate
  */
-class CRM_Certificate_Token_Event extends CRM_Certificate_Token_AbstractCertificateToken {
+class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCertificateToken {
 
-  const TOKEN = 'certificate event';
+  const TOKEN = 'certificate participant';
 
   public function __construct($tokenNames = []) {
     $this->tokenNames = $tokenNames;
@@ -22,13 +22,11 @@ class CRM_Certificate_Token_Event extends CRM_Certificate_Token_AbstractCertific
    * @inheritDoc
    */
   public static function entityTokens() {
-    $eventCustomFields = CRM_Utils_Token::getCustomFieldTokens('Event');
-    $eventTokens = CRM_Core_SelectValues::eventTokens();
+    $participantTokens = CRM_Core_SelectValues::participantTokens();
 
-    // we clean up the array because they are keyed in the format {event.field}
-    $filtered_keys = preg_replace(['/(event\.)/', '/(\W*)/'], '', array_keys($eventTokens));
-    $eventTokens = array_combine($filtered_keys, array_values($eventTokens));
-    $tokens = array_merge($eventCustomFields, $eventTokens);
+    // we clean up the array because they are keyed in the format {participant.field}
+    $filtered_keys = preg_replace(['/(participant\.)/', '/(\W*)/'], '', array_keys($participantTokens));
+    $tokens = array_combine($filtered_keys, array_values($participantTokens));
 
     return $tokens;
   }
@@ -50,8 +48,9 @@ class CRM_Certificate_Token_Event extends CRM_Certificate_Token_AbstractCertific
       if (is_array($entityTypeId)) {
         $entityTypeId = $entityTypeId[0];
         $contactId = $contactId[0];
-        $result = civicrm_api3('Event', 'getsingle', [
-          'id' => $entityTypeId,
+        $result = civicrm_api3('Participant', 'getsingle', [
+          'event_id' => $entityTypeId,
+          'contact_id' => $contactId,
         ]);
 
         if (!empty($result['is_error'])) {
@@ -78,12 +77,9 @@ class CRM_Certificate_Token_Event extends CRM_Certificate_Token_AbstractCertific
     // Convert date fields to human readable format (2022-12-01 12:12:00 -> 1st December 2022 12:12 PM).
     array_walk($event, function(&$v, $k) {
       $dateFields = [
-        "end_date",
-        "start_date",
         "event_end_date",
         "event_start_date",
-        "registeration_end_date",
-        "registeration_start_date",
+        "participant_register_date",
       ];
 
       if (in_array($k, $dateFields)) {
@@ -94,6 +90,7 @@ class CRM_Certificate_Token_Event extends CRM_Certificate_Token_AbstractCertific
     foreach ($this->activeTokens as $value) {
       $resolvedTokens[$value] = CRM_Utils_Array::value($value, $event, '');
     }
+
   }
 
 }
