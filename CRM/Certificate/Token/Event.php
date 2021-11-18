@@ -69,7 +69,7 @@ class CRM_Certificate_Token_Event extends CRM_Certificate_Token_AbstractCertific
   }
 
   /**
-   * Resolve the value of case standard fields in the token event.
+   * Resolve the value of event fields in the token event.
    *
    * @param array $event
    * @param array &$resolvedTokens
