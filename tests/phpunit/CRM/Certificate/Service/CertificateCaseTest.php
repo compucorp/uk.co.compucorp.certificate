@@ -48,12 +48,6 @@ class CRM_Certificate_Service_CertificateCaseTest extends BaseHeadlessTest {
     ];
 
     $this->createCertificate($values);
-
-    $values = [
-      'type' => CRM_Certificate_Enum_CertificateType::CASES,
-      'linked_to' => $caseType,
-      'statuses' => $caseStatus,
-    ];
     $this->createCertificate($values);
   }
 
