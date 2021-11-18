@@ -68,14 +68,14 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
   }
 
   /**
-   * Resolve the value of case standard fields in the token event.
+   * Resolve the value of participant fields in the token event.
    *
-   * @param array $event
+   * @param array $participant
    * @param array &$resolvedTokens
    */
-  private function resolveFields($event, &$resolvedTokens) {
+  private function resolveFields($participant, &$resolvedTokens) {
     // Convert date fields to human readable format (2022-12-01 12:12:00 -> 1st December 2022 12:12 PM).
-    array_walk($event, function(&$v, $k) {
+    array_walk($participant, function(&$v, $k) {
       $dateFields = [
         "event_end_date",
         "event_start_date",
@@ -88,7 +88,7 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
     });
 
     foreach ($this->activeTokens as $value) {
-      $resolvedTokens[$value] = CRM_Utils_Array::value($value, $event, '');
+      $resolvedTokens[$value] = CRM_Utils_Array::value($value, $participant, '');
     }
 
   }
