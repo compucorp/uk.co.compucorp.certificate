@@ -2,11 +2,11 @@
 
 
 /**
- * Test service class for generating certificate html content
+ * Test service class for generating case certificate html content
  *
  * @group headless
  */
-class CRM_Certificate_Service_CertificateGeneratorTest extends BaseHeadlessTest {
+class CRM_Certificate_Service_CaseCertificateGeneratorTest extends BaseHeadlessTest {
 
   use CRM_Certificate_Test_Helper_Case;
 
@@ -42,9 +42,6 @@ class CRM_Certificate_Service_CertificateGeneratorTest extends BaseHeadlessTest 
     $this->assertContains($case['subject'], $result['html']);
   }
 
-  /**
-   * @group para
-   */
   public function testGenerateCertificateWillResolveCaseCustomFieldTokens() {
     $customField = CRM_Certificate_Test_Fabricator_CustomField::fabricate([]);
     $customToken = 'custom_' . $customField['id'];
