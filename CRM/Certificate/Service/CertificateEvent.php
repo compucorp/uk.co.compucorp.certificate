@@ -10,12 +10,14 @@ class CRM_Certificate_Service_CertificateEvent extends CRM_Certificate_Service_C
   protected function extraCondition(&$query, &$optionsCondition, $values, &$conjuction) {
     $query->join('cert_event_attr', 'LEFT JOIN `' . CertificateEventAttribute::getTableName() . '` cert_event_attr ON (cert_event_attr.certificate_id = ccc.id)');
 
-    $optionsCondition[] = "cert_event_attr.participant_type_id IS NULL";
+    $condition = "cert_event_attr.participant_type_id IS NULL";
 
     if (!empty($values['participant_type_id'])) {
       $attrValues = sprintf('(%s)', implode(',', (array) $values['participant_type_id']));
-      $optionsCondition[] = "cert_event_attr.participant_type_id IN $attrValues";
+      $condition = "cert_event_attr.participant_type_id IN $attrValues";
     }
+
+    $optionsCondition[] = $condition;
 
     // This is to avoid an entity having multiple event certificate configuration,
     // i.e. in a case where a configuration that has participant_type_id 'all' and statuses for a specific status,
