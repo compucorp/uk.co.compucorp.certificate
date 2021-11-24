@@ -189,6 +189,7 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
         }
         $certificate = [
           'participant_id' => $participant['id'],
+          'event_id' => $participant['event_id'],
           'name' => $configuredCertificate['name'],
           'type' => 'Event',
           'linked_to' => $participant['event_title'],

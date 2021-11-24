@@ -12,6 +12,7 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
   use \Civi\Test\Api3TestTrait;
   use CRM_Certificate_Test_Helper_Session;
   use CRM_Certificate_Test_Helper_Case;
+  use CRM_Certificate_Test_Helper_Event;
 
   /**
    * Holds logged in contact/case client id.
@@ -28,7 +29,7 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
   }
 
   /**
-   * Test that the api returns available configured certificate for
+   * Test that the api returns available cases certificate for
    * the logged-in contact.
    */
   public function testCaseCertficateIsReturnedForLoggedInContact() {
@@ -44,7 +45,7 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
   }
 
   /**
-   * Test that the api returns available configured certificate for
+   * Test that the api returns available cases certificate for
    * the contact ID passed to the API request.
    */
   public function testCaseCertficateIsReturnedForContactIdPassedInAPIParam() {
@@ -60,6 +61,39 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
 
     $this->assertEquals(1, $results['count']);
     $this->assertEquals($case['id'], $results['values'][0]['case_id']);
+  }
+
+  /**
+   * Test that the api returns available events certificate for
+   * the logged-in contact.
+   */
+  public function testEventCertficateIsReturnedForLoggedInContact() {
+    $caseParam = ['client_id' => $this->client_id];
+    $participant = $this->createEventCertificate($caseParam);
+
+    $param = ['entity' => 'event'];
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
+
+    $this->assertEquals(1, $results['count']);
+    $this->assertEquals($participant['id'], $results['values'][0]['participant_id']);
+  }
+
+  /**
+   * Test that the api returns available events certificate for
+   * the contact ID passed to the API request.
+   */
+  public function testEventCertficateIsReturnedForContactIdPassedInAPIParam() {
+    $event = $this->createEventCertificate();
+    $participant = $this->createParticipant(['event_id' => $event['id']]);
+
+    $contact = $participant['contact'];
+
+    $param = ['entity' => 'event', 'contact_id' => $contact['id']];
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
+
+    $this->assertEquals($participant['id'], $results['values'][0]['participant_id']);
   }
 
   public function tearDown() {
