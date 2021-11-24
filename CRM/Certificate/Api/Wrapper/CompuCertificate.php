@@ -32,6 +32,10 @@ class CRM_Certificate_Api_Wrapper_CompuCertificate implements API_Wrapper {
         $certificates = $this->getContactCasesCertificates($contactId);
         break;
 
+      case $params['entity'] === 'event':
+        $certificates = $this->getContactEventsCertificates($contactId);
+        break;
+
       default:
         $certificates = [];
         break;
@@ -42,6 +46,14 @@ class CRM_Certificate_Api_Wrapper_CompuCertificate implements API_Wrapper {
 
   private function getContactCasesCertificates(int $contactId) {
     $certificateType = CRM_Certificate_Enum_CertificateType::CASES;
+    $entity = CRM_Certificate_Entity_EntityFactory::create($certificateType);
+    $certificates = $entity->getContactCertificates($contactId);
+
+    return $certificates;
+  }
+
+  private function getContactEventsCertificates(int $contactId) {
+    $certificateType = CRM_Certificate_Enum_CertificateType::EVENTS;
     $entity = CRM_Certificate_Entity_EntityFactory::create($certificateType);
     $certificates = $entity->getContactCertificates($contactId);
 
