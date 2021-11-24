@@ -176,6 +176,8 @@ function certificate_civicrm_permission(&$permissions) {
  */
 function _compucertificate_add_token_subscribers() {
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Case());
+  Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Event());
+  Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Participant());
 }
 
 function _compucertificate_getCaseIdFromUrlIfExist() {
@@ -194,6 +196,8 @@ function _compucertificate_getCaseIdFromUrlIfExist() {
  */
 function certificate_civicrm_tokens(&$tokens) {
   $tokens[CRM_Certificate_Token_Case::TOKEN] = CRM_Certificate_Token_Case::prefixedEntityTokens();
+  $tokens[CRM_Certificate_Token_Event::TOKEN] = CRM_Certificate_Token_Event::prefixedEntityTokens();
+  $tokens[CRM_Certificate_Token_Participant::TOKEN] = CRM_Certificate_Token_Participant::prefixedEntityTokens();
 
   if (_compucertificate_getCaseIdFromUrlIfExist()) {
     $tokens['certificate_url']['certificate_url.case'] = 'Case Certificate URL';

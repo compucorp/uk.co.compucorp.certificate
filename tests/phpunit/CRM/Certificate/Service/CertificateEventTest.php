@@ -79,25 +79,20 @@ class CRM_Certificate_Service_CertificateEventTest extends BaseHeadlessTest {
    * Test that duplicate certifiacte configuration
    * cannot be created for the same entity.
    */
-  public function testExceptionThrownForDuplicateCertificateCaseConfiguration() {
+  public function testExceptionThrownForDuplicateCertificateEventConfiguration() {
     $this->expectException(CRM_Certificate_Exception_ConfigurationExistException::class);
-
-    $caseStatus[] = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate()['value'];
-    $caseType[] = CRM_Certificate_Test_Fabricator_CaseType::fabricate()['id'];
+    $statuses = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate()['id'];
+    $types = CRM_Certificate_Test_Fabricator_Event::fabricate()['id'];
 
     $values = [
-      'type' => CRM_Certificate_Enum_CertificateType::CASES,
-      'linked_to' => $caseType,
-      'statuses' => $caseStatus,
+      'name' => 'test cert',
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'statuses' => $statuses,
+      'linked_to' => $types,
+      'participant_type_id' => 1,
     ];
 
     $this->createCertificate($values);
-
-    $values = [
-      'type' => CRM_Certificate_Enum_CertificateType::CASES,
-      'linked_to' => $caseType,
-      'statuses' => $caseStatus,
-    ];
     $this->createCertificate($values);
   }
 
@@ -105,31 +100,35 @@ class CRM_Certificate_Service_CertificateEventTest extends BaseHeadlessTest {
    * Test that duplicate certifiacte configuration
    * cannot be created for the same entity.
    */
-  public function testExceptionNotThrownForDifferentCertificateCaseConfiguration() {
-    $caseStatus[] = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate()['value'];
-    $caseType[] = CRM_Certificate_Test_Fabricator_CaseType::fabricate()['id'];
+  public function testExceptionNotThrownForDifferentCertificateEventConfiguration() {
+    $statuses = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate()['id'];
+    $types = CRM_Certificate_Test_Fabricator_Event::fabricate()['id'];
 
     $values = [
-      'type' => CRM_Certificate_Enum_CertificateType::CASES,
-      'linked_to' => $caseType,
-      'statuses' => $caseStatus,
+      'name' => 'test cert',
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'statuses' => $statuses,
+      'linked_to' => $types,
+      'participant_type_id' => 1,
     ];
 
     $this->createCertificate($values);
 
-    $newCaseStatus[] = CRM_Certificate_Test_Fabricator_CaseStatus::fabricate()['value'];
+    $newStatuses = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate()['id'];
 
     $values = [
-      'type' => CRM_Certificate_Enum_CertificateType::CASES,
-      'linked_to' => $caseType,
-      'statuses' => $newCaseStatus,
+      'name' => 'test cert',
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'statuses' => $newStatuses,
+      'linked_to' => $types,
+      'participant_type_id' => 1,
     ];
     $result = $this->createCertificate($values);
     $this->assertTrue(is_array($result));
   }
 
   private function createCertificate($values = []) {
-    return CRM_Certificate_Test_Fabricator_CompuCertificate::fabricate(CRM_Certificate_Enum_CertificateType::CASES, $values);
+    return CRM_Certificate_Test_Fabricator_CompuCertificate::fabricate(CRM_Certificate_Enum_CertificateType::EVENTS, $values);
   }
 
 }
