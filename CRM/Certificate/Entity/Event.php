@@ -157,11 +157,27 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
     $configuredCertificates = CompuCertificate::getEntityCertificates(CertificateType::EVENTS);
 
     foreach ($configuredCertificates as $configuredCertificate) {
-      $result = civicrm_api3('Participant', 'get', [
-        'event_id' => $configuredCertificate['entity_type_id'],
-        'status_id' => $configuredCertificate['status_id'],
+      $eventAttribute = $this->getCertificateEventAttribute($configuredCertificate['certificate_id']);
+      $participantTypeId = array_column($eventAttribute, 'participant_type_id');
+
+      $condition = [
+        'contact_id' => $contactId,
         'api.Event.get' => ['is_active' => 1],
-      ]);
+      ];
+
+      if (!empty($configuredCertificate['entity_type_id'])) {
+        $condition['event_id'] = $configuredCertificate['entity_type_id'];
+      }
+
+      if (!empty($configuredCertificate['status_id'])) {
+        $condition['participant_status_id'] = $configuredCertificate['status_id'];
+      }
+
+      if (!empty($participantTypeId)) {
+        $condition['participant_role_id'] = ['IN' => (array) $participantTypeId];
+      }
+
+      $result = civicrm_api3('Participant', 'get', $condition);
 
       if ($result['is_error']) {
         continue;
@@ -173,10 +189,12 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
         }
         $certificate = [
           'participant_id' => $participant['id'],
+          'event_id' => $participant['event_id'],
           'name' => $configuredCertificate['name'],
           'type' => 'Event',
           'linked_to' => $participant['event_title'],
           'download_link' => $this->getCertificateDownloadUrl($participant['id'], $contactId, TRUE),
+          'participant_role' => $participant['participant_role'],
         ];
         array_push($certificates, $certificate);
       });
