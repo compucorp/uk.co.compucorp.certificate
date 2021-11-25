@@ -19,7 +19,7 @@ trait CRM_Certificate_Test_Helper_Event {
     $participant = CRM_Certificate_Test_Fabricator_Participant::fabricate($params);
 
     $participant = civicrm_api3('Participant', 'getsingle', [
-      'contact_id' => $contact['id'],
+      'contact_id' => $params['contact_id'],
       'id' => $participant['id'],
     ]);
 
@@ -33,16 +33,14 @@ trait CRM_Certificate_Test_Helper_Event {
     $event = CRM_Certificate_Test_Fabricator_Event::fabricate(['is_active' => 1]);
     $statuses = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate()['id'];
 
-    $values = [
+    $values = array_merge([
       'type' => CertificateType::EVENTS,
       'linked_to' => $event['id'],
       'statuses' => $statuses,
       'participant_type_id' => 1,
-    ];
+    ], $params);
 
-    CompuCertificateFabricator::fabricate(CertificateType::EVENTS, $values);
-
-    return $event;
+    return CompuCertificateFabricator::fabricate(CertificateType::EVENTS, $values);
   }
 
 }
