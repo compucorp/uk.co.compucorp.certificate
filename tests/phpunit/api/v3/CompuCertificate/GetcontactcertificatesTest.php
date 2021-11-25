@@ -68,8 +68,13 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
    * the logged-in contact.
    */
   public function testEventCertficateIsReturnedForLoggedInContact() {
-    $caseParam = ['client_id' => $this->client_id];
-    $participant = $this->createEventCertificate($caseParam);
+    $participant = $this->createParticipant(['contact_id' => $this->client_id]);
+    $this->createEventCertificate(
+      [
+        'linked_to' => [$participant['event_id']],
+        'statuses'  => [$participant['participant_status_id']],
+      ]
+    );
 
     $param = ['entity' => 'event'];
 
@@ -84,8 +89,13 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
    * the contact ID passed to the API request.
    */
   public function testEventCertficateIsReturnedForContactIdPassedInAPIParam() {
-    $event = $this->createEventCertificate();
-    $participant = $this->createParticipant(['event_id' => $event['id']]);
+    $participant = $this->createParticipant();
+    $this->createEventCertificate(
+      [
+        'linked_to' => [$participant['event_id']],
+        'statuses'  => [$participant['participant_status_id']],
+      ]
+    );
 
     $contact = $participant['contact'];
 
