@@ -9,31 +9,22 @@ var waitForElement = function ($, elementPath, callBack) {
 };
 
 var downloadLink = function () {
-  const a = document.createElement('a');
+  const btn = document.createElement('button');
   const ts = CRM.ts('uk.co.compucorp.certificate');
-  a.innerHTML = ts('Print Certificate');
-  a.setAttribute('href', CRM.vars.certificate.download_url);
-  a.setAttribute('target', '_blank');
-  return a;
-};
-
-var certificateDownloadRow = function () {
-  const row = document.createElement('tr');
-  row.classList.add('crm-event-participantview-form-block-event_source');
-  const firstColumn = document.createElement('td');
-  const secondColumn = document.createElement('td');
-
-  firstColumn.innerHTML = 'Certificates';
-  firstColumn.classList.add('label');
-  secondColumn.append(downloadLink());
-
-  row.append(firstColumn);
-  row.append(secondColumn);
-  return row;
+  btn.innerHTML = ts(
+    `<span class="ui-button-icon ui-icon crm-i fa-print"></span>
+    <span class="ui-button-icon-space">Print Certificate</span>`
+  );
+  btn.setAttribute('type', 'button');
+  btn.setAttribute('onclick', "window.open('" + CRM.vars.certificate.download_url + "')");
+  btn.setAttribute('target', '_blank');
+  btn.classList.add('ui-button', 'ui-corner-all', 'ui-widget');
+  btn.style.marginRight = '5px';
+  return btn;
 };
 
 CRM.$(function ($) {
   waitForElement($, 'div.crm-event-participant-view-form-block table.crm-info-panel', function ($, elements) {
-    elements[0].querySelector('tbody').append(certificateDownloadRow());
+    $('.ui-dialog-buttonpane > .ui-dialog-buttonset').append(downloadLink());
   });
 });
