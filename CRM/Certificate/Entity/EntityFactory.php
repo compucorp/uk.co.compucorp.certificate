@@ -13,6 +13,9 @@ class CRM_Certificate_Entity_EntityFactory {
       case CRM_Certificate_Enum_CertificateType::EVENTS:
         return new CRM_Certificate_Entity_Event();
 
+      case CRM_Certificate_Enum_CertificateType::MEMBERSHIPS:
+        return new CRM_Certificate_Entity_Membership();
+
       default:
         throw new CRM_Core_Exception("Unsupported certificate entity type");
     }

@@ -11,6 +11,7 @@ class CRM_Certificate_Enum_CertificateType {
 
   const CASES = 1;
   const EVENTS = 2;
+  const MEMBERSHIPS = 3;
 
   /**
    * Returns the options to populate Entity select box
@@ -23,6 +24,7 @@ class CRM_Certificate_Enum_CertificateType {
       ''  => E::ts('- Select -'),
       self::CASES   => E::ts('Cases'),
       self::EVENTS  => E::ts('Events'),
+      self::MEMBERSHIPS => E::ts('Memberships'),
     ];
   }
 
@@ -50,6 +52,18 @@ class CRM_Certificate_Enum_CertificateType {
       self::EVENTS => [
         'entity' => 'event',
         'placeholder' => ts('- Select Event Name -'),
+        'api' => [
+          'params' => [
+            'is_active' => 1,
+          ],
+        ],
+        'select' => [
+          'minimumInputLength' => 0,
+        ],
+      ],
+      self::MEMBERSHIPS => [
+        'entity' => 'membershipType',
+        'placeholder' => ts('- Select Membership Type -'),
         'api' => [
           'params' => [
             'is_active' => 1,
@@ -94,6 +108,19 @@ class CRM_Certificate_Enum_CertificateType {
         ],
         'select' => [
           'minimumInputLength' => 0,
+        ],
+      ],
+      self::MEMBERSHIPS => [
+        'entity' => 'membershipStatus',
+        'placeholder' => ts('- Select Membership Status -'),
+        'api' => [
+          'params' => [
+            'is_active' => 1,
+          ],
+        ],
+        'select' => [
+          'minimumInputLength' => 0,
+          'multiple' => TRUE,
         ],
       ],
     ]);
