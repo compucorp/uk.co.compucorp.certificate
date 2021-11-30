@@ -52,7 +52,7 @@ class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_Entity
     $statusBAO = new CRM_Certificate_BAO_CompuCertificateStatus();
 
     $statusBAO->whereAdd("certificate_id = " . $certificateId);
-    $statusBAO->joinAdd(['status_id', new CRM_Member_DAO_MembershipStatus, 'id']);
+    $statusBAO->joinAdd(['status_id', new CRM_Member_DAO_MembershipStatus(), 'id']);
     $statusBAO->find();
     $statuses = $statusBAO->fetchAll('id');
 
