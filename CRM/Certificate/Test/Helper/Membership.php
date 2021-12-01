@@ -28,15 +28,14 @@ trait CRM_Certificate_Test_Helper_Membership {
     return $membership;
   }
 
-  private function createEventCertificate($params = []) {
+  private function createMembershipCertificate($params = []) {
     $membershipType = CRM_Certificate_Test_Fabricator_MembershipType::fabricate(['is_active' => 1]);
     $membershipStatus = CRM_Certificate_Test_Fabricator_MembershipStatus::fabricate(['is_active' => 1]);
 
     $values = [
-      'type' => CertificateType::EVENTS,
+      'type' => CertificateType::MEMBERSHIPS,
       'linked_to' => $membershipType['id'],
       'statuses' => $membershipStatus['id'],
-      'participant_type_id' => 1,
     ];
 
     return CompuCertificateFabricator::fabricate(CertificateType::MEMBERSHIPS, $values);
