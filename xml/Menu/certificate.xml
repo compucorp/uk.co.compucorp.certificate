@@ -33,4 +33,11 @@
     <access_callback>1</access_callback>
     <is_public>true</is_public>
   </item>
+  <item>
+    <path>civicrm/certificates/membership</path>
+    <page_callback>CRM_Certificate_Page_CertificateDownload::downloadMembershipCertificate</page_callback>
+    <title>Download Certificate</title>
+    <access_callback>1</access_callback>
+    <is_public>true</is_public>
+  </item>
 </menu>
