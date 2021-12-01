@@ -239,6 +239,7 @@ function certificate_civicrm_apiWrappers(&$wrappers, $apiRequest) {
 function certificate_civicrm_pageRun(&$page) {
   $hooks = [
     new CRM_Certificate_Hook_PageRun_EventPageTab($page),
+    new CRM_Certificate_Hook_PageRun_MemberPageTab($page),
   ];
 
   array_walk($hooks, function ($hook) {
