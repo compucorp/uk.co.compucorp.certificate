@@ -3,7 +3,7 @@ window.waitForElement = function ($, elementPath, callBack) {
     if ($(elementPath).length) {
       callBack($, $(elementPath));
     } else {
-      waitForElement($, elementPath, callBack);
+      window.waitForElement($, elementPath, callBack);
     }
   }, 500);
 };
