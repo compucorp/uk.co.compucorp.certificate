@@ -29,7 +29,7 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
    */
   public static function downloadMembershipCertificate() {
     $contactId = CRM_Utils_Request::retrieve('contact_id', 'Positive') ?? CRM_Utils_Request::retrieve('cid', 'Positive');
-    $entityId = CRM_Utils_Request::retrieve('participant_id', 'Positive') ?? CRM_Utils_Request::retrieve('id', 'Positive');
+    $entityId = CRM_Utils_Request::retrieve('membership_id', 'Positive') ?? CRM_Utils_Request::retrieve('id', 'Positive');
     $certificateType = CRM_Certificate_Enum_CertificateType::MEMBERSHIPS;
 
     self::downloadCertificate($contactId, $entityId, $certificateType);
