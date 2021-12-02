@@ -145,6 +145,41 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
     $this->assertFalse($configuration);
   }
 
+  /**
+   * Test that only the membership certificate for contact with the Id
+   * passed is returned.
+   */
+  public function testOnlyMembershipCertificateForContactIsReturned() {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $contactMembership = array_map(function () use ($contact) {
+      $membership = $this->createMembership(['contact_id' => $contact["id"]]);
+      $this->createMembershipCertificate(
+        [
+          'linked_to' => [$membership['membership_type_id']],
+          'statuses'  => [$membership['status_id']],
+        ]
+      );
+    }, [1, 2]);
+
+    $otherContact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $membership = $this->createMembership(['contact_id' => $otherContact["id"]]);
+    $this->createMembershipCertificate(
+      [
+        'linked_to' => [$membership['membership_type_id']],
+        'statuses'  => [$membership['status_id']],
+      ]
+    );
+
+    $entity = new CRM_Certificate_Entity_Membership();
+    $avaliableCertificates = $entity->getContactCertificates($contact["id"]);
+
+    $this->assertEquals(count($contactMembership), count($avaliableCertificates));
+
+    $expectedMembershipsId = array_column($contactMembership, "id");
+    $avaliableCertificatesMembershipId = array_column($avaliableCertificates, "membership_id");
+    $this->assertCount(0, array_diff($expectedMembershipsId, $avaliableCertificatesMembershipId));
+  }
+
   private function createCertificate($values = []) {
     return CRM_Certificate_Test_Fabricator_CompuCertificate::fabricate(CRM_Certificate_Enum_CertificateType::MEMBERSHIPS, $values);
   }
