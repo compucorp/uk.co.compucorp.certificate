@@ -1,5 +1,8 @@
 <?php
 
+use CRM_Certificate_Enum_CertificateType as CertificateType;
+use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
+
 class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_EntityInterface {
 
   /**
@@ -113,7 +116,7 @@ class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_Entity
       $membership = civicrm_api3('Membership', 'getsingle', [
         'id' => $entityId,
         'contact_id' => $contactId,
-        'is_active' => 1,
+        'active_only' => 1,
       ]);
 
       $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
@@ -139,7 +142,37 @@ class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_Entity
    * {@inheritDoc}
    */
   public function getContactCertificates($contactId) {
-    throw new \Exception("Not yet implemented");
+    $certificates = [];
+
+    $configuredCertificates = CompuCertificate::getEntityCertificates(CertificateType::MEMBERSHIPS);
+
+    foreach ($configuredCertificates as $configuredCertificate) {
+      $condition = [
+        'sequential' => 1,
+        'active_only' => 1,
+        'contact_id' => $contactId,
+        'status_id' => $configuredCertificate['status_id'],
+        'membership_type_id' => $configuredCertificate['entity_type_id'],
+      ];
+      $result = civicrm_api3('Membership', 'get', $condition);
+
+      if ($result['is_error']) {
+        continue;
+      }
+
+      array_walk($result['values'], function ($membership) use (&$certificates, $configuredCertificate, $contactId) {
+        $certificate = [
+          'membership_id' => $membership['id'],
+          'name' => $configuredCertificate['name'],
+          'type' => 'Membership',
+          'linked_to' => $membership['membership_name'],
+          'download_link' => $this->getCertificateDownloadUrl($membership['id'], $contactId, TRUE),
+        ];
+        array_push($certificates, $certificate);
+      });
+    }
+
+    return $certificates;
   }
 
   /**
