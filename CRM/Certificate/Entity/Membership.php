@@ -116,7 +116,7 @@ class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_Entity
       $membership = civicrm_api3('Membership', 'getsingle', [
         'id' => $entityId,
         'contact_id' => $contactId,
-        'active_only' => 1,
+        'is_active' => 1,
       ]);
 
       $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
@@ -149,7 +149,7 @@ class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_Entity
     foreach ($configuredCertificates as $configuredCertificate) {
       $condition = [
         'sequential' => 1,
-        'active_only' => 1,
+        'is_active' => 1,
         'contact_id' => $contactId,
         'status_id' => $configuredCertificate['status_id'],
         'membership_type_id' => $configuredCertificate['entity_type_id'],
