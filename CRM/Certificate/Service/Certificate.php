@@ -85,7 +85,7 @@ class CRM_Certificate_Service_Certificate {
     }
 
     $entityTypes = sprintf('(%s)', implode(',', (array) $linkedTo));
-    return "cet.entity_type_id IS NULL OR cet.entity_type_id in $entityTypes";
+    return "(cet.entity_type_id IS NULL OR cet.entity_type_id in $entityTypes)";
   }
 
   /**
@@ -102,7 +102,7 @@ class CRM_Certificate_Service_Certificate {
     }
 
     $statuses = sprintf('(%s)', implode(',', (array) $statuses));
-    return "cs.status_id IS NULL OR cs.status_id in $statuses";
+    return "(cs.status_id IS NULL OR cs.status_id in $statuses)";
   }
 
   /**
@@ -132,7 +132,7 @@ class CRM_Certificate_Service_Certificate {
   }
 
   /**
-   * Add Options condition that are required per entities,
+   * Adds required options condition.
    * Entity extending this class can override this,
    * if it needs to add an extra condition.
    *
@@ -146,7 +146,6 @@ class CRM_Certificate_Service_Certificate {
     if (empty($values['linked_to']) && empty($values['statuses'])) {
       return;
     }
-    //what if when we've created ALL ALL, and we try creating 1 2
 
     $optionsCondition[] = $this->linkedToCondition($values['linked_to']);
     $optionsCondition[] = $this->statusesCondition($values['statuses']);
