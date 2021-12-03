@@ -120,13 +120,13 @@ class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_Entity
       ]);
 
       $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
-      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id']);
-      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id']);
+      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id'], "LEFT");
+      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id'], "LEFT");
       $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::MEMBERSHIPS);
-      $certificateBAO->whereAdd('entity_type_id = ' . $membership['membership_type_id']);
-      $certificateBAO->whereAdd('status_id = ' . $membership['status_id']);
-      $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '.id Desc');
-      $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '.id');
+      $certificateBAO->whereAdd("entity_type_id = {$membership['membership_type_id']} OR entity_type_id IS NULL");
+      $certificateBAO->whereAdd("status_id = {$membership['status_id']}  OR status_id IS NULL");
+      $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id Desc');
+      $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id');
       $certificateBAO->find(TRUE);
 
       if (!empty($certificateBAO->id)) {
@@ -151,9 +151,16 @@ class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_Entity
         'sequential' => 1,
         'is_active' => 1,
         'contact_id' => $contactId,
-        'status_id' => $configuredCertificate['status_id'],
-        'membership_type_id' => $configuredCertificate['entity_type_id'],
       ];
+
+      if (!empty($configuredCertificate['status_id'])) {
+        $condition['status_id'] = $configuredCertificate['status_id'];
+      }
+
+      if (!empty($configuredCertificate['entity_type_id'])) {
+        $condition['membership_type_id'] = $configuredCertificate['entity_type_id'];
+      }
+
       $result = civicrm_api3('Membership', 'get', $condition);
 
       if ($result['is_error']) {

@@ -45,9 +45,10 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
    */
   public static function getEntityCertificates($entity) {
     $certificateBAO = new self();
-    $certificateBAO->joinAdd(['id', new CompuCertificateEntityType(), 'certificate_id'], 'INNER', 'cert_type');
-    $certificateBAO->joinAdd(['id', new CompuCertificateStatus(), 'certificate_id'], 'INNER', 'cert_status');
+    $certificateBAO->joinAdd(['id', new CompuCertificateEntityType(), 'certificate_id'], 'LEFT', 'cert_type');
+    $certificateBAO->joinAdd(['id', new CompuCertificateStatus(), 'certificate_id'], 'LEFT', 'cert_status');
     $certificateBAO->whereAdd('entity = ' . $entity);
+    $certificateBAO->selectAdd(self::$_tableName . '.id' . ' as certificate_id');
     $certificateBAO->find();
 
     $configuredCertificates = $certificateBAO->fetchAll();
