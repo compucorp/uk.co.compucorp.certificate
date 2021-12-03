@@ -7,23 +7,28 @@ class CRM_Certificate_Service_CertificateEvent extends CRM_Certificate_Service_C
   /**
    * {@inheritDoc}
    */
-  protected function extraCondition(&$query, &$optionsCondition, $values, &$conjuction) {
+  protected function addOptionsCondition(&$query, $values) {
     $query->join('cert_event_attr', 'LEFT JOIN `' . CertificateEventAttribute::getTableName() . '` cert_event_attr ON (cert_event_attr.certificate_id = ccc.id)');
 
-    $condition = "cert_event_attr.participant_type_id IS NULL";
+    $participantTypeCondition = "cert_event_attr.participant_type_id IS NULL";
 
     if (!empty($values['participant_type_id'])) {
       $attrValues = sprintf('(%s)', implode(',', (array) $values['participant_type_id']));
-      $condition = "cert_event_attr.participant_type_id IN $attrValues";
+      $participantTypeCondition = "$participantTypeCondition OR cert_event_attr.participant_type_id IN $attrValues";
     }
 
-    $optionsCondition[] = $condition;
+    $linkedToCondition = $this->linkedToCondition($values['linked_to']);
+    $statusesCondition = $this->statusesCondition($values['statuses']);
 
-    // This is to avoid an entity having multiple event certificate configuration,
-    // i.e. in a case where a configuration that has participant_type_id 'all' and statuses for a specific status,
-    // and the user attepmts to create another configuration with participant_type_id for a specific type and statuses for 'all',
-    // then a ConfigurationExistException would be thrown.
-    $conjuction = empty($values['participant_type_id']) || $conjuction === ' OR ' ? ' OR ' : ' AND ';
+    $query = $query->where($linkedToCondition);
+
+    if (empty($values['participant_type_id']) && empty($values['statuses'])) {
+      return;
+    }
+
+    // This is to avoid event entity from having multiple certificate configuration.
+    $conjuction = empty($values['participant_type_id']) || empty($values['statuses']) ? ' OR ' : ' AND ';
+    $query = $query->where(implode($conjuction, [$statusesCondition, $participantTypeCondition]));
   }
 
   /**
