@@ -219,28 +219,40 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $this->validateCertificateName($values, $errors);
 
     // only validate statuses and linked_to if the certificate is attached to cases.
-    if ($values['type'] != CRM_Certificate_Enum_CertificateType::CASES) {
-      return $errors;
+    if ($values['type'] == CRM_Certificate_Enum_CertificateType::CASES) {
+      $this->validateLinkedToField($values, $errors);
+      $this->validateStatusesField($values, $errors);
     }
 
-    $this->validateCertificateFields($values, $errors);
+    // only validate linked_to if the certificate is attached to events.
+    if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
+      $this->validateLinkedToField($values, $errors);
+    }
 
     return $errors ?: TRUE;
   }
 
   /**
-   * Validates the statuses and linked_to field.
+   * Validates the statuses field.
    *
    * @param array $values
    * @param array $errors
    */
-  public function validateCertificateFields(&$values, &$errors) {
-    if (empty($values['linked_to'])) {
-      $errors['linked_to'] = ts('The linked to field is required');
-    }
-
+  public function validateStatusesField(&$values, &$errors) {
     if (empty($values['statuses'])) {
       $errors['statuses'] = ts('The status field is required');
+    }
+  }
+
+  /**
+   * Validates the linked_to field.
+   *
+   * @param array $values
+   * @param array $errors
+   */
+  public function validateLinkedToField(&$values, &$errors) {
+    if (empty($values['linked_to'])) {
+      $errors['linked_to'] = ts('The linked to field is required');
     }
   }
 
