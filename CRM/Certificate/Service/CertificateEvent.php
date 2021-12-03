@@ -14,7 +14,7 @@ class CRM_Certificate_Service_CertificateEvent extends CRM_Certificate_Service_C
 
     if (!empty($values['participant_type_id'])) {
       $attrValues = sprintf('(%s)', implode(',', (array) $values['participant_type_id']));
-      $participantTypeCondition = "$participantTypeCondition OR cert_event_attr.participant_type_id IN $attrValues";
+      $participantTypeCondition = "($participantTypeCondition OR cert_event_attr.participant_type_id IN $attrValues)";
     }
 
     $linkedToCondition = $this->linkedToCondition($values['linked_to']);
