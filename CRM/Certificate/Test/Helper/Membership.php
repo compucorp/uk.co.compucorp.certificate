@@ -19,7 +19,6 @@ trait CRM_Certificate_Test_Helper_Membership {
     $membership = CRM_Certificate_Test_Fabricator_Membership::fabricate($params);
 
     $membership = civicrm_api3('Membership', 'getsingle', [
-      'contact_id' => $contact['id'],
       'id' => $membership['id'],
     ]);
 
@@ -32,11 +31,11 @@ trait CRM_Certificate_Test_Helper_Membership {
     $membershipType = CRM_Certificate_Test_Fabricator_MembershipType::fabricate(['is_active' => 1]);
     $membershipStatus = CRM_Certificate_Test_Fabricator_MembershipStatus::fabricate(['is_active' => 1]);
 
-    $values = [
+    $values = array_merge([
       'type' => CertificateType::MEMBERSHIPS,
       'linked_to' => $membershipType['id'],
       'statuses' => $membershipStatus['id'],
-    ];
+    ], $params);
 
     return CompuCertificateFabricator::fabricate(CertificateType::MEMBERSHIPS, $values);
   }

@@ -10,9 +10,10 @@ use CRM_Certificate_Test_Fabricator_Contact as ContactFabricator;
 class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTest {
 
   use \Civi\Test\Api3TestTrait;
-  use CRM_Certificate_Test_Helper_Session;
   use CRM_Certificate_Test_Helper_Case;
   use CRM_Certificate_Test_Helper_Event;
+  use CRM_Certificate_Test_Helper_Session;
+  use CRM_Certificate_Test_Helper_Membership;
 
   /**
    * Holds logged in contact/case client id.
@@ -104,6 +105,49 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
     $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
 
     $this->assertEquals($participant['id'], $results['values'][0]['participant_id']);
+  }
+
+  /**
+   * Test that the api returns available memberships certificate for
+   * the logged-in contact.
+   */
+  public function testMembershipCertficateIsReturnedForLoggedInContact() {
+    $membership = $this->createMembership(['contact_id' => $this->client_id]);
+    $this->createMembershipCertificate(
+      [
+        'linked_to' => [$membership['membership_type_id']],
+        'statuses'  => [$membership['status_id']],
+      ]
+    );
+
+    $param = ['entity' => 'membership'];
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
+
+    $this->assertEquals(1, $results['count']);
+    $this->assertEquals($membership['id'], $results['values'][0]['membership_id']);
+  }
+
+  /**
+   * Test that the api returns available memberships certificate for
+   * the contact ID passed to the API request.
+   */
+  public function testMembershipCertficateIsReturnedForContactIdPassedInAPIParam() {
+    $membership = $this->createMembership();
+    $this->createMembershipCertificate(
+      [
+        'linked_to' => [$membership['membership_type_id']],
+        'statuses'  => [$membership['status_id']],
+      ]
+    );
+
+    $contact = $membership['contact'];
+
+    $param = ['entity' => 'membership', 'contact_id' => $contact['id']];
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
+
+    $this->assertEquals($membership['id'], $results['values'][0]['membership_id']);
   }
 
   public function tearDown() {
