@@ -252,7 +252,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
    */
   public function validateLinkedToField(&$values, &$errors) {
     if (empty($values['linked_to'])) {
-      $errors['linked_to'] = ts('The linked to field is required');
+      $errors['linked_to'] = ts('The "linked to" field is required');
     }
   }
 
