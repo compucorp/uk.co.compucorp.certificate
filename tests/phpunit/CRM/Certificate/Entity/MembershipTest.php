@@ -204,8 +204,56 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
     $this->assertEquals(4, count($avaliableCertificates));
   }
 
-  private function createCertificate($values = []) {
-    return CRM_Certificate_Test_Fabricator_CompuCertificate::fabricate(CRM_Certificate_Enum_CertificateType::MEMBERSHIPS, $values);
+  /**
+   * Test contact certificate is returned for a certificate
+   * configured with all status and/or all type.
+   */
+  public function testMembershipGetContactCertificateReturnsCertificateForBlankStatusAndType() {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $membership = $this->createMembership(['contact_id' => $contact["id"]]);
+
+    $this->createCertificate(
+      [
+        'linked_to' => NULL,
+        'statuses'  => NULL,
+      ]
+    );
+
+    $entity = new CRM_Certificate_Entity_Membership();
+    $avaliableCertificates = $entity->getContactCertificates($contact["id"]);
+
+    $this->assertEquals(1, count($avaliableCertificates));
+    $this->assertEquals($membership['id'], $avaliableCertificates[0]['membership_id']);
+  }
+
+  /**
+   * Test certificate configuration is returned when a certificate
+   * with all status and/or all type is configured.
+   */
+  public function testMembershipGetCertificateConfigurationReturnsCertificateForBlankStatusAndType() {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $membership = $this->createMembership(['contact_id' => $contact["id"]]);
+
+    $configuration = $this->createCertificate(
+      [
+        'linked_to' => NULL,
+        'statuses'  => NULL,
+      ]
+    );
+
+    $entity = new CRM_Certificate_Entity_Membership();
+    $availableCertificate = $entity->getCertificateConfiguration($membership['id'], $contact["id"]);
+
+    $this->assertEquals($configuration['certificate']->id, $availableCertificate->id);
+  }
+
+  private function createCertificate($values) {
+    $values['type'] = CRM_Certificate_Enum_CertificateType::MEMBERSHIPS;
+    $values['name'] = md5(mt_rand());
+    $values['message_template_id']  = 1;
+    $storeCertificate = new CRM_Certificate_Service_CertificateMembership();
+
+    return $storeCertificate->store($values);
   }
 
 }
