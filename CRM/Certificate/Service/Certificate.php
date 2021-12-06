@@ -54,27 +54,13 @@ class CRM_Certificate_Service_Certificate {
    *   false config doesnt exist
    */
   public function configurationExist($values) {
-    $optionsCondition = [];
-
     $query = CRM_Utils_SQL_Select::from(CRM_Certificate_DAO_CompuCertificate::getTableName() . ' ccc')
       ->select('ccc.id')
       ->join('cet', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateEntityType::getTableName() . '` cet ON (cet.certificate_id = ccc.id)')
       ->join('cs', 'LEFT JOIN `' . CRM_Certificate_DAO_CompuCertificateStatus::getTableName() . '` cs ON (cs.certificate_id = ccc.id)')
       ->where('ccc.entity = @entity', ['entity' => $values['type']]);
 
-    $this->linkedToCondition($optionsCondition, $values['linked_to']);
-    $this->statusesCondition($optionsCondition, $values['statuses']);
-
-    // This is to avoid an entity having multiple certificate configuration,
-    // i.e. in a case where a configuration that has linked_to 'all' and statuses for a specific status,
-    // and the user attepmts to create another configuration with linked_to for a specific type and statuses for 'all',
-    // then a ConfigurationExistException would be thrown.
-    $conjuction = empty($values['linked_to']) || empty($values['statuses']) ? ' OR ' : ' AND ';
-    $this->extraCondition($query, $optionsCondition, $values, $conjuction);
-
-    if (!empty($optionsCondition)) {
-      $query = $query->where(implode($conjuction, $optionsCondition));
-    }
+    $this->addOptionsCondition($query, $values);
 
     if (!empty($values['id'])) {
       $query = $query->where('ccc.id <> ' . $values['id']);
@@ -89,40 +75,34 @@ class CRM_Certificate_Service_Certificate {
    * Appends sql query condition for linked_to,
    * only if the linked_to array contains values.
    *
-   * @param array &$optionsCondition
-   *  The array to append sql query to.
    * @param array $linkedTo
    *  The array containing ids of an entity type
    *
    */
-  private function linkedToCondition(&$optionsCondition, $linkedTo) {
+  protected function linkedToCondition($linkedTo) {
     if (empty($linkedTo)) {
-      $optionsCondition[] = "cet.entity_type_id IS NULL";
-      return;
+      return "cet.entity_type_id IS NULL";
     }
 
     $entityTypes = sprintf('(%s)', implode(',', (array) $linkedTo));
-    $optionsCondition[] = "cet.entity_type_id in $entityTypes";
+    return "(cet.entity_type_id IS NULL OR cet.entity_type_id in $entityTypes)";
   }
 
   /**
    * Appends sql query condition for statuses,
    * only if the statuses array contains values.
    *
-   * @param array &$optionsCondition
-   *  The array to append sql query to.
    * @param array $statuses
    *  The array containing ids of statuses
    *
    */
-  private function statusesCondition(&$optionsCondition, $statuses) {
+  protected function statusesCondition($statuses) {
     if (empty($statuses)) {
-      $optionsCondition[] = "cs.status_id IS NULL";
-      return;
+      return "cs.status_id IS NULL";
     }
 
     $statuses = sprintf('(%s)', implode(',', (array) $statuses));
-    $optionsCondition[] = "cs.status_id in $statuses";
+    return "(cs.status_id IS NULL OR cs.status_id in $statuses)";
   }
 
   /**
@@ -152,21 +132,30 @@ class CRM_Certificate_Service_Certificate {
   }
 
   /**
-   * Appends extra condition that are required per entities,
-   * Entity extending this class should override this,
+   * Adds required options condition.
+   * Entity extending this class can override this,
    * if it needs to add an extra condition.
    *
    * @param CRM_Utils_SQL_Select $query
    *  The query object
-   * @param array &$optionsCondition
-   *  The array to append sql query to.
    * @param array $values
    *  An Array of certificate values.
-   * @param string $conjuction
-   *   String to join the conditions.
    *
    */
-  protected function extraCondition(&$query, &$optionsCondition, $values, &$conjuction) {
+  protected function addOptionsCondition(&$query, $values) {
+    if (empty($values['linked_to']) && empty($values['statuses'])) {
+      return;
+    }
+
+    $optionsCondition[] = $this->linkedToCondition($values['linked_to']);
+    $optionsCondition[] = $this->statusesCondition($values['statuses']);
+
+    // This is to avoid an entity having multiple certificate configuration,
+    // i.e. in a case where a configuration that has linked_to 'all' and statuses for a specific status,
+    // and the user attepmts to create another configuration with linked_to for a specific type and statuses for 'all',
+    // then a ConfigurationExistException would be thrown.
+    $conjuction = empty($values['linked_to']) || empty($values['statuses']) ? ' OR ' : ' AND ';
+    $query = $query->where(implode($conjuction, $optionsCondition));
   }
 
   /**

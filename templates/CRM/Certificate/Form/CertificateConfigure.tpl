@@ -35,11 +35,15 @@
     if (val === TYPE_CASES) {
       if (!$('.linked_to > label > span.crm-marker').length) {
         $('.linked_to > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
+      }
+      if (!$('.statuses > label > span.crm-marker').length) {
         $('.statuses > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
       }
       $('.participant_type_id').hide()
     } else if (val === TYPE_EVENTS) {
-      $('.linked_to > label > span.crm-marker').remove()
+      if (!$('.linked_to > label > span.crm-marker').length) {
+        $('.linked_to > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
+      }
       $('.statuses > label > span.crm-marker').remove()
       $('.participant_type_id').show()
     }
