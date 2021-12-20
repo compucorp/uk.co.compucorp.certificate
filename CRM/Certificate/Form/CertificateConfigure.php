@@ -59,7 +59,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $this->add(
       'text',
       'participant_type_id',
-      ts('Linked to'),
+      ts('Event Role'),
       [
         'placeholder' => E::ts('- Select Participant Type -'),
         1 => 'disabled',
