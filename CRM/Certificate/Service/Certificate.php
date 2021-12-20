@@ -30,12 +30,8 @@ class CRM_Certificate_Service_Certificate {
 
       $result['certificate'] = CRM_Certificate_BAO_CompuCertificate::create($params);
 
-      if (!empty($statuses)) {
-        $result['statuses'] = CRM_Certificate_BAO_CompuCertificateStatus::assignCertificateEntityStatuses($result['certificate'], $statuses);
-      }
-      if (!empty($entityTypes)) {
-        $result['entityTypes'] = CRM_Certificate_BAO_CompuCertificateEntityType::assignCertificateEntityTypes($result['certificate'], $entityTypes);
-      }
+      $result['statuses'] = CRM_Certificate_BAO_CompuCertificateStatus::assignCertificateEntityStatuses($result['certificate'], $statuses);
+      $result['entityTypes'] = CRM_Certificate_BAO_CompuCertificateEntityType::assignCertificateEntityTypes($result['certificate'], $entityTypes);
 
       $this->storeExtraValues($result, $values);
     });
