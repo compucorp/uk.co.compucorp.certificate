@@ -55,12 +55,8 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
       if (is_array($entityTypeId)) {
         $entityTypeId = $entityTypeId[0];
         $contactId = $contactId[0];
-        $result = civicrm_api3('Membership', 'getsingle', [
-          'id' => $entityTypeId,
-          'contact_id' => $contactId,
-        ]);
-
-        if (!empty($result['is_error'])) {
+        $result = $this->getMembership($entityTypeId, $contactId);
+        if (empty($result)) {
           return $resolvedTokens;
         }
 
@@ -97,6 +93,33 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
     foreach ($this->activeTokens as $value) {
       $resolvedTokens[$value] = CRM_Utils_Array::value($value, $membership, '');
     }
+  }
+
+  /**
+   * Returns a single membership entity with associated data.
+   *
+   * @param int $membershipId
+   * @param int $contactId
+   *
+   * @return array
+   */
+  private function getMembership($membershipId, $contactId) {
+    $result = civicrm_api3('Membership', 'getsingle', [
+      'id' => $membershipId,
+      'contact_id' => $contactId,
+    ]);
+
+    if (!empty($result['is_error'])) {
+      return [];
+    }
+
+    $status = CRM_Member_BAO_MembershipStatus::getMembershipStatus($result['status_id']);
+    $type = CRM_Member_BAO_MembershipType::getMembershipType($result['membership_type_id']);
+    $result['status'] = $status['membership_status'] ?? '';
+    $result['type'] = $type['name'] ?? '';
+    $result['fee'] = CRM_Utils_Money::format($type['minimum_fee'] ?? '');
+
+    return $result;
   }
 
 }
