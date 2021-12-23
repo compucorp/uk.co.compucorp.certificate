@@ -22,11 +22,37 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
    * @inheritDoc
    */
   public static function entityTokens() {
-    $participantTokens = CRM_Core_SelectValues::participantTokens();
+    $participantFields = CRM_Event_BAO_Participant::exportableFields();
+    $tokens = [];
 
-    // we clean up the array because they are keyed in the format {participant.field}
-    $filtered_keys = preg_replace(['/(participant\.)/', '/(\W*)/'], '', array_keys($participantTokens));
-    $tokens = array_combine($filtered_keys, array_values($participantTokens));
+    // Filter out unused fields from token list.
+    array_walk($participantFields, function ($v, $k) use (&$tokens) {
+      if (!in_array($k, [
+        'contact_id',
+        'display_name',
+        'event_id',
+        'event_title',
+        'event_start_date',
+        'event_end_date',
+        'default_role_id',
+        'participant_id',
+        'participant_fee_level',
+        'participant_fee_amount',
+        'participant_fee_currency',
+        'event_type',
+        'participant_status',
+        'participant_role',
+        'participant_register_date',
+        'participant_source',
+        'participant_note',
+        'id',
+      ])) {
+        return;
+      }
+      $tokens[$k] = ts($v['title']);
+    });
+
+    $tokens = array_merge(CRM_Utils_Token::getCustomFieldTokens('Participant'), $tokens);
 
     return $tokens;
   }
@@ -49,7 +75,7 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
         $entityTypeId = $entityTypeId[0];
         $contactId = $contactId[0];
         $result = civicrm_api3('Participant', 'getsingle', [
-          'event_id' => $entityTypeId,
+          'id' => $entityTypeId,
           'contact_id' => $contactId,
         ]);
 
@@ -91,6 +117,7 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
         $v = implode(',', $v);
       }
     });
+    $participant['participant_fee_level'] = $participant['participant_fee_level'][0] ?? "";
 
     foreach ($this->activeTokens as $value) {
       $resolvedTokens[$value] = CRM_Utils_Array::value($value, $participant, '');
