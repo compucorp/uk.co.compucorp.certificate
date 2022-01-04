@@ -85,6 +85,11 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
       if (in_array($k, $dateFields)) {
         $v = CRM_Utils_Date::customFormat($v);
       }
+
+      if (is_array($v)) {
+        // eg. role_id for participant can be an array.
+        $v = implode(',', $v);
+      }
     });
 
     foreach ($this->activeTokens as $value) {
