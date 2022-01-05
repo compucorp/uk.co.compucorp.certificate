@@ -71,6 +71,38 @@ class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
   }
 
   /**
+   * Test that a certificate configuration is returned
+   * for a participant with multiple roles where one of
+   * the roles matches that of the configured certificate.
+   */
+  public function testCanGetCertificateConfigurationForParticipantWithMultipleRoles() {
+    $contactId = CRM_Certificate_Test_Fabricator_Contact::fabricate()['id'];
+    $eventId = CRM_Certificate_Test_Fabricator_Event::fabricate(['is_active' => 1])['id'];
+    $statusId = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate(['is_active' => 1])['id'];
+
+    $params = [
+      'contact_id' => $contactId,
+      'event_id' => $eventId,
+      'status_id' => $statusId,
+      'role_id'  => [1, 2],
+    ];
+    $participantId = CRM_Certificate_Test_Fabricator_Participant::fabricate($params)['id'];
+
+    $values = [
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'linked_to' => [$eventId],
+      'statuses' => [$statusId],
+      'participant_type_id' => 1,
+    ];
+    $this->createCertificate($values);
+
+    $eventEntity = new CRM_Certificate_Entity_Event();
+    $configuration = $eventEntity->getCertificateConfiguration($participantId, $contactId);
+
+    $this->assertInstanceOf(CRM_Certificate_BAO_CompuCertificate::class, $configuration);
+  }
+
+  /**
    * Test that a certificacte configuration is not returned
    * when the case status and type of the certificate is not met
    */
