@@ -117,7 +117,6 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
         $v = implode(',', $v);
       }
     });
-    $participant['participant_fee_level'] = $participant['participant_fee_level'][0] ?? "";
 
     foreach ($this->activeTokens as $value) {
       $resolvedTokens[$value] = CRM_Utils_Array::value($value, $participant, '');
