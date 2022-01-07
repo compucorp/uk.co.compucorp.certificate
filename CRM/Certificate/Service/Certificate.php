@@ -148,7 +148,7 @@ class CRM_Certificate_Service_Certificate {
 
     // This is to avoid an entity having multiple certificate configuration,
     // i.e. in a case where a configuration that has linked_to 'all' and statuses for a specific status,
-    // and the user attepmts to create another configuration with linked_to for a specific type and statuses for 'all',
+    // and the user attempts to create another configuration with linked_to for a specific type and statuses for 'all',
     // then a ConfigurationExistException would be thrown.
     $conjuction = empty($values['linked_to']) || empty($values['statuses']) ? ' OR ' : ' AND ';
     $query = $query->where(implode($conjuction, $optionsCondition));
