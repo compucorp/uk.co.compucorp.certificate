@@ -14,12 +14,11 @@ class CRM_Certificate_Service_EventCertificateGeneratorTest extends BaseHeadless
     $content = $this->getMsgContent();
     $template = CRM_Certificate_Test_Fabricator_MessageTemplate::fabricate($content);
     $participant = $this->createParticipant();
-    $eventId = $participant['event_id'];
     $event = $participant["event"];
     $contact = $participant["contact"];
 
     $generatorService = new CRM_Certificate_Service_CertificateGenerator();
-    $result = $generatorService->generate($template['id'], $contact['id'], $eventId);
+    $result = $generatorService->generate($template['id'], $contact['id'], $participant['id']);
 
     $this->assertContains($contact['display_name'], $result['html']);
     $this->assertContains($event['title'], $result['html']);
@@ -33,11 +32,10 @@ class CRM_Certificate_Service_EventCertificateGeneratorTest extends BaseHeadless
     $template = CRM_Certificate_Test_Fabricator_MessageTemplate::fabricate($content);
     $participantSource = md5(mt_rand());
     $participant = $this->createParticipant(['participant_source' => $participantSource]);
-    $eventId = $participant['event_id'];
     $contact = $participant["contact"];
 
     $generatorService = new CRM_Certificate_Service_CertificateGenerator();
-    $result = $generatorService->generate($template['id'], $contact['id'], $eventId);
+    $result = $generatorService->generate($template['id'], $contact['id'], $participant['id']);
 
     $this->assertContains($participant['participant_role'], $result['html']);
     $this->assertContains($participant['participant_source'], $result['html']);

@@ -94,6 +94,13 @@ abstract class CRM_Certificate_Token_AbstractCertificateToken extends AbstractTo
   public function evaluateToken(TokenRow $row, $entity, $field, $prefetch = NULL) {
     $value = CRM_Utils_Array::value($field, $prefetch);
     $prefix = CRM_Utils_String::munge(static::TOKEN);
+    if (is_array($value)) {
+      foreach ($value as $format => $data) {
+        $row->format($format)->tokens($prefix, $field, $data);
+      }
+      return;
+    }
+
     if ($value) {
       $row->tokens($prefix, $field, $value);
     }
