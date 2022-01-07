@@ -59,7 +59,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $this->add(
       'text',
       'participant_type_id',
-      ts('Linked to'),
+      ts('Event Role'),
       [
         'placeholder' => E::ts('- Select Participant Type -'),
         1 => 'disabled',
@@ -145,9 +145,11 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       return;
     }
 
-    $msg = sprintf('Certificate configuration %s successfully', !empty($this->_id) ? 'updated' : 'created');
+    $createOrUpdate = !empty($this->_id) ? 'updated' : 'created';
 
-    CRM_Core_Session::setStatus($msg, 'success', 'success');
+    $msg = sprintf('Certificate configuration %s successfully', $createOrUpdate);
+
+    CRM_Core_Session::setStatus($msg, 'Item ' . $createOrUpdate, 'success');
   }
 
   public function setDefaultValues() {

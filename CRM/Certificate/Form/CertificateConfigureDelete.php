@@ -44,7 +44,7 @@ class CRM_Certificate_Form_CertificateConfigureDelete extends CRM_Core_Form {
   public function postProcess() {
     if (!empty($this->id)) {
       CRM_Certificate_BAO_CompuCertificate::deleteById($this->id);
-      CRM_Core_Session::setStatus(E::ts('Certificate configuration deleted successfully.'), ts('Item Deleted'), 'success');
+      CRM_Core_Session::setStatus(E::ts('Certificate configuration deleted successfully.'), ts('Item deleted'), 'success');
     }
   }
 
