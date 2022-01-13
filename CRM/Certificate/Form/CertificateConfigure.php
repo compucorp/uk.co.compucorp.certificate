@@ -53,7 +53,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
         1 => 'disabled',
         'class' => 'form-control',
       ],
-      FALSE
+      TRUE
     );
 
     $this->add(
@@ -92,7 +92,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
         1 => 'disabled',
         'class' => 'form-control',
       ],
-      FALSE
+      TRUE
     );
 
     $this->addButtons([
@@ -219,16 +219,12 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $errors = [];
 
     $this->validateCertificateName($values, $errors);
+    $this->validateLinkedToField($values, $errors);
+    $this->validateStatusesField($values, $errors);
 
-    // only validate statuses and linked_to if the certificate is attached to cases.
-    if ($values['type'] == CRM_Certificate_Enum_CertificateType::CASES) {
-      $this->validateLinkedToField($values, $errors);
-      $this->validateStatusesField($values, $errors);
-    }
-
-    // only validate linked_to if the certificate is attached to events.
-    if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
-      $this->validateLinkedToField($values, $errors);
+    // The participant_type filed should only be validated for Event Certificate.
+    if ($values['types'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
+      $this->validateParticipantTypeField($values, $errors);
     }
 
     return $errors ?: TRUE;
@@ -268,6 +264,18 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $certificateService = new CRM_Certificate_Service_Certificate();
     if ($certificateService->certificateNameExist($values['name'], $this->_id)) {
       $errors['name'] = ts('The certificate name already exists');
+    }
+  }
+
+  /**
+   * Validates participant type field.
+   *
+   * @param array $values
+   * @param array $errors
+   */
+  public function validateParticipantTypeField($values, &$errors) {
+    if (empty($values['participant_type_id'])) {
+      $errors['participant_type_id'] = ts('The "Event role" field is required');
     }
   }
 
