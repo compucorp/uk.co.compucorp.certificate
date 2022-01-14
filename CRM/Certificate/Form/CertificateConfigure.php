@@ -222,8 +222,8 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $this->validateLinkedToField($values, $errors);
     $this->validateStatusesField($values, $errors);
 
-    // The participant_type filed should only be validated for Event Certificate.
-    if ($values['types'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
+    // The participant_type field should only be validated for Event Certificate.
+    if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
       $this->validateParticipantTypeField($values, $errors);
     }
 
