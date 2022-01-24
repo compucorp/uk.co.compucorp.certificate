@@ -5,16 +5,19 @@
   <description>This extension allows sites administrator to configure certificates and attached them to entities, which can become downloadable when the configured condition for the certificate is met.</description>
   <license>AGPL-3.0</license>
   <maintainer>
-    <author>Compucorp Ltd.</author>
-    <email>info@compucorp.co.uk</email>
+    <author>Compuco</author>
+    <email>hello@compuco.io</email>
   </maintainer>
-  <releaseDate>2021-09-13</releaseDate>
-  <version>1.0.0-alpha.2</version>
-  <develStage>alpha</develStage>
+  <releaseDate>2022-01-24</releaseDate>
+  <version>1.0.0</version>
+  <develStage>stable</develStage>
   <compatibility>
-    <ver>5.35</ver>
+    <ver>5.39</ver>
   </compatibility>
-  <comments></comments>
+  <comments>
+    Supported CiviCRM versions  :
+    - A patched version of CiviCRM 5.39.1 (Download link: https://github.com/compucorp/civicrm-core/releases/download/5.39.1%2Bpatch.9c2c3b/civicrm-5.39.1+patch.9c2c3b.tar.gz)
+  </comments>
   <classloader>
     <psr4 prefix="Civi\" path="Civi"/>
   </classloader>
