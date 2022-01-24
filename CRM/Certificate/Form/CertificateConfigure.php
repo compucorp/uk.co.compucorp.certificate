@@ -53,6 +53,18 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
         1 => 'disabled',
         'class' => 'form-control',
       ],
+      TRUE
+    );
+
+    $this->add(
+      'text',
+      'participant_type_id',
+      ts('Event Role'),
+      [
+        'placeholder' => E::ts('- Select Participant Type -'),
+        1 => 'disabled',
+        'class' => 'form-control',
+      ],
       FALSE
     );
 
@@ -80,7 +92,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
         1 => 'disabled',
         'class' => 'form-control',
       ],
-      FALSE
+      TRUE
     );
 
     $this->addButtons([
@@ -133,9 +145,11 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       return;
     }
 
-    $msg = sprintf('Certificate configuration %s successfully', !empty($this->_id) ? 'updated' : 'created');
+    $createOrUpdate = !empty($this->_id) ? 'updated' : 'created';
 
-    CRM_Core_Session::setStatus($msg, 'success', 'success');
+    $msg = sprintf('Certificate configuration %s successfully', $createOrUpdate);
+
+    CRM_Core_Session::setStatus($msg, 'Item ' . $createOrUpdate, 'success');
   }
 
   public function setDefaultValues() {
@@ -150,7 +164,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
 
   private function saveConfiguration($values) {
     try {
-      $certificateCreator = new CRM_Certificate_Service_Certificate();
+      $entity = CRM_Certificate_Entity_EntityFactory::create($values['type']);
       if (!empty($this->_id)) {
         $values['id'] = $this->_id;
       }
@@ -158,7 +172,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       $values['statuses'] = empty($values['statuses']) ? [] : explode(',', $values['statuses']);
       $values['linked_to'] = empty($values['linked_to']) ? [] : explode(',', $values['linked_to']);
 
-      $result = $certificateCreator->store($values);
+      $result = $entity->store($values);
     }
     catch (CRM_Certificate_Exception_ConfigurationExistException $e) {
       CRM_Core_Session::setStatus($e->getMessage(), 'failed', 'error');
@@ -181,14 +195,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     }
 
     $entity = CRM_Certificate_Entity_EntityFactory::create($certificateDAO->entity);
-    $statuses = $entity->getCertificateConfiguredStatuses($certificateDAO->id);
-    $types = $entity->getCertificateConfiguredTypes($certificateDAO->id);
-
-    $values['name'] = $certificateDAO->name;
-    $values['type'] = $certificateDAO->entity;
-    $values['message_template_id'] = $certificateDAO->template_id;
-    $values['statuses'] = implode(',', array_column($statuses, 'id'));
-    $values['linked_to'] = implode(',', array_column($types, 'id'));
+    $values = $entity->getCertificateConfigurationById($certificateDAO->id);
 
     return $values;
   }
@@ -212,30 +219,38 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $errors = [];
 
     $this->validateCertificateName($values, $errors);
+    $this->validateLinkedToField($values, $errors);
+    $this->validateStatusesField($values, $errors);
 
-    // only validate statuses and linked_to if the certificate is attached to cases.
-    if ($values['type'] != CRM_Certificate_Enum_CertificateType::CASES) {
-      return $errors;
+    // The participant_type field should only be validated for Event Certificate.
+    if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
+      $this->validateParticipantTypeField($values, $errors);
     }
-
-    $this->validateCertificateFields($values, $errors);
 
     return $errors ?: TRUE;
   }
 
   /**
-   * Validates the statuses and linked_to field.
+   * Validates the statuses field.
    *
    * @param array $values
    * @param array $errors
    */
-  public function validateCertificateFields(&$values, &$errors) {
-    if (empty($values['linked_to'])) {
-      $errors['linked_to'] = ts('The linked to field is required');
-    }
-
+  public function validateStatusesField(&$values, &$errors) {
     if (empty($values['statuses'])) {
       $errors['statuses'] = ts('The status field is required');
+    }
+  }
+
+  /**
+   * Validates the linked_to field.
+   *
+   * @param array $values
+   * @param array $errors
+   */
+  public function validateLinkedToField(&$values, &$errors) {
+    if (empty($values['linked_to'])) {
+      $errors['linked_to'] = ts('The "linked to" field is required');
     }
   }
 
@@ -249,6 +264,18 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $certificateService = new CRM_Certificate_Service_Certificate();
     if ($certificateService->certificateNameExist($values['name'], $this->_id)) {
       $errors['name'] = ts('The certificate name already exists');
+    }
+  }
+
+  /**
+   * Validates participant type field.
+   *
+   * @param array $values
+   * @param array $errors
+   */
+  public function validateParticipantTypeField($values, &$errors) {
+    if (empty($values['participant_type_id'])) {
+      $errors['participant_type_id'] = ts('The "Event role" field is required');
     }
   }
 

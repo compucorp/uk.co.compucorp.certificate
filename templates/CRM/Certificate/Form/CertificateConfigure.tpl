@@ -27,24 +27,30 @@
   let statusRef = { $entityStatusRefs }
   let performingUpdate = false
   const TYPE_CASES = "1";
+  const TYPE_EVENTS = "2";
 
   { literal }
 
   let toggleRequiredMarker = ($, val) => {
     if (val === TYPE_CASES) {
-      if (!$('.linked_to > label > span.crm-marker').length) {
-        $('.linked_to > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
-        $('.statuses > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
+      $('.participant_type_id').hide()
+    } else if (val === TYPE_EVENTS) {
+      if (!$('.participant_type_id > label > span.crm-marker').length) {
+        $('.participant_type_id > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
       }
-    } else {
-      $('.linked_to > label > span.crm-marker').remove()
-      $('.statuses > label > span.crm-marker').remove()
+      $('.participant_type_id').show()
+    }
+    else {
+      $('.participant_type_id').hide()
     }
   }
   
   CRM.$(function ($) {
+
+    $('.participant_type_id').hide();
+
     /**
-     * if entity is selected we want to populate the 
+     * if an entity is selected we want to populate the 
      * linked_to (entity type) and status (entity status) entity reference field
      * with the right values
      */
@@ -69,6 +75,23 @@
           .crmEntityRef(statusRef[e.target.value])
 
         toggleRequiredMarker($, e.target.value);
+      }
+    })
+
+    CRM.$('[name=linked_to]').on('change', function (e) {
+      if (e.target.value > 0 && CRM.$('[name=type]').val() === TYPE_EVENTS) {
+        $('[name=participant_type_id]')
+          .attr('placeholder', '- Select Participant Type -')
+          .attr('disabled', false)
+          .crmEntityRef({
+            entity: 'OptionValue',
+            api: {
+              params: {active: true, option_group_id: 'participant_role'}
+            },
+            select: {
+              minimumInputLength: 0
+            }
+          })
       }
     })
 

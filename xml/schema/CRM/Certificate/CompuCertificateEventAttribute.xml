@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Certificate</base>
+  <class>CompuCertificateEventAttribute</class>
+  <name>compucertificate_event_attribute</name>
+  <comment>Table to store attributes peculiar to CompuCertificate of type event </comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique CompuCertificateEventAttribute ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>certificate_id</name>
+    <type>int unsigned</type>
+    <comment>FK to CompuCertificate</comment>
+  </field>
+  <foreignKey>
+    <name>certificate_id</name>
+    <table>compucertificate_certificate</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>participant_type_id</name>
+    <type>int unsigned</type>
+    <comment>Particiapnt Type ID</comment>
+  </field>
+
+</table>

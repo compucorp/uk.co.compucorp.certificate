@@ -1,5 +1,7 @@
 <?php
 
+use CRM_Certificate_Enum_CertificateType as CertificateType;
+
 /**
  * CRM_Certificate_Api_Wrapper_CompuCertificate.
  *
@@ -23,13 +25,25 @@ class CRM_Certificate_Api_Wrapper_CompuCertificate implements API_Wrapper {
 
     $certificates = [];
 
+    if (empty($contactId)) {
+      return [];
+    }
+
     switch (TRUE) {
       case empty($params['entity']):
-        $certificates = $this->getContactCasesCertificates($contactId);
+        $certificates = $this->getContactEntityCertificate(CertificateType::CASES, $contactId);
         break;
 
       case $params['entity'] === 'case':
-        $certificates = $this->getContactCasesCertificates($contactId);
+        $certificates = $this->getContactEntityCertificate(CertificateType::CASES, $contactId);
+        break;
+
+      case $params['entity'] === 'event':
+        $certificates = $this->getContactEntityCertificate(CertificateType::EVENTS, $contactId);
+        break;
+
+      case $params['entity'] === 'membership':
+        $certificates = $this->getContactEntityCertificate(CertificateType::MEMBERSHIPS, $contactId);
         break;
 
       default:
@@ -40,9 +54,8 @@ class CRM_Certificate_Api_Wrapper_CompuCertificate implements API_Wrapper {
     return $certificates;
   }
 
-  private function getContactCasesCertificates(int $contactId) {
-    $certificateType = CRM_Certificate_Enum_CertificateType::CASES;
-    $entity = CRM_Certificate_Entity_EntityFactory::create($certificateType);
+  private function getContactEntityCertificate(int $entity, int $contactId) {
+    $entity = CRM_Certificate_Entity_EntityFactory::create($entity);
     $certificates = $entity->getContactCertificates($contactId);
 
     return $certificates;

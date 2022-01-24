@@ -8,6 +8,13 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
   /**
    * {@inheritDoc}
    */
+  public function store($values) {
+    return (new CRM_Certificate_Service_CertificateCase())->store($values);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public function getTypes() {
     $result = civicrm_api3('CaseType', 'get', [
       'sequential' => 1,
@@ -81,6 +88,23 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
     }, $entityTypes);
 
     return $entityTypes;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getCertificateConfigurationById($certificateId) {
+    $certificateDAO = CRM_Certificate_BAO_CompuCertificate::findById($certificateId);
+    $statuses = $this->getCertificateConfiguredStatuses($certificateDAO->id);
+    $types = $this->getCertificateConfiguredTypes($certificateDAO->id);
+
+    return [
+      'name' => $certificateDAO->name,
+      'type' => $certificateDAO->entity,
+      'message_template_id' => $certificateDAO->template_id,
+      'statuses' => implode(',', array_column($statuses, 'id')),
+      'linked_to' => implode(',', array_column($types, 'id')),
+    ];
   }
 
   /**

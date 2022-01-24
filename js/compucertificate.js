@@ -1,14 +1,14 @@
-var waitForElement = function ($, elementPath, callBack) {
+window.waitForElement = function ($, elementPath, callBack) {
   window.setTimeout(function () {
     if ($(elementPath).length) {
       callBack($, $(elementPath));
     } else {
-      waitForElement($, elementPath, callBack);
+      window.waitForElement($, elementPath, callBack);
     }
   }, 500);
 };
 
-var downloadLink = function () {
+window.downloadLink = function () {
   const btn = document.createElement('button');
   const ts = CRM.ts('uk.co.compucorp.certificate');
   btn.innerHTML = ts(
@@ -22,9 +22,3 @@ var downloadLink = function () {
   btn.style.marginRight = '5px';
   return btn;
 };
-
-CRM.$(function ($) {
-  waitForElement($, 'div.crm-event-participant-view-form-block table.crm-info-panel', function ($, elements) {
-    $('.ui-dialog-buttonpane > .ui-dialog-buttonset').append(downloadLink());
-  });
-});

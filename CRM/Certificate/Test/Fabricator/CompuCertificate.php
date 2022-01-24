@@ -17,6 +17,10 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
         $certificate = self::fabricateEventCertificate($values);
         break;
 
+      case CRM_Certificate_Enum_CertificateType::MEMBERSHIPS:
+        $certificate = self::fabricateMembershipCertificate($values);
+        break;
+
       default:
         $certificate = self::fabricateCaseCertificate($values);
     }
@@ -37,7 +41,7 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
     }
 
     $values = array_merge(self::getDefaultParams(), $values);
-    $storeCertificate = new CRM_Certificate_Service_Certificate();
+    $storeCertificate = new CRM_Certificate_Service_CertificateCase();
     return $storeCertificate->store($values);
   }
 
@@ -55,7 +59,25 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
     }
 
     $values = array_merge(self::getDefaultParams(), $values);
-    $storeCertificate = new CRM_Certificate_Service_Certificate();
+    $storeCertificate = new CRM_Certificate_Service_CertificateEvent();
+    return $storeCertificate->store($values);
+  }
+
+  public static function fabricateMembershipCertificate($values) {
+    $values['type'] = CRM_Certificate_Enum_CertificateType::MEMBERSHIPS;
+
+    if (empty($values['linked_to'])) {
+      $membershipType = CRM_Certificate_Test_Fabricator_MembershipType::fabricate(['is_active' => 1]);
+      $values['linked_to'] = (array) $membershipType['id'];
+    }
+
+    if (empty($values['statuses'])) {
+      $status = CRM_Certificate_Test_Fabricator_MembershipStatus::fabricate(['is_active' => 1]);
+      $values['statuses'] = (array) $status['id'];
+    }
+
+    $values = array_merge(self::getDefaultParams(), $values);
+    $storeCertificate = new CRM_Certificate_Service_CertificateMembership();
     return $storeCertificate->store($values);
   }
 
