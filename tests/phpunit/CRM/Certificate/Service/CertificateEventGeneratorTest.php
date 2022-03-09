@@ -41,7 +41,7 @@ class CRM_Certificate_Service_EventCertificateGeneratorTest extends BaseHeadless
     $this->assertContains($participant['participant_source'], $result['html']);
   }
 
-  public function testGenerateCertificateWillResolveEventTokenWithEmptySummaryFields() {
+  public function testGenerateCertificateWillResolveEventTokenWithEmptySummaryField() {
     $content = $this->getMsgContent(
       "Summary: {certificate_event.summary} \n
       Start date: {certificate_event.start_date}"

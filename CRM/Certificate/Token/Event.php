@@ -121,8 +121,8 @@ class CRM_Certificate_Token_Event extends CRM_Certificate_Token_AbstractCertific
     $tokens['start_date']['text/html'] = !empty($event['start_date']) ? CRM_Utils_Date::customFormat($event['start_date']) : '';
     $tokens['end_date']['text/html'] = !empty($event['end_date']) ? CRM_Utils_Date::customFormat($event['end_date']) : '';
     $tokens['event_type']['text/html'] = CRM_Core_PseudoConstant::getLabel('CRM_Event_BAO_Event', 'event_type_id', $event['event_type_id']);
-    $tokens['contact_phone']['text/html'] = $event['phone.phone'];
-    $tokens['contact_email']['text/html'] = $event['email.email'];
+    $tokens['contact_phone']['text/html'] = $event['phone.phone'] ?? '';
+    $tokens['contact_email']['text/html'] = $event['email.email'] ?? '';
 
     foreach (array_keys($this->entityTokens()) as $field) {
       if (!isset($tokens[$field])) {
@@ -132,7 +132,7 @@ class CRM_Certificate_Token_Event extends CRM_Certificate_Token_AbstractCertific
           $tokens[$field]['text/html'] = CRM_Core_BAO_CustomField::displayValue((string) $event[$customField], $id, $event['id']);
         }
         else {
-          $tokens[$field]['text/html'] = $event[$field];
+          $tokens[$field]['text/html'] = $event[$field] ?? '';
         }
       }
     }
