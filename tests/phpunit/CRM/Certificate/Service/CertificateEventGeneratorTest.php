@@ -41,6 +41,34 @@ class CRM_Certificate_Service_EventCertificateGeneratorTest extends BaseHeadless
     $this->assertContains($participant['participant_source'], $result['html']);
   }
 
+  public function testGenerateCertificateWillResolveEventTokenWithEmptySummaryField() {
+    $content = $this->getMsgContent(
+      "Summary: {certificate_event.summary} \n
+      Start date: {certificate_event.start_date}"
+    );
+    $template = CRM_Certificate_Test_Fabricator_MessageTemplate::fabricate($content);
+    $participant = $this->createParticipant();
+    $event = $participant["event"];
+
+    // Empty event summary and description.
+    $result = civicrm_api3("Event", "create", array_merge(
+      $event,
+      [
+        "summary" => "",
+        "description" => "",
+      ]
+    ));
+
+    $contact = $participant["contact"];
+
+    $generatorService = new CRM_Certificate_Service_CertificateGenerator();
+    $result = $generatorService->generate($template["id"], $contact["id"], $participant["id"]);
+
+    $this->assertContains($contact["display_name"], $result["html"]);
+    $this->assertContains($event["title"], $result["html"]);
+    $this->assertContains(CRM_Utils_Date::customFormat($event["start_date"]), $result["html"]);
+  }
+
   private function getMsgContent($extra = "") {
     return [
       'msg_html' => "Hello {contact.display_name} Subject is {certificate_event.title} {$extra}",
