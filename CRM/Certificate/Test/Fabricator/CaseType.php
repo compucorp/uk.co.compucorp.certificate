@@ -5,6 +5,15 @@
  */
 class CRM_Certificate_Test_Fabricator_CaseType {
 
+  /**
+   * Fabricates new CaseType entity.
+   *
+   * @param array $params
+   *   Case parameters.
+   *
+   * @return array
+   *   Values of newly created Case entity.
+   */
   public static function fabricate($params = []) {
     $params = array_merge(self::getDefaultParams(), $params);
     $result = civicrm_api3(
@@ -16,9 +25,13 @@ class CRM_Certificate_Test_Fabricator_CaseType {
     return array_shift($result['values']);
   }
 
+  /**
+   * Returns default Parameters.
+   *
+   * @var array
+   */
   public static function getDefaultParams() {
     $title = md5(mt_rand());
-    $activityTypes = md5(mt_rand());
     $activity = md5(mt_rand());
     return [
       'title' => $title,
@@ -28,7 +41,7 @@ class CRM_Certificate_Test_Fabricator_CaseType {
       'weight' => 100,
       'definition' => [
         'activityTypes' => [
-          ['name' => $activityTypes],
+          ['name' => 'Meeting'],
         ],
         'activitySets' => [
           [
