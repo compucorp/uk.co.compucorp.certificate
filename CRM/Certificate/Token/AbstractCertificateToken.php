@@ -23,7 +23,7 @@ abstract class CRM_Certificate_Token_AbstractCertificateToken extends AbstractTo
    * @return bool
    */
   public function checkActive(\Civi\Token\TokenProcessor $processor) {
-    return !empty(array_intersect([static::TOKEN], $processor->context["hookTokenCategories"]));
+    return !empty(array_intersect([static::TOKEN], \CRM_Utils_Token::getTokenCategories()));
   }
 
   /**
