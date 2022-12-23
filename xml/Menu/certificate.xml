@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <menu>
   <item>
+    <path>civicrm/admin/certificates/imageFormats</path>
+    <page_callback>CRM_Certificate_Page_CertificateImageFormats</page_callback>
+    <title>ConfigureCertificate</title>
+    <access_arguments>configure certificates</access_arguments>
+  </item>
+  <item>
     <path>civicrm/admin/certificates/add</path>
     <page_callback>CRM_Certificate_Form_CertificateConfigure</page_callback>
     <title>CertificateConfigure</title>
