@@ -98,6 +98,24 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     );
 
     $this->add(
+      'datepicker',
+      'start_date',
+      ts('Start Date'),
+      NULL,
+      TRUE,
+      ['minDate' => date('Y-m-d'), 'time' => FALSE]
+    );
+
+    $this->add(
+      'datepicker',
+      'end_date',
+      ts('End Date'),
+      NULL,
+      TRUE,
+      ['minDate' => date('Y-m-d'), 'time' => FALSE]
+    );
+
+    $this->add(
       'select',
       'download_format',
       ts('Download Format'),
@@ -244,6 +262,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $this->validateLinkedToField($values, $errors);
     $this->validateStatusesField($values, $errors);
     $this->validateFormatType($values, $errors);
+    $this->validateDateField($values, $errors);
 
     // The participant_type field should only be validated for Event Certificate.
     if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
@@ -311,6 +330,18 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
   public function validateFormatType($values, &$errors) {
     if ($values['download_format'] == "2" && empty($values['image_format_id'])) {
       $errors['image_format_id'] = ts('Image format field is required');
+    }
+  }
+
+  /**
+   * Validates date field.
+   *
+   * @param array $values
+   * @param array $errors
+   */
+  public function validateDateField($values, &$errors) {
+    if (strtotime($values['end_date']) <= strtotime($values['start_date'])) {
+      $errors['end_date'] = ts('End date field must be after start date');
     }
   }
 

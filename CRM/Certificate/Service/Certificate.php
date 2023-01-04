@@ -26,6 +26,8 @@ class CRM_Certificate_Service_Certificate {
       }
       $params['name'] = $values['name'];
       $params['entity'] = $values['type'];
+      $params['end_date'] = $values['end_date'];
+      $params['start_date'] = $values['start_date'];
       $params['template_id'] = $values['message_template_id'];
       $params['download_format'] = $values['download_format'] ?? CompuCertificateBAO::PDF;
       if ($params['download_format'] == CompuCertificateBAO::IMAGE) {
