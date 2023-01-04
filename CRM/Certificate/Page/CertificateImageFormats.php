@@ -41,7 +41,7 @@ class CRM_Certificate_Page_CertificateImageFormats extends CRM_Core_Page_Basic {
     $this->assign('rows', $imageFormatList);
   }
 
-    /**
+  /**
    * Get name of edit form.
    *
    * @return string

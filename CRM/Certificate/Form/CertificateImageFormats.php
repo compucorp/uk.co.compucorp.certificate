@@ -23,7 +23,6 @@ class CRM_Certificate_Form_CertificateImageFormats extends CRM_Admin_Form {
 
   public function preProcess() {
     parent::preProcess();
-    
 
     $actionPrefix = [CRM_Core_Action::UPDATE => 'Update', CRM_Core_Action::DELETE => 'Delete'];
     $titlePrefix = CRM_Utils_Array::value($this->_action, $actionPrefix, 'Add');
@@ -45,8 +44,8 @@ class CRM_Certificate_Form_CertificateImageFormats extends CRM_Admin_Form {
 
     $this->add('text', 'name', ts('Name'), [], TRUE);
     $this->add('text', 'description', ts('Description'));
-    $this->add('text', 'width', ts('Width (px)'), ['min'=> 1, 'step' => '0.01'], TRUE);
-    $this->add('text', 'height', ts('Height (px)'), ['min'=> 1, 'step' => '0.01'], TRUE);
+    $this->add('text', 'width', ts('Width (px)'), ['min' => 1, 'step' => '0.01'], TRUE);
+    $this->add('text', 'height', ts('Height (px)'), ['min' => 1, 'step' => '0.01'], TRUE);
     $this->add('text', 'quality', ts('Quality'), ['min' => 1, 'max' => 10], TRUE);
     $this->add('select', 'extension', ts('Extension'), CompuCertificateImageFormat::getSupportedExtensions(), FALSE);
     $this->add('checkbox', 'is_default', ts('Is this Image Format the default?'));
@@ -60,7 +59,7 @@ class CRM_Certificate_Form_CertificateImageFormats extends CRM_Admin_Form {
     return $this->_values;
   }
 
-    /**
+  /**
    * Process the form submission.
    */
   public function postProcess() {
@@ -79,7 +78,7 @@ class CRM_Certificate_Form_CertificateImageFormats extends CRM_Admin_Form {
     if ($this->_action & CRM_Core_Action::UPDATE) {
       $status = ts('Image Format titled <strong>%1</strong> has been updated.', [1 => $values['name']], ts('Saved'), 'success');
     }
-    CRM_Core_Session::setStatus($status,'Image format updated', 'success');
+    CRM_Core_Session::setStatus($status, 'Image format updated', 'success');
   }
 
   /**
@@ -98,4 +97,5 @@ class CRM_Certificate_Form_CertificateImageFormats extends CRM_Admin_Form {
     }
     return $elementNames;
   }
+
 }

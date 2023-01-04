@@ -1,5 +1,8 @@
 <?php
 
+use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
+use CRM_Certificate_Test_Fabricator_ImageFormat as ImageFormatFabricator;
+
 /**
  * Fabricates ccertificate configuration for an entity.
  */
@@ -86,6 +89,8 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
     return [
       'name' => $name,
       'message_template_id'  => 1,
+      'downolad_format' => CompuCertificate::IMAGE,
+      'image_format_id' => ImageFormatFabricator::fabricate()['id'],
     ];
   }
 
