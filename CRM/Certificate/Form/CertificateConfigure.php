@@ -1,6 +1,8 @@
 <?php
 
 use CRM_Certificate_ExtensionUtil as E;
+use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
+use CRM_Certificate_BAO_CompuCertificateImageFormat as CompuCertificateImageFormat;
 
 /**
  * CertificateConfigure Form controller class
@@ -93,6 +95,26 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
         'class' => 'form-control',
       ],
       TRUE
+    );
+
+    $this->add(
+      'select',
+      'download_format',
+      ts('Download Format'),
+      CompuCertificate::getSupportedDownloadFormats(),
+      TRUE,
+      ['class' => 'form-control']
+    );
+
+    $this->add(
+      'select',
+      'image_format_id',
+      ts('Image Format'),
+      [
+        'null' => ts('- Image Format -'),
+      ] + CompuCertificateImageFormat::getList(TRUE),
+      FALSE,
+      ['class' => 'form-control']
     );
 
     $this->addButtons([
@@ -221,6 +243,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $this->validateCertificateName($values, $errors);
     $this->validateLinkedToField($values, $errors);
     $this->validateStatusesField($values, $errors);
+    $this->validateFormatType($values, $errors);
 
     // The participant_type field should only be validated for Event Certificate.
     if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
@@ -276,6 +299,18 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
   public function validateParticipantTypeField($values, &$errors) {
     if (empty($values['participant_type_id'])) {
       $errors['participant_type_id'] = ts('The "Event role" field is required');
+    }
+  }
+
+  /**
+   * Validates download format field.
+   *
+   * @param array $values
+   * @param array $errors
+   */
+  public function validateFormatType($values, &$errors) {
+    if ($values['download_format'] == "2" && empty($values['image_format_id'])) {
+      $errors['image_format_id'] = ts('Image format field is required');
     }
   }
 
