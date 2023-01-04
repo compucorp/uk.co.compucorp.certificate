@@ -65,8 +65,13 @@ class CRM_Certificate_Upgrader extends CRM_Certificate_Upgrader_Base {
     return TRUE;
   }
 
+  /**
+   * Adds columns and option group for image format support.
+   */
   public function upgrade_0002() {
+    $this->ctx->log->info('Applying update 0002');
     (new AddCertificateImageFormatOptionGroup)->apply();
+    $this->executeSqlFile('sql/upgrade_0002.sql');
 
     return TRUE;
   }
