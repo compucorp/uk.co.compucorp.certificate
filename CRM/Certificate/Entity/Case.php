@@ -101,6 +101,10 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
     return [
       'name' => $certificateDAO->name,
       'type' => $certificateDAO->entity,
+      'end_date' => $certificateDAO->end_date,
+      'start_date' => $certificateDAO->start_date,
+      'download_format' => $certificateDAO->download_format,
+      'image_format_id' => $certificateDAO->image_format_id,
       'message_template_id' => $certificateDAO->template_id,
       'statuses' => implode(',', array_column($statuses, 'id')),
       'linked_to' => implode(',', array_column($types, 'id')),
