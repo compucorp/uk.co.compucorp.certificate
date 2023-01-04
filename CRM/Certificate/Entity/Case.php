@@ -128,6 +128,7 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
       $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::CASES);
       $certificateBAO->whereAdd('entity_type_id = ' . $case['case_type_id']);
       $certificateBAO->whereAdd('status_id = ' . $case['status_id']);
+      $certificateBAO->whereAdd('start_date IS NULL OR end_date IS NULL OR start_date = CURRENT_DATE OR end_date = CURRENT_DATE OR CURRENT_TIMESTAMP BETWEEN start_date AND end_date');
       $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '.id Desc');
       $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '.id');
       $certificateBAO->find(TRUE);
@@ -169,6 +170,8 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
           $certificate = [
             'case_id' => $caseContact['case_id'],
             'name' => $configuredCertificate['name'],
+            'end_date' => $configuredCertificate['end_date'],
+            'start_date' => $configuredCertificate['start_date'],
             'type' => 'Case',
             'linked_to' => $caseContact['case_id.case_type_id.title'],
             'download_link' => $this->getCertificateDownloadUrl($caseContact['case_id'], $contactId, TRUE),

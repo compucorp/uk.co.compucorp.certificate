@@ -129,6 +129,7 @@ class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_Entity
       $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::MEMBERSHIPS);
       $certificateBAO->whereAdd("entity_type_id = {$membership['membership_type_id']} OR entity_type_id IS NULL");
       $certificateBAO->whereAdd("status_id = {$membership['status_id']}  OR status_id IS NULL");
+      $certificateBAO->whereAdd('start_date IS NULL OR end_date IS NULL OR start_date = CURRENT_DATE OR end_date = CURRENT_DATE OR CURRENT_TIMESTAMP BETWEEN start_date AND end_date');
       $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id Desc');
       $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id');
       $certificateBAO->find(TRUE);
