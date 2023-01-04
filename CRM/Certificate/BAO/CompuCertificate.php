@@ -62,7 +62,7 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
 
   /**
    * Returns the supported download formats.
-   * 
+   *
    * @return array
    */
   public static function getSupportedDownloadFormats() {

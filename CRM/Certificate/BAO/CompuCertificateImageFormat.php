@@ -213,7 +213,6 @@ class CRM_Certificate_BAO_CompuCertificateImageFormat extends CRM_Core_DAO_Optio
     throw new CRM_Core_Exception(ts('Invalid value passed to delete function.'));
   }
 
-
   /**
    * Retrieve DB object based on input parameters.
    *
@@ -243,4 +242,5 @@ class CRM_Certificate_BAO_CompuCertificateImageFormat extends CRM_Core_DAO_Optio
     }
     return NULL;
   }
+
 }
