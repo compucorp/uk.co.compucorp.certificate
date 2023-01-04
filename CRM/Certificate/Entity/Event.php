@@ -142,6 +142,7 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
       $certificateBAO->whereAdd('entity_type_id = ' . $participant['event_id'] . ' OR entity_type_id IS NULL');
       $certificateBAO->whereAdd('status_id = ' . $participant['participant_status_id'] . ' OR status_id IS NULL');
       $certificateBAO->whereAdd('participant_type_id IN (' . $participantRoleIds . ') OR participant_type_id IS NULL');
+      $certificateBAO->whereAdd('start_date IS NULL OR end_date IS NULL OR start_date = CURRENT_DATE OR end_date = CURRENT_DATE OR CURRENT_TIMESTAMP BETWEEN start_date AND end_date');
       $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id Desc');
       $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id');
       $certificateBAO->find(TRUE);
