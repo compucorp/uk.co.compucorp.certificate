@@ -28,6 +28,7 @@
   let performingUpdate = false
   const TYPE_CASES = "1";
   const TYPE_EVENTS = "2";
+  const FORMAT_IMAGE = "2";
 
   { literal }
 
@@ -48,6 +49,7 @@
   CRM.$(function ($) {
 
     $('.participant_type_id').hide();
+    $('.image_format_id').hide();
 
     /**
      * if an entity is selected we want to populate the 
@@ -76,7 +78,7 @@
 
         toggleRequiredMarker($, e.target.value);
       }
-    })
+    });
 
     CRM.$('[name=linked_to]').on('change', function (e) {
       if (e.target.value > 0 && CRM.$('[name=type]').val() === TYPE_EVENTS) {
@@ -93,7 +95,16 @@
             }
           })
       }
-    })
+    });
+
+    CRM.$('#download_format').on('change', function (e) {
+      if (e.target.value === FORMAT_IMAGE) {
+        $('.image_format_id').show();
+        $('.image_format_id > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
+      } else {
+        $('.image_format_id').hide();
+      }
+    });
 
     //this is to trigger the entity ref, when value of certifcate type is set from the backend
     if ($('[name=type]')[0].value) {
@@ -101,6 +112,7 @@
       $('[name=type]').change();
     }
 
+    CRM.$('#download_format').change();
   });
 
   { /literal}
