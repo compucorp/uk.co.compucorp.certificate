@@ -9,7 +9,6 @@ abstract class BaseHeadlessTest extends PHPUnit_Framework_TestCase implements
 
   public function setUpHeadless() {
     return \Civi\Test::headless()
-      ->uninstallMe(__DIR__)
       ->installMe(__DIR__)
       ->install(['uk.co.compucorp.civicase'])
       ->apply();

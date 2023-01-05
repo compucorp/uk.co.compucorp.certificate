@@ -62,6 +62,7 @@ class CRM_Certificate_Token_CaseTest extends BaseHeadlessTest {
     $tokenValueEventMock->method('getTokenProcessor')->willReturn($tokenProcessorMock);
     $tokenProcessorMock->method('getContextValues')->will($this->onConsecutiveCalls(
       [$case['id']],
+      [array_shift($case['contact_id'])],
       [array_shift($case['contact_id'])]
     ));
 
