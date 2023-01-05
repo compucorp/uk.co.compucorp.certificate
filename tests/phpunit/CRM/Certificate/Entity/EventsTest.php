@@ -7,6 +7,8 @@
  */
 class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
 
+  use CRM_Certificate_Test_Helper_Event;
+
   /**
    * Test the appropraite types are returned
    *  i.e. only active types are returned.
@@ -122,6 +124,46 @@ class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
     $configuration = $eventEntity->getCertificateConfiguration($participantId, $contactId);
 
     $this->assertFalse($configuration);
+  }
+
+  /**
+   * Test that only certificates wihthin the validitly period is returned.
+   */
+  public function testExpiredEventCertificatesAreNotReturned() {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+
+    $participant = $this->createParticipant(['contact_id' => $contact['id']]);
+    $params = [
+      'linked_to' => [$participant['event_id']],
+      'statuses'  => [$participant['participant_status_id']],
+    ];
+    $validCertificate[] = $this->createEventCertificate(array_merge(['start_date' => date('Y-m-d')], $params));
+
+    $participant = $this->createParticipant(['contact_id' => $contact['id']]);
+    $params = [
+      'linked_to' => [$participant['event_id']],
+      'statuses'  => [$participant['participant_status_id']],
+    ];
+    $invalidCertificate[] = $this->createEventCertificate(array_merge(['start_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days"))], $params));
+
+    $participant = $this->createParticipant(['contact_id' => $contact['id']]);
+    $params = [
+      'linked_to' => [$participant['event_id']],
+      'statuses'  => [$participant['participant_status_id']],
+    ];
+    $invalidCertificate[] = $this->createEventCertificate(array_merge([
+      'start_date' => $this->getDate("- 10 days"),
+      'end_date' => $this->getDate("- 6 days"),
+    ], $params));
+
+    $eventEntity = new CRM_Certificate_Entity_Event();
+    $avaliableCertificates = $eventEntity->getContactCertificates($contact["id"]);
+
+    $this->assertEquals(count($validCertificate), count($avaliableCertificates));
+
+    $expectedEventsId = array_column($validCertificate, "id");
+    $avaliableCertificatesEventId = array_column($avaliableCertificates, "event_id");
+    $this->assertCount(0, array_diff($expectedEventsId, $avaliableCertificatesEventId));
   }
 
   private function createCertificate($values = []) {
