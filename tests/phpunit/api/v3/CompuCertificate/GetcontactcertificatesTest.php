@@ -150,6 +150,68 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
     $this->assertEquals($membership['id'], $results['values'][0]['membership_id']);
   }
 
+  /**
+   * Test that the api does not return expired memberships certificate .
+   */
+  public function testExpiredMembershipCertficateIsNotReturnedForAPI() {
+    $membership = $this->createMembership();
+    $this->createMembershipCertificate(
+      [
+        'linked_to' => [$membership['membership_type_id']],
+        'statuses'  => [$membership['status_id']],
+        'start_date' => $this->getDate('- 15 days'),
+        'end_date' => $this->getDate('- 1 days'),
+      ]
+    );
+
+    $contact = $membership['contact'];
+
+    $param = ['entity' => 'membership', 'contact_id' => $contact['id']];
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
+
+    $this->assertEmpty($results['values']);
+  }
+
+  /**
+   * Test that the api does not return expired events certificate.
+   */
+  public function testExpiredEventCertficateIsNotReturnedForAPI() {
+    $participant = $this->createParticipant(['contact_id' => $this->client_id]);
+    $this->createEventCertificate(
+      [
+        'linked_to' => [$participant['event_id']],
+        'statuses'  => [$participant['participant_status_id']],
+        'start_date' => $this->getDate('- 15 days'),
+        'end_date' => $this->getDate('- 1 days'),
+      ]
+    );
+
+    $param = ['entity' => 'event'];
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
+
+    $this->assertEquals(0, $results['count']);
+  }
+
+  /**
+   * Test that the api does not return expired cases certificate.
+   */
+  public function testExpiredCaseCertficateIsNotReturnedForAPI() {
+    $caseParam = [
+      'client_id' => $this->client_id,
+      'start_date' => $this->getDate('- 15 days'),
+      'end_date' => $this->getDate('- 1 days'),
+    ];
+    $this->createCaseCertificate($caseParam);
+
+    $param = ['entity' => 'case'];
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
+
+    $this->assertEquals(0, $results['count']);
+  }
+
   public function tearDown() {
     $this->unregisterCurrentLoggedInContactFromSession();
     parent::tearDown();
