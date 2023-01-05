@@ -21,6 +21,8 @@ class CRM_Certificate_Service_CertificateEventTest extends BaseHeadlessTest {
       'statuses' => $statuses,
       'linked_to' => $types,
       'participant_type_id' => 1,
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
     ];
 
     $certificateCreator = new CRM_Certificate_Service_CertificateEvent();
@@ -45,6 +47,8 @@ class CRM_Certificate_Service_CertificateEventTest extends BaseHeadlessTest {
       'statuses' => $statuses,
       'linked_to' => $types,
       'participant_type_id' => 1,
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d'),
     ];
 
     $certificateCreator = new CRM_Certificate_Service_CertificateEvent();
@@ -66,6 +70,8 @@ class CRM_Certificate_Service_CertificateEventTest extends BaseHeadlessTest {
       'statuses' => [],
       'linked_to' => [],
       'participant_type_id' => 1,
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d'),
     ];
 
     $certificateCreator = new CRM_Certificate_Service_CertificateEvent();
