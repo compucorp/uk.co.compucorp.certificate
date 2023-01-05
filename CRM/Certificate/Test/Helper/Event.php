@@ -38,6 +38,8 @@ trait CRM_Certificate_Test_Helper_Event {
       'linked_to' => $event['id'],
       'statuses' => $statuses,
       'participant_type_id' => 1,
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 10 days")),
     ], $params);
 
     return CompuCertificateFabricator::fabricate(CertificateType::EVENTS, $values);

@@ -57,7 +57,7 @@ class CaseCertificateUrlTokensValuesTest extends BaseHeadlessTest {
     $contactCaseUrl = $contactValues[$contact['id']]['certificate_url.case'] ?? "";
 
     $contactCaseUrl = parse_url($contactCaseUrl);
-    $contactCaseUrl = explode("q=", $contactCaseUrl["query"])[1];
+    $contactCaseUrl = explode("q=", $contactCaseUrl["query"])[1] ?? $contactCaseUrl["query"];
     parse_str($contactCaseUrl, $parsedUrl);
 
     $this->assertEquals($contact['id'], $parsedUrl["cid"]);
