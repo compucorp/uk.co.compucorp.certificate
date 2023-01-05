@@ -91,6 +91,8 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
       'message_template_id'  => 1,
       'downolad_format' => CompuCertificate::IMAGE,
       'image_format_id' => ImageFormatFabricator::fabricate()['id'],
+      'start_date' => date("Y-m-d"),
+      'end_date' => date("Y-m-d", strtotime(date("Y-m-d") . " + 10 days")),
     ];
   }
 

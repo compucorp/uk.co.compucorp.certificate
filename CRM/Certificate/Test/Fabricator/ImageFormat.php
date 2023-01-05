@@ -10,6 +10,9 @@ class CRM_Certificate_Test_Fabricator_ImageFormat {
   public static function fabricate($params = []) {
     $params = array_merge(self::getDefaultParams(), $params);
 
+    if ($result = self::existingFormat($params)) {
+      return $result;
+    }
     $result = civicrm_api3(
       'OptionValue',
       'create',
@@ -28,6 +31,16 @@ class CRM_Certificate_Test_Fabricator_ImageFormat {
       'name' => $name,
       'value' => '{"extension":"jpg","quality":5,"height":2,"width":12.55}',
     ];
+  }
+
+  public static function existingFormat(array $params) {
+    $result = civicrm_api3('OptionValue', 'get', [
+      'sequential' => 1,
+      'option_group_id' => $params['option_group_id'],
+      'value' => $params['value'],
+    ]);
+
+    return $result['values'][0] ?? FALSE;
   }
 
 }

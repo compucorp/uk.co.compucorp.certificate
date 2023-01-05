@@ -52,6 +52,8 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
       'type' => CRM_Certificate_Enum_CertificateType::MEMBERSHIPS,
       'linked_to' => [$membershipType['id']],
       'statuses' => [$membershipStatus['id']],
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
     ];
 
     $expectedStatus = ['id' => $membershipStatus['id'], 'label' => $membershipStatus['label']];
@@ -77,6 +79,8 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
       'type' => CRM_Certificate_Enum_CertificateType::MEMBERSHIPS,
       'linked_to' => [$membershipType['id']],
       'statuses' => [$membershipStatus['id']],
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
     ];
 
     $expectedType = ['id' => $membershipType['id'], 'label' => $membershipType['name']];
@@ -114,6 +118,8 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
       'type' => CRM_Certificate_Enum_CertificateType::MEMBERSHIPS,
       'linked_to' => [$membershipType['id']],
       'statuses' => [$membershipStatus['id']],
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
     ];
     $this->createCertificate($values);
 
@@ -216,6 +222,8 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
       [
         'linked_to' => NULL,
         'statuses'  => NULL,
+        'start_date' => date('Y-m-d'),
+        'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
       ]
     );
 
@@ -238,6 +246,8 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
       [
         'linked_to' => NULL,
         'statuses'  => NULL,
+        'start_date' => date('Y-m-d'),
+        'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
       ]
     );
 
