@@ -28,12 +28,12 @@ class CRM_Certificate_BAO_CompuCertificateImageFormat extends CRM_Core_DAO_Optio
     'height' => [
       'name' => 'height',
       'type' => CRM_Utils_Type::T_FLOAT,
-      'default' => 500,
+      'default' => '',
     ],
     'width' => [
       'name' => 'width',
       'type' => CRM_Utils_Type::T_FLOAT,
-      'default' => 500,
+      'default' => '',
     ],
   ];
 
@@ -240,6 +240,27 @@ class CRM_Certificate_BAO_CompuCertificateImageFormat extends CRM_Core_DAO_Optio
       CRM_Core_DAO::storeValues($optionValue, $values);
       return $optionValue;
     }
+    return NULL;
+  }
+
+  /**
+   * Get Image Format from the DB.
+   *
+   * @param string $field
+   *   Field name to search by.
+   * @param int $val
+   *   Field value to search for.
+   *
+   * @return array
+   *   associative array of name/value pairs
+   */
+  public static function getImageFormat($field, $val) {
+    $params = ['is_active' => 1, $field => $val];
+    $imageFormat = [];
+    if (self::retrieve($params, $imageFormat)) {
+      return $imageFormat;
+    }
+
     return NULL;
   }
 

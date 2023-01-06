@@ -1,5 +1,8 @@
 <?php
 
+use CRM_Certificate_BAO_CompuCertificate as CompuCertificateBAO;
+use CRM_Certificate_BAO_CompuCertificateImageFormat as CompuCertificateImageFormatBAO;
+
 class CRM_Certificate_Service_CertificateDownloader {
 
   /**
@@ -12,7 +15,13 @@ class CRM_Certificate_Service_CertificateDownloader {
   public function download($certificate, $contactId, $entityId) {
     $certificateGenerator = new CRM_Certificate_Service_CertificateGenerator($certificate->template_id);
     $generatedTemplate = $certificateGenerator->generate($certificate->template_id, $contactId, $entityId);
-    $this->renderPDF($generatedTemplate);
+
+    //here we decide to render has PDF or Image.
+    if ($certificate->download_format == CompuCertificateBAO::PDF) {
+      return $this->renderPDF($generatedTemplate);
+    }
+
+    return $this->renderImage($generatedTemplate['html'], $certificate->image_format_id);
   }
 
   /**
@@ -29,6 +38,19 @@ class CRM_Certificate_Service_CertificateDownloader {
       $content["format"]
     );
     CRM_Utils_System::civiExit();
+  }
+
+  /**
+   * Converts html content to Image, and return image file to the browser.
+   *
+   * @param string $html
+   * @param int $imageFormatId
+   */
+  private function renderImage($html, $imageFormatId) {
+    $page = new CRM_Certificate_Page_CertificateDownload();
+    $page->assign('certificateContent', $html);
+    $page->assign('imageFormat', json_encode(CompuCertificateImageFormatBAO::getImageFormat('id', $imageFormatId)));
+    $page->run();
   }
 
 }
