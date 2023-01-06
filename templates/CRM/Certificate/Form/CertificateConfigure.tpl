@@ -48,6 +48,7 @@
   
   CRM.$(function ($) {
 
+    $('.image_format_id > label ').append(' <span class="crm-marker" title="This field is required."> *</span>');
     $('.participant_type_id').hide();
     $('.image_format_id').hide();
 
@@ -100,7 +101,6 @@
     CRM.$('#download_format').on('change', function (e) {
       if (e.target.value === FORMAT_IMAGE) {
         $('.image_format_id').show();
-        $('.image_format_id > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
       } else {
         $('.image_format_id').hide();
       }

@@ -129,7 +129,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       'image_format_id',
       ts('Image Format'),
       [
-        'null' => ts('- Image Format -'),
+        NULL => ts('- Image Format -'),
       ] + CompuCertificateImageFormat::getList(TRUE),
       FALSE,
       ['class' => 'form-control']
