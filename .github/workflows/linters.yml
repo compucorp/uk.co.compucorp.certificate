@@ -28,4 +28,4 @@ jobs:
 
     - name: Run eslint linter
       if: ${{ always() }}
-      run: git diff --diff-filter=d origin/${GITHUB_BASE_REF} --name-only -- '*.js' | xargs -r  npx eslint --max-warnings=0 -c .eslintrc.json
+      run: git diff --diff-filter=d origin/${GITHUB_BASE_REF} --name-only -- '*.js' :^js/vendor | xargs -r  npx eslint --max-warnings=0 -c .eslintrc.json
