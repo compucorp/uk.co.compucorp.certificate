@@ -13,7 +13,7 @@ class CRM_Certificate_Service_CertificateDownloader {
    * @param int $entityId
    */
   public function download($certificate, $contactId, $entityId) {
-    $certificateGenerator = new CRM_Certificate_Service_CertificateGenerator($certificate->template_id);
+    $certificateGenerator = new CRM_Certificate_Service_CertificateGenerator($certificate->id);
     $generatedTemplate = $certificateGenerator->generate($certificate->template_id, $contactId, $entityId);
 
     //here we decide to render has PDF or Image.
