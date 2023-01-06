@@ -17,6 +17,8 @@
         <label class="col-sm-2 control-label">{$form.$elementName.label}</label>
         <div class="col-sm-7 col-md-5">
           {$form.$elementName.html}
+          <br>
+          <span class="description">{ts}{$elementDescriptions.$elementName}{/ts}</span>
         </div>
       </div>
       {/foreach}
