@@ -1,8 +1,7 @@
 <?php
 
 use CRM_Certificate_ExtensionUtil as E;
-use CRM_Certificate_Hook_PostInstall_AddCertificateImageFormatOptionGroup as AddCertificateImageFormatOptionGroup;
-use CRM_Certificate_Hook_Uninstall_RemoveCertificateImageFormatOptionGroup as RemoveCertificateImageFormatOptionGroup;
+use CRM_Certificate_Setup_Manage_CertificateImageFormatManager as CertificateImageFormatManager;
 
 /**
  * Collection of upgrade steps.
@@ -15,11 +14,11 @@ class CRM_Certificate_Upgrader extends CRM_Certificate_Upgrader_Base {
   public function onPostInstall(): void {
     try {
       $steps = [
-        new AddCertificateImageFormatOptionGroup(),
+        new CertificateImageFormatManager(),
       ];
 
       foreach ($steps as $step) {
-        $step->apply();
+        $step->create();
       }
     }
     catch (\Throwable $th) {
@@ -38,11 +37,11 @@ class CRM_Certificate_Upgrader extends CRM_Certificate_Upgrader_Base {
   public function uninstall(): void {
     try {
       $steps = [
-        new RemoveCertificateImageFormatOptionGroup(),
+        new CertificateImageFormatManager(),
       ];
 
       foreach ($steps as $step) {
-        $step->apply();
+        $step->remove();
       }
     }
     catch (\Throwable $th) {
@@ -52,6 +51,32 @@ class CRM_Certificate_Upgrader extends CRM_Certificate_Upgrader_Base {
           'message' => $th->getMessage(),
         ],
       ]);
+    }
+  }
+
+  /**
+   * Reactivate disabled entities.
+   */
+  public function enable() {
+    $steps = [
+      new CertificateImageFormatManager(),
+    ];
+
+    foreach ($steps as $step) {
+      $step->activate();
+    }
+  }
+
+  /**
+   * Deactivate neccessary entities.
+   */
+  public function disable() {
+    $steps = [
+      new CertificateImageFormatManager(),
+    ];
+
+    foreach ($steps as $step) {
+      $step->deactivate();
     }
   }
 
@@ -70,7 +95,7 @@ class CRM_Certificate_Upgrader extends CRM_Certificate_Upgrader_Base {
    */
   public function upgrade_0002() {
     $this->ctx->log->info('Applying update 0002');
-    (new AddCertificateImageFormatOptionGroup)->apply();
+    (new CertificateImageFormatManager)->create();
     $this->executeSqlFile('sql/upgrade_0002.sql');
 
     return TRUE;

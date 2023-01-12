@@ -2,7 +2,7 @@
 
 use CRM_Certificate_BAO_CompuCertificateImageFormat as CompuCertificateImageFormat;
 
-class CRM_Certificate_Hook_PostInstall_AddCertificateImageFormatOptionGroup {
+class CRM_Certificate_Setup_Manage_CertificateImageFormatManager extends CRM_Certificate_Setup_Manage_AbstractManager {
 
   /**
    * Reflects if the option group was just created.
@@ -11,13 +11,28 @@ class CRM_Certificate_Hook_PostInstall_AddCertificateImageFormatOptionGroup {
    */
   private $fresh = FALSE;
 
-  public function apply(): bool {
+  public function create(): void {
     $this->createImageFormatOptionGroup();
     $this->addDefaultImageFormats();
-
-    return TRUE;
   }
 
+  public function remove(): void {
+    $this->removeImageFormatOptionGroup();
+  }
+
+  protected function toggle($status): void {
+    civicrm_api3('OptionGroup', 'get', [
+      'sequential' => 1,
+      'name' => CRM_Certificate_BAO_CompuCertificateImageFormat::NAME,
+      'api.OptionGroup.create' => ['id' => '$value.id', 'is_active' => $status],
+    ]);
+  }
+
+  /**
+   * Creates image format option group.
+   *
+   * @throws CiviCRM_API3_Exception
+   */
   public function createImageFormatOptionGroup(): void {
     $count = civicrm_api3('OptionGroup', 'getcount', [
       'name' => CompuCertificateImageFormat::NAME,
@@ -34,6 +49,9 @@ class CRM_Certificate_Hook_PostInstall_AddCertificateImageFormatOptionGroup {
     }
   }
 
+  /**
+   * Adds the default image formats option values.
+   */
   public function addDefaultImageFormats(): void {
     if (!$this->fresh) {
       return;
@@ -57,6 +75,19 @@ class CRM_Certificate_Hook_PostInstall_AddCertificateImageFormatOptionGroup {
 
     $imageFormatBao->saveImageFormat($jpgFormat);
     $imageFormatBao->saveImageFormat($pngFormat);
+  }
+
+  /**
+   * Removes image format option group.
+   *
+   * @throws CiviCRM_API3_Exception
+   */
+  public function removeImageFormatOptionGroup(): void {
+    civicrm_api3('OptionGroup', 'get', [
+      'return' => ['id'],
+      'name' => CRM_Certificate_BAO_CompuCertificateImageFormat::NAME,
+      'api.OptionGroup.delete' => ['id' => '$value.id'],
+    ]);
   }
 
 }
