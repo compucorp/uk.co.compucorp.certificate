@@ -3,7 +3,7 @@
 use CRM_Certificate_Enum_CertificateType as CertificateType;
 use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
 
-class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInterface {
+class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity {
 
   /**
    * {@inheritDoc}
@@ -125,35 +125,21 @@ class CRM_Certificate_Entity_Event implements CRM_Certificate_Entity_EntityInter
   /**
    * {@inheritDoc}
    */
-  public function getCertificateConfiguration($entityId, $contactId) {
-    try {
-      $participant = civicrm_api3('Participant', 'getsingle', [
-        'participant_id' => $entityId,
-        'contact_id' => $contactId,
-        'is_active' => 1,
-      ]);
-      $participantRoleIds = implode(',', (array) $participant['participant_role_id']);
+  protected function addEntityConditionals($certificateBAO, $entityId, $contactId) {
+    $participant = civicrm_api3('Participant', 'getsingle', [
+      'participant_id' => $entityId,
+      'contact_id' => $contactId,
+      'is_active' => 1,
+    ]);
+    $participantRoleIds = implode(',', (array) $participant['participant_role_id']);
 
-      $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
-      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id'], 'LEFT');
-      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id'], 'LEFT');
-      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEventAttribute(), 'certificate_id'], 'LEFT');
-      $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::EVENTS);
-      $certificateBAO->whereAdd('entity_type_id = ' . $participant['event_id'] . ' OR entity_type_id IS NULL');
-      $certificateBAO->whereAdd('status_id = ' . $participant['participant_status_id'] . ' OR status_id IS NULL');
-      $certificateBAO->whereAdd('participant_type_id IN (' . $participantRoleIds . ') OR participant_type_id IS NULL');
-      $certificateBAO->whereAdd('start_date IS NULL OR end_date IS NULL OR start_date = CURRENT_DATE OR end_date = CURRENT_DATE OR CURRENT_TIMESTAMP BETWEEN start_date AND end_date');
-      $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id Desc');
-      $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id');
-      $certificateBAO->find(TRUE);
-
-      if (!empty($certificateBAO->id)) {
-        return $certificateBAO;
-      }
-    }
-    catch (Exception $e) {
-    }
-    return FALSE;
+    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id'], 'LEFT');
+    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id'], 'LEFT');
+    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEventAttribute(), 'certificate_id'], 'LEFT');
+    $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::EVENTS);
+    $certificateBAO->whereAdd('entity_type_id = ' . $participant['event_id'] . ' OR entity_type_id IS NULL');
+    $certificateBAO->whereAdd('status_id = ' . $participant['participant_status_id'] . ' OR status_id IS NULL');
+    $certificateBAO->whereAdd('participant_type_id IN (' . $participantRoleIds . ') OR participant_type_id IS NULL');
   }
 
   /**

@@ -3,7 +3,7 @@
 use CRM_Certificate_Enum_CertificateType as CertificateType;
 use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
 
-class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterface {
+class CRM_Certificate_Entity_Case extends CRM_Certificate_Entity_AbstractEntity {
 
   /**
    * {@inheritDoc}
@@ -114,32 +114,18 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
   /**
    * {@inheritDoc}
    */
-  public function getCertificateConfiguration($entityId, $contactId) {
-    try {
-      $case = civicrm_api3('Case', 'getsingle', [
-        'id' => $entityId,
-        'contact_id' => $contactId,
-        'is_active' => 1,
-      ]);
+  protected function addEntityConditionals($certificateBAO, $entityId, $contactId) {
+    $case = civicrm_api3('Case', 'getsingle', [
+      'id' => $entityId,
+      'contact_id' => $contactId,
+      'is_active' => 1,
+    ]);
 
-      $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
-      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id']);
-      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id']);
-      $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::CASES);
-      $certificateBAO->whereAdd('entity_type_id = ' . $case['case_type_id']);
-      $certificateBAO->whereAdd('status_id = ' . $case['status_id']);
-      $certificateBAO->whereAdd('start_date IS NULL OR end_date IS NULL OR start_date = CURRENT_DATE OR end_date = CURRENT_DATE OR CURRENT_TIMESTAMP BETWEEN start_date AND end_date');
-      $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '.id Desc');
-      $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '.id');
-      $certificateBAO->find(TRUE);
-
-      if (!empty($certificateBAO->id)) {
-        return $certificateBAO;
-      }
-    }
-    catch (Exception $e) {
-    }
-    return FALSE;
+    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id']);
+    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id']);
+    $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::CASES);
+    $certificateBAO->whereAdd('entity_type_id = ' . $case['case_type_id']);
+    $certificateBAO->whereAdd('status_id = ' . $case['status_id']);
   }
 
   /**
