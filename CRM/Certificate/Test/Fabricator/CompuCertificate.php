@@ -1,6 +1,6 @@
 <?php
 
-use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
+use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
 use CRM_Certificate_Test_Fabricator_ImageFormat as ImageFormatFabricator;
 
 /**
@@ -89,7 +89,7 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
     return [
       'name' => $name,
       'message_template_id'  => 1,
-      'downolad_format' => CompuCertificate::IMAGE,
+      'downolad_format' => DownloadFormat::IMAGE,
       'image_format_id' => ImageFormatFabricator::fabricate()['id'],
       'start_date' => date("Y-m-d"),
       'end_date' => date("Y-m-d", strtotime(date("Y-m-d") . " + 10 days")),

@@ -1,6 +1,6 @@
 <?php
 
-use CRM_Certificate_BAO_CompuCertificate as CompuCertificateBAO;
+use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
 use CRM_Certificate_BAO_CompuCertificateImageFormat as CompuCertificateImageFormatBAO;
 
 class CRM_Certificate_Service_CertificateDownloader {
@@ -17,7 +17,7 @@ class CRM_Certificate_Service_CertificateDownloader {
     $generatedTemplate = $certificateGenerator->generate($certificate->template_id, $contactId, $entityId);
 
     //here we decide to render has PDF or Image.
-    if ($certificate->download_format == CompuCertificateBAO::PDF) {
+    if ($certificate->download_format == DownloadFormat::PDF) {
       return $this->renderPDF($generatedTemplate);
     }
 

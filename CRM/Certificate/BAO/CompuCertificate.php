@@ -1,13 +1,11 @@
 <?php
 
 use CRM_Certificate_ExtensionUtil as E;
+use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
 use CRM_Certificate_BAO_CompuCertificateStatus as CompuCertificateStatus;
 use CRM_Certificate_BAO_CompuCertificateEntityType as CompuCertificateEntityType;
 
 class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCertificate {
-
-  const PDF = '1';
-  const IMAGE = '2';
 
   /**
    * Create a new CompuCertificate based on array-data
@@ -68,8 +66,8 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
    */
   public static function getSupportedDownloadFormats() {
     return [
-      self::PDF  => E::ts('PDF'),
-      self::IMAGE   => E::ts('Image'),
+      DownloadFormat::PDF  => E::ts('PDF'),
+      DownloadFormat::IMAGE   => E::ts('Image'),
     ];
   }
 
