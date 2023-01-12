@@ -1,6 +1,7 @@
 <?php
 
 use CRM_Certificate_ExtensionUtil as E;
+use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
 use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
 use CRM_Certificate_BAO_CompuCertificateImageFormat as CompuCertificateImageFormat;
 
@@ -328,7 +329,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
    * @param array $errors
    */
   public function validateFormatType($values, &$errors) {
-    if ($values['download_format'] == "2" && empty($values['image_format_id'])) {
+    if ($values['download_format'] == DownloadFormat::IMAGE && empty($values['image_format_id'])) {
       $errors['image_format_id'] = ts('Image format field is required');
     }
   }
