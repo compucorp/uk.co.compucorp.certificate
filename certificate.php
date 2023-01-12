@@ -158,7 +158,7 @@ function certificate_civicrm_navigationMenu(&$menu) {
 
   _certificate_civix_insert_navigation_menu($menu, 'Administer/Communications', array(
     'label' => E::ts('Image Formats (Certificates)'),
-    'name' => 'compu-configure-imageformats',
+    'name' => 'compucertificate-configure-imageformats',
     'url' => 'civicrm/admin/certificates/imageFormats?reset=1',
     'permission' => 'configure certificates',
   ));
