@@ -51,7 +51,6 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
     $certificateBAO->joinAdd(['id', new CompuCertificateStatus(), 'certificate_id'], 'LEFT', 'cert_status');
     $certificateBAO->whereAdd('entity = ' . $entity);
     $certificateBAO->whereDateIsValid();
-    $certificateBAO->whereAdd('start_date IS NULL OR end_date IS NULL OR start_date = CURRENT_DATE OR end_date = CURRENT_DATE OR CURRENT_TIMESTAMP BETWEEN start_date AND end_date');
     $certificateBAO->selectAdd(self::$_tableName . '.id' . ' as certificate_id');
     $certificateBAO->find();
 
@@ -76,7 +75,7 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
    * Add condition to ensure the certificate start_date and end_date is valid.
    */
   public function whereDateIsValid() {
-    $this->whereAdd('(start_date IS NULL OR end_date IS NULL OR start_date = CURRENT_DATE OR end_date = CURRENT_DATE OR CURRENT_TIMESTAMP BETWEEN start_date AND end_date)');
+    $this->whereAdd('(start_date IS NULL OR date(start_date) <= date(NOW())) AND (end_date IS NULL OR date(end_date) >= date(NOW()) )');
   }
 
 }
