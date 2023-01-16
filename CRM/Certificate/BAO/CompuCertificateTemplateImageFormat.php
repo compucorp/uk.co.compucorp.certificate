@@ -45,7 +45,7 @@ class CRM_Certificate_BAO_CompuCertificateTemplateImageFormat extends CRM_Certif
    */
   public static function getByTemplateId($templateId) {
     $templateImageFormat = new self();
-    $templateImageFormat->whereAdd('template_id', $templateId);
+    $templateImageFormat->whereAdd('template_id = ' . $templateId);
     $count = $templateImageFormat->find(TRUE);
 
     return $count > 0 ? $templateImageFormat : NULL;
