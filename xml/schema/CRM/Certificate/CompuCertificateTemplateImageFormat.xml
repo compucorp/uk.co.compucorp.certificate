@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Certificate</base>
+  <class>CompuCertificateTemplateImageFormat</class>
+  <name>civicrm_compu_certificate_template_image_format</name>
+  <comment>Table to store image format linked to a message template</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique CompuCertificateTemplateImageFormat ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>template_id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>FK to message template</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <field>
+    <name>image_format_id</name>
+    <type>int unsigned</type>
+    <required>false</required>
+    <comment>FK to certificate image format option group</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <foreignKey>
+    <name>template_id</name>
+    <table>civicrm_msg_template</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+</table>
