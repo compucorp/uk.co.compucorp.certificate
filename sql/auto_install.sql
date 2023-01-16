@@ -31,7 +31,6 @@ CREATE TABLE `compucertificate_certificate` (
   `entity` int unsigned NOT NULL COMMENT 'Predefined CompuCertificate Entity ID (1 - CASE, 2 - MEMBERSHIP, 3 - EVENT) ',
   `template_id` int unsigned NOT NULL COMMENT 'FK to message template',
   `download_format` int unsigned NOT NULL COMMENT 'Predefined CompuCertificate download format (1 - PDF, 2 - IMAGE)',
-  `image_format_id` int unsigned NULL COMMENT 'FK to certificate image format option group',
   `start_date` date NULL COMMENT 'Date the certificate validity starts',
   `end_date` date NULL COMMENT 'Date the certificate validity ends',
   PRIMARY KEY (`id`),

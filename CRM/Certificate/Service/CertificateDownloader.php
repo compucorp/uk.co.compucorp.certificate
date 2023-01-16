@@ -21,7 +21,7 @@ class CRM_Certificate_Service_CertificateDownloader {
       return $this->renderPDF($generatedTemplate);
     }
 
-    return $this->renderImage($generatedTemplate['html'], $certificate->image_format_id);
+    return $this->renderImage($generatedTemplate['html'], NULL);
   }
 
   /**
