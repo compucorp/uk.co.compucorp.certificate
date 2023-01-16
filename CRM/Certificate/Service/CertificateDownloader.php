@@ -2,6 +2,7 @@
 
 use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
 use CRM_Certificate_BAO_CompuCertificateImageFormat as CompuCertificateImageFormatBAO;
+use CRM_Certificate_BAO_CompuCertificateTemplateImageFormat as CompuCertificateTemplateImageFormat;
 
 class CRM_Certificate_Service_CertificateDownloader {
 
@@ -21,7 +22,8 @@ class CRM_Certificate_Service_CertificateDownloader {
       return $this->renderPDF($generatedTemplate);
     }
 
-    return $this->renderImage($generatedTemplate['html'], NULL);
+    $templateImageFormat = CompuCertificateTemplateImageFormat::getByTemplateId($certificate->template_id);
+    return $this->renderImage($generatedTemplate['html'], $templateImageFormat->image_format_id ?? NULL);
   }
 
   /**
