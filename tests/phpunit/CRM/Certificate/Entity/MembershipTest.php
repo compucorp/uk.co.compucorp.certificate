@@ -8,6 +8,7 @@
 class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
 
   use CRM_Certificate_Test_Helper_Membership;
+  use CRM_Certificate_Test_Helper_Certificate;
 
   /**
    * Test the appropraite types are returned
@@ -294,6 +295,33 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
     $expectedMembershipId = array_column($validCertificate, "id");
     $avaliableCertificatesEventId = array_column($avaliableCertificates, "event_id");
     $this->assertCount(0, array_diff($expectedMembershipId, $avaliableCertificatesEventId));
+  }
+
+  /**
+   * Test that only certificates wihthin the validitly period is returned.
+   *
+   * @param string $startDate
+   *  Validity start date.
+   * @param string $endDate
+   *  Validity end date.
+   * @param boolean $valid
+   *  If the date is considered valid.
+   *
+   * @dataProvider provideCertificateDateData
+   */
+  public function testMembershipCertificatesValidityByDate($startDate, $endDate, $valid) {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $membership = $this->createMembership(['contact_id' => $contact["id"]]);
+    $params = [
+      'linked_to' => [$membership['membership_type_id']],
+      'statuses'  => [$membership['status_id']],
+    ];
+    $this->createMembershipCertificate(array_merge(['start_date' => $startDate, 'end_date' => $endDate], $params));
+
+    $membershipEntity = new CRM_Certificate_Entity_Membership();
+    $avaliableCertificates = $membershipEntity->getContactCertificates($contact["id"]);
+
+    $this->assertEquals(count($avaliableCertificates) > 0, $valid);
   }
 
   private function createCertificate($values) {
