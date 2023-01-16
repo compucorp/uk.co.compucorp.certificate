@@ -14,4 +14,8 @@ abstract class BaseHeadlessTest extends PHPUnit_Framework_TestCase implements
       ->apply();
   }
 
+  public function getDate($from = "0 days") {
+    return date('Y-m-d', strtotime(date('Y-m-d') . " $from"));
+  }
+
 }

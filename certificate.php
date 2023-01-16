@@ -155,6 +155,13 @@ function certificate_civicrm_navigationMenu(&$menu) {
     'url' => 'civicrm/admin/certificates',
     'permission' => 'configure certificates',
   ));
+
+  _certificate_civix_insert_navigation_menu($menu, 'Administer/Communications', array(
+    'label' => E::ts('Image Formats (Certificates)'),
+    'name' => 'compucertificate-configure-imageformats',
+    'url' => 'civicrm/admin/certificates/imageFormats?reset=1',
+    'permission' => 'configure certificates',
+  ));
 }
 
 /**
@@ -179,6 +186,7 @@ function _compucertificate_add_token_subscribers() {
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Event());
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Participant());
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Membership());
+  Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Certificate());
 }
 
 function _compucertificate_getCaseIdFromUrlIfExist() {
@@ -200,6 +208,7 @@ function certificate_civicrm_tokens(&$tokens) {
   $tokens[CRM_Certificate_Token_Event::TOKEN] = CRM_Certificate_Token_Event::prefixedEntityTokens();
   $tokens[CRM_Certificate_Token_Participant::TOKEN] = CRM_Certificate_Token_Participant::prefixedEntityTokens();
   $tokens[CRM_Certificate_Token_Membership::TOKEN] = CRM_Certificate_Token_Membership::prefixedEntityTokens();
+  $tokens[CRM_Certificate_Token_Certificate::TOKEN] = CRM_Certificate_Token_Certificate::prefixedEntityTokens();
 
   if (_compucertificate_getCaseIdFromUrlIfExist()) {
     $tokens['certificate_url']['certificate_url.case'] = 'Case Certificate URL';

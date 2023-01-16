@@ -1,5 +1,7 @@
 <?php
 
+use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
+
 class CRM_Certificate_Service_Certificate {
 
   /**
@@ -24,7 +26,14 @@ class CRM_Certificate_Service_Certificate {
       }
       $params['name'] = $values['name'];
       $params['entity'] = $values['type'];
+      $params['end_date'] = $values['end_date'];
+      $params['start_date'] = $values['start_date'];
       $params['template_id'] = $values['message_template_id'];
+      $params['download_format'] = $values['download_format'] ?? DownloadFormat::PDF;
+      if ($params['download_format'] == DownloadFormat::IMAGE) {
+        $params['image_format_id'] = $values['image_format_id'];
+      }
+
       $statuses = (array) $values['statuses'];
       $entityTypes = (array) $values['linked_to'];
 

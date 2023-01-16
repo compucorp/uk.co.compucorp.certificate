@@ -6,6 +6,22 @@ use Civi\Token\TokenProcessor;
 class CRM_Certificate_Service_CertificateGenerator {
 
   /**
+   * ID of the certificate to be generated.
+   *
+   * @var int
+   */
+  public $certificateId;
+
+  /**
+   * Constructs a new instance of CRM_Certificate_Service_CertificateGenerator.
+   *
+   * @param int $certificateId
+   */
+  public function __construct($certificateId = NULL) {
+    $this->certificateId = $certificateId;
+  }
+
+  /**
    * Converts the message template to html and resolve tokens
    * for the contact and entity
    *
@@ -59,7 +75,7 @@ class CRM_Certificate_Service_CertificateGenerator {
     $tokenProcessor->addMessage('html', $content['html'], 'text/html');
     $tokenProcessor->addMessage('text', $content['text'], 'text/plain');
     $tokenProcessor->addMessage('subject', $content['subject'], 'text/plain');
-    $tokenProcessor->addRow(['contactId' => $contactId, 'entityId' => $entityTypeId]);
+    $tokenProcessor->addRow(['contactId' => $contactId, 'entityId' => $entityTypeId, 'certificateId' => $this->certificateId]);
     $tokenProcessor->evaluate();
     foreach ($tokenProcessor->getRows() as $row) {
       $content['html'] = $row->render('html');

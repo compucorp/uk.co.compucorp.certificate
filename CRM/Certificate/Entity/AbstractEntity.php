@@ -3,7 +3,7 @@
 /**
  * This is a shared interface for supported certificate entities.
  */
-interface CRM_Certificate_Entity_EntityInterface {
+abstract class CRM_Certificate_Entity_AbstractEntity {
 
   /**
    * Stores a certificate configuration
@@ -14,21 +14,21 @@ interface CRM_Certificate_Entity_EntityInterface {
    * @return array
    *   New Certificate configuration values
    */
-  public function store($values);
+  abstract public function store($values);
 
   /**
    * Returns array of type ids supported by the entity
    *
    * @return Array|NULL
    */
-  public function getTypes();
+  abstract public function getTypes();
 
   /**
    * Returns array of status ids supported by the entity
    *
    * @return Array|NULL
    */
-  public function getStatuses();
+  abstract public function getStatuses();
 
   /**
    * Returns the status(es) of the entity for which a certificate
@@ -39,7 +39,7 @@ interface CRM_Certificate_Entity_EntityInterface {
    *
    * @return Array
    */
-  public function getCertificateConfiguredStatuses($certificateId);
+  abstract public function getCertificateConfiguredStatuses($certificateId);
 
   /**
    * Returns the type(s) of the entity for which a certificate
@@ -50,7 +50,7 @@ interface CRM_Certificate_Entity_EntityInterface {
    *
    * @return Array
    */
-  public function getCertificateConfiguredTypes($certificateId);
+  abstract public function getCertificateConfiguredTypes($certificateId);
 
   /**
    * Returns a configured certificate by ID
@@ -58,7 +58,7 @@ interface CRM_Certificate_Entity_EntityInterface {
    * @param int $certificateId
    *  Id of the certificate instance to retrieve.
    */
-  public function getCertificateConfigurationById($certificateId);
+  abstract public function getCertificateConfigurationById($certificateId);
 
   /**
    * Gets a certificate configuration, if a configured certificate for the entity exists
@@ -71,7 +71,35 @@ interface CRM_Certificate_Entity_EntityInterface {
    *
    * @return \CRM_Certificate_BAO_CompuCertificate|bool
    */
-  public function getCertificateConfiguration($entityId, $contactId);
+  public function getCertificateConfiguration($entityId, $contactId) {
+    try {
+      $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
+      $this->addEntityConditionals($certificateBAO, $entityId, $contactId);
+      $certificateBAO->whereDateIsValid();
+      $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id Desc');
+      $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id');
+      $certificateBAO->find(TRUE);
+
+      if (!empty($certificateBAO->id)) {
+        return $certificateBAO;
+      }
+    }
+    catch (\Exception $e) {
+    }
+    return FALSE;
+  }
+
+  /**
+   * Add entity specific retrieval conditions.
+   *
+   * @param \CRM_Certificate_BAO_CompuCertificate $certificateBAO
+   *  Object to add coniditions to.
+   * @param int $entityId
+   *  Id of the entity to get a configured certificate for.
+   * @param int $contactId
+   *  Id of the contact the entity belongs to.
+   */
+  abstract protected function addEntityConditionals($certificateBAO, $entityId, $contactId);
 
   /**
    * Gets all entity certificates vailable for a contact.
@@ -81,7 +109,7 @@ interface CRM_Certificate_Entity_EntityInterface {
    *
    * @return Array
    */
-  public function getContactCertificates($contactId);
+  abstract public function getContactCertificates($contactId);
 
   /**
    * Gets an entity certificate download URL.
@@ -95,6 +123,6 @@ interface CRM_Certificate_Entity_EntityInterface {
    *
    * @return string
    */
-  public function getCertificateDownloadUrl($entityId, $contactId, $absolute = FALSE);
+  abstract public function getCertificateDownloadUrl($entityId, $contactId, $absolute = FALSE);
 
 }

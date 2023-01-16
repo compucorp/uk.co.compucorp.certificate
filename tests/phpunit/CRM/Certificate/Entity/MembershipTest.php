@@ -52,6 +52,8 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
       'type' => CRM_Certificate_Enum_CertificateType::MEMBERSHIPS,
       'linked_to' => [$membershipType['id']],
       'statuses' => [$membershipStatus['id']],
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
     ];
 
     $expectedStatus = ['id' => $membershipStatus['id'], 'label' => $membershipStatus['label']];
@@ -77,6 +79,8 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
       'type' => CRM_Certificate_Enum_CertificateType::MEMBERSHIPS,
       'linked_to' => [$membershipType['id']],
       'statuses' => [$membershipStatus['id']],
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
     ];
 
     $expectedType = ['id' => $membershipType['id'], 'label' => $membershipType['name']];
@@ -114,6 +118,8 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
       'type' => CRM_Certificate_Enum_CertificateType::MEMBERSHIPS,
       'linked_to' => [$membershipType['id']],
       'statuses' => [$membershipStatus['id']],
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
     ];
     $this->createCertificate($values);
 
@@ -216,6 +222,8 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
       [
         'linked_to' => NULL,
         'statuses'  => NULL,
+        'start_date' => date('Y-m-d'),
+        'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
       ]
     );
 
@@ -238,6 +246,8 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
       [
         'linked_to' => NULL,
         'statuses'  => NULL,
+        'start_date' => date('Y-m-d'),
+        'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
       ]
     );
 
@@ -245,6 +255,45 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
     $availableCertificate = $entity->getCertificateConfiguration($membership['id'], $contact["id"]);
 
     $this->assertEquals($configuration['certificate']->id, $availableCertificate->id);
+  }
+
+  /**
+   * Test that only certificates wihthin the validitly period is returned.
+   */
+  public function testExpiredMembershipCertificatesAreNotReturned() {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $membership = $this->createMembership(['contact_id' => $contact["id"]]);
+    $params = [
+      'linked_to' => [$membership['membership_type_id']],
+      'statuses'  => [$membership['status_id']],
+    ];
+    $validCertificate[] = $this->createMembershipCertificate(array_merge(['start_date' => date('Y-m-d')], $params));
+
+    $membership = $this->createMembership(['contact_id' => $contact["id"]]);
+    $params = [
+      'linked_to' => [$membership['membership_type_id']],
+      'statuses'  => [$membership['status_id']],
+    ];
+    $invalidCertificate[] = $this->createMembershipCertificate(array_merge(['start_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days"))], $params));
+
+    $membership = $this->createMembership(['contact_id' => $contact["id"]]);
+    $params = [
+      'linked_to' => [$membership['membership_type_id']],
+      'statuses'  => [$membership['status_id']],
+    ];
+    $invalidCertificate[] = $this->createMembershipCertificate(array_merge([
+      'start_date' => $this->getDate("- 10 days"),
+      'end_date' => $this->getDate("- 6 days"),
+    ], $params));
+
+    $membershipEntity = new CRM_Certificate_Entity_Membership();
+    $avaliableCertificates = $membershipEntity->getContactCertificates($contact["id"]);
+
+    $this->assertEquals(count($validCertificate), count($avaliableCertificates));
+
+    $expectedMembershipId = array_column($validCertificate, "id");
+    $avaliableCertificatesEventId = array_column($avaliableCertificates, "event_id");
+    $this->assertCount(0, array_diff($expectedMembershipId, $avaliableCertificatesEventId));
   }
 
   private function createCertificate($values) {

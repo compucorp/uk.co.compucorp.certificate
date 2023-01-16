@@ -1,5 +1,7 @@
 <?php
 
+use CRM_Certificate_ExtensionUtil as E;
+use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
 use CRM_Certificate_BAO_CompuCertificateStatus as CompuCertificateStatus;
 use CRM_Certificate_BAO_CompuCertificateEntityType as CompuCertificateEntityType;
 
@@ -48,12 +50,33 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
     $certificateBAO->joinAdd(['id', new CompuCertificateEntityType(), 'certificate_id'], 'LEFT', 'cert_type');
     $certificateBAO->joinAdd(['id', new CompuCertificateStatus(), 'certificate_id'], 'LEFT', 'cert_status');
     $certificateBAO->whereAdd('entity = ' . $entity);
+    $certificateBAO->whereDateIsValid();
+    $certificateBAO->whereAdd('start_date IS NULL OR end_date IS NULL OR start_date = CURRENT_DATE OR end_date = CURRENT_DATE OR CURRENT_TIMESTAMP BETWEEN start_date AND end_date');
     $certificateBAO->selectAdd(self::$_tableName . '.id' . ' as certificate_id');
     $certificateBAO->find();
 
     $configuredCertificates = $certificateBAO->fetchAll();
 
     return $configuredCertificates;
+  }
+
+  /**
+   * Returns the supported download formats.
+   *
+   * @return array
+   */
+  public static function getSupportedDownloadFormats() {
+    return [
+      DownloadFormat::PDF  => E::ts('PDF'),
+      DownloadFormat::IMAGE   => E::ts('Image'),
+    ];
+  }
+
+  /**
+   * Add condition to ensure the certificate start_date and end_date is valid.
+   */
+  public function whereDateIsValid() {
+    $this->whereAdd('(start_date IS NULL OR end_date IS NULL OR start_date = CURRENT_DATE OR end_date = CURRENT_DATE OR CURRENT_TIMESTAMP BETWEEN start_date AND end_date)');
   }
 
 }

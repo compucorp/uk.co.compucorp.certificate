@@ -3,7 +3,7 @@
 use CRM_Certificate_Enum_CertificateType as CertificateType;
 use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
 
-class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_EntityInterface {
+class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractEntity {
 
   /**
    * {@inheritDoc}
@@ -102,6 +102,10 @@ class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_Entity
     return [
       'name' => $certificateDAO->name,
       'type' => $certificateDAO->entity,
+      'end_date' => $certificateDAO->end_date,
+      'start_date' => $certificateDAO->start_date,
+      'download_format' => $certificateDAO->download_format,
+      'image_format_id' => $certificateDAO->image_format_id,
       'message_template_id' => $certificateDAO->template_id,
       'statuses' => implode(',', array_column($statuses, 'id')),
       'linked_to' => implode(',', array_column($types, 'id')),
@@ -111,31 +115,18 @@ class CRM_Certificate_Entity_Membership implements CRM_Certificate_Entity_Entity
   /**
    * {@inheritDoc}
    */
-  public function getCertificateConfiguration($entityId, $contactId) {
-    try {
-      $membership = civicrm_api3('Membership', 'getsingle', [
-        'id' => $entityId,
-        'contact_id' => $contactId,
-        'is_active' => 1,
-      ]);
+  protected function addEntityConditionals($certificateBAO, $entityId, $contactId) {
+    $membership = civicrm_api3('Membership', 'getsingle', [
+      'id' => $entityId,
+      'contact_id' => $contactId,
+      'is_active' => 1,
+    ]);
 
-      $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
-      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id'], "LEFT");
-      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id'], "LEFT");
-      $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::MEMBERSHIPS);
-      $certificateBAO->whereAdd("entity_type_id = {$membership['membership_type_id']} OR entity_type_id IS NULL");
-      $certificateBAO->whereAdd("status_id = {$membership['status_id']}  OR status_id IS NULL");
-      $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id Desc');
-      $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id');
-      $certificateBAO->find(TRUE);
-
-      if (!empty($certificateBAO->id)) {
-        return $certificateBAO;
-      }
-    }
-    catch (Exception $e) {
-    }
-    return FALSE;
+    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id'], "LEFT");
+    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id'], "LEFT");
+    $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::MEMBERSHIPS);
+    $certificateBAO->whereAdd("entity_type_id = {$membership['membership_type_id']} OR entity_type_id IS NULL");
+    $certificateBAO->whereAdd("status_id = {$membership['status_id']}  OR status_id IS NULL");
   }
 
   /**
