@@ -103,8 +103,8 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       'start_date',
       ts('Start Date'),
       NULL,
-      TRUE,
-      ['minDate' => date('Y-m-d'), 'time' => FALSE]
+      FALSE,
+      ['time' => FALSE]
     );
 
     $this->add(
@@ -112,8 +112,8 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       'end_date',
       ts('End Date'),
       NULL,
-      TRUE,
-      ['minDate' => date('Y-m-d'), 'time' => FALSE]
+      FALSE,
+      ['time' => FALSE]
     );
 
     $this->add(
@@ -341,6 +341,11 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
    * @param array $errors
    */
   public function validateDateField($values, &$errors) {
+    // Ignore validation if either of the dates are empty.
+    if (empty($values['end_date']) || empty($values['start_date'])) {
+      return;
+    }
+
     if (strtotime($values['end_date']) <= strtotime($values['start_date'])) {
       $errors['end_date'] = ts('End date field must be after start date');
     }

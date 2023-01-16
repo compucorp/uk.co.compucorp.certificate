@@ -8,6 +8,7 @@
 class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
 
   use CRM_Certificate_Test_Helper_Event;
+  use CRM_Certificate_Test_Helper_Certificate;
 
   /**
    * Test the appropraite types are returned
@@ -164,6 +165,33 @@ class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
     $expectedEventsId = array_column($validCertificate, "id");
     $avaliableCertificatesEventId = array_column($avaliableCertificates, "event_id");
     $this->assertCount(0, array_diff($expectedEventsId, $avaliableCertificatesEventId));
+  }
+
+  /**
+   * Test that only certificates wihthin the validitly period is returned.
+   *
+   * @param string $startDate
+   *  Validity start date.
+   * @param string $endDate
+   *  Validity end date.
+   * @param boolean $valid
+   *  If the date is considered valid.
+   *
+   * @dataProvider provideCertificateDateData
+   */
+  public function testEventCertificatesValidityByDate($startDate, $endDate, $valid) {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+
+    $participant = $this->createParticipant(['contact_id' => $contact['id']]);
+    $params = [
+      'linked_to' => [$participant['event_id']],
+      'statuses'  => [$participant['participant_status_id']],
+    ];
+    $this->createEventCertificate(array_merge(['start_date' => $startDate, 'end_date' => $endDate], $params));
+    $eventEntity = new CRM_Certificate_Entity_Event();
+    $avaliableCertificates = $eventEntity->getContactCertificates($contact["id"]);
+
+    $this->assertEquals(count($avaliableCertificates) > 0, $valid);
   }
 
   private function createCertificate($values = []) {
