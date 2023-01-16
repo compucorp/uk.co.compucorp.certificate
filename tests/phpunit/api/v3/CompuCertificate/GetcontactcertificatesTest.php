@@ -14,6 +14,7 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
   use CRM_Certificate_Test_Helper_Event;
   use CRM_Certificate_Test_Helper_Session;
   use CRM_Certificate_Test_Helper_Membership;
+  use CRM_Certificate_Test_Helper_Certificate;
 
   /**
    * Holds logged in contact/case client id.
@@ -151,16 +152,25 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
   }
 
   /**
-   * Test that the api does not return expired memberships certificate .
+   * Test that the api does not return expired memberships certificate.
+   *
+   * @param string $startDate
+   *  Validity start date.
+   * @param string $endDate
+   *  Validity end date.
+   * @param boolean $valid
+   *  If the date is considered valid.
+   *
+   * @dataProvider provideCertificateDateData
    */
-  public function testExpiredMembershipCertficateIsNotReturnedForAPI() {
+  public function testExpiredMembershipCertficateIsNotReturnedForAPI($startDate, $endDate, $valid) {
     $membership = $this->createMembership();
     $this->createMembershipCertificate(
       [
         'linked_to' => [$membership['membership_type_id']],
         'statuses'  => [$membership['status_id']],
-        'start_date' => $this->getDate('- 15 days'),
-        'end_date' => $this->getDate('- 1 days'),
+        'start_date' => $startDate,
+        'end_date' => $endDate,
       ]
     );
 
@@ -170,20 +180,29 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
 
     $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
 
-    $this->assertEmpty($results['values']);
+    $this->assertEquals($results['count'] > 0, $valid);
   }
 
   /**
    * Test that the api does not return expired events certificate.
+   *
+   * @param string $startDate
+   *  Validity start date.
+   * @param string $endDate
+   *  Validity end date.
+   * @param boolean $valid
+   *  If the date is considered valid.
+   *
+   * @dataProvider provideCertificateDateData
    */
-  public function testExpiredEventCertficateIsNotReturnedForAPI() {
+  public function testExpiredEventCertficateIsNotReturnedForAPI($startDate, $endDate, $valid) {
     $participant = $this->createParticipant(['contact_id' => $this->client_id]);
     $this->createEventCertificate(
       [
         'linked_to' => [$participant['event_id']],
         'statuses'  => [$participant['participant_status_id']],
-        'start_date' => $this->getDate('- 15 days'),
-        'end_date' => $this->getDate('- 1 days'),
+        'start_date' => $startDate,
+        'end_date' => $endDate,
       ]
     );
 
@@ -191,17 +210,26 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
 
     $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
 
-    $this->assertEquals(0, $results['count']);
+    $this->assertEquals($results['count'] > 0, $valid);
   }
 
   /**
    * Test that the api does not return expired cases certificate.
+   *
+   * @param string $startDate
+   *  Validity start date.
+   * @param string $endDate
+   *  Validity end date.
+   * @param boolean $valid
+   *  If the date is considered valid.
+   *
+   * @dataProvider provideCertificateDateData
    */
-  public function testExpiredCaseCertficateIsNotReturnedForAPI() {
+  public function testExpiredCaseCertficateIsNotReturnedForAPI($startDate, $endDate, $valid) {
     $caseParam = [
       'client_id' => $this->client_id,
-      'start_date' => $this->getDate('- 15 days'),
-      'end_date' => $this->getDate('- 1 days'),
+      'start_date' => $startDate,
+      'end_date' => $endDate,
     ];
     $this->createCaseCertificate($caseParam);
 
@@ -209,7 +237,7 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
 
     $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', $param);
 
-    $this->assertEquals(0, $results['count']);
+    $this->assertEquals($results['count'] > 0, $valid);
   }
 
   public function tearDown() {
