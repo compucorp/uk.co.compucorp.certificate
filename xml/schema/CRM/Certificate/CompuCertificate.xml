@@ -64,16 +64,6 @@
   </field>
 
   <field>
-    <name>image_format_id</name>
-    <type>int unsigned</type>
-    <required>false</required>
-    <comment>FK to certificate image format option group</comment>
-    <html>
-      <type>Number</type>
-    </html>
-  </field>
-
-  <field>
     <name>start_date</name>
     <type>date</type>
     <required>false</required>
