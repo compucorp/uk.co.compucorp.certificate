@@ -17,10 +17,6 @@ class CRM_Certificate_Hook_BuildForm_MessageTemplates {
   }
 
   public function run() {
-    if (!$this->shouldHandle()) {
-      return;
-    }
-
     $formProcessor = new CRM_Certificate_Form_CertificateTemplateImageFormat($this->form);
     $formProcessor->buildForm();
   }
@@ -28,10 +24,12 @@ class CRM_Certificate_Hook_BuildForm_MessageTemplates {
   /**
    * Checks if this is the right form.
    *
+   * @param \CRM_Core_Form $form
+   *
    * @return bool
    */
-  private function shouldHandle() {
-    return $this->form instanceof CRM_Admin_Form_MessageTemplates && ($this->form->_action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD));
+  public static function shouldRun($form) {
+    return $form instanceof CRM_Admin_Form_MessageTemplates && ($form->_action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD));
   }
 
 }
