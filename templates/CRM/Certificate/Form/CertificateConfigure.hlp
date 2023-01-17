@@ -1,0 +1,8 @@
+{htxt id="relationship_types-title"}
+  {ts}Download Related Contact Certificates{/ts}
+{/htxt}
+{htxt id="relationship_types"}
+  <p>{ts}Contacts who have a CMS user account can download their own CiviCRM certificates, normally from the CiviCRM self service "dashboard", but also from a download certificate.With this setting you can specify contacts who can also download certificates for related contacts based on holding specific relationship types. This might be useful where, for example, a user should be able to download certificates for an organisation record for which they are the main billing contact, or for a partner or spouse. Where no relationship is selected, users will not be able to download certificates from related contacts.{/ts}</p>
+  <p>{ts}<b>Note:</b> This setting has security implications.
+    <br/>System should allow the contacts having this permission to access and download the certificates.{/ts}</p>
+{/htxt}

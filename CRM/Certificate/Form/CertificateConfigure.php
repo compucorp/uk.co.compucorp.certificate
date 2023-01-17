@@ -123,6 +123,13 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       ['class' => 'form-control']
     );
 
+    $this->addEntityRef('relationship_types', ts('Access For Related Contacts'), [
+      'entity' => 'RelationshipType',
+      'placeholder' => ts('- Select Relationship -'),
+      'select' => ['multiple' => TRUE],
+      'class' => 'form-control',
+    ], FALSE);
+
     $this->addButtons([
       [
         'type' => 'submit',
@@ -136,6 +143,9 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       ],
     ]);
 
+    $elementWithHelpTexts = ['relationship_types'];
+
+    $this->assign('help', $elementWithHelpTexts);
     $this->assign('elementNames', $this->getRenderableElementNames());
     $this->assign('entityRefs', CRM_Certificate_Enum_CertificateType::getEnityRefs());
     $this->assign('entityStatusRefs', CRM_Certificate_Enum_CertificateType::getEntityStatusRefs());
