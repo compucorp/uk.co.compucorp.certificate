@@ -72,7 +72,7 @@ class CRM_Certificate_Enum_CertificateType {
         ],
         'select' => [
           'minimumInputLength' => 0,
-          'multiple' => FALSE,
+          'multiple' => TRUE,
         ],
       ],
     ]);
