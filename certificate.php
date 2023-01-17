@@ -262,9 +262,10 @@ function certificate_civicrm_pageRun(&$page) {
  * Implements hook_civicrm_buildForm().
  */
 function certificate_civicrm_buildForm($formName, &$form) {
-  $hooks = [
-    new CRM_Certificate_Hook_BuildForm_MessageTemplates($form),
-  ];
+  $hooks = [];
+  if (CRM_Certificate_Hook_BuildForm_MessageTemplates::shouldRun($form)) {
+    $hooks[] = new CRM_Certificate_Hook_BuildForm_MessageTemplates($form);
+  }
 
   array_walk($hooks, function ($hook) {
     $hook->run();
@@ -275,9 +276,10 @@ function certificate_civicrm_buildForm($formName, &$form) {
  * Implements hook_civicrm_postProcess().
  */
 function certificate_civicrm_postProcess($formName, &$form) {
-  $hooks = [
-    new CRM_Certificate_Hook_PostProcess_MessageTemplates($formName, $form),
-  ];
+  $hooks = [];
+  if (CRM_Certificate_Hook_PostProcess_MessageTemplates::shouldRun($form)) {
+    $hooks[] = new CRM_Certificate_Hook_PostProcess_MessageTemplates($formName, $form);
+  }
 
   array_walk($hooks, function ($hook) {
     $hook->run();
