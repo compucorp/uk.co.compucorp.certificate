@@ -88,16 +88,16 @@ ENGINE=InnoDB;
 
 -- /*******************************************************
 -- *
--- * civicrm_compu_certificate_template_image_format
+-- * compu_certificate_template_image_format
 -- *
 -- * Table to store image format linked to a message template
 -- *
 -- *******************************************************/
-CREATE TABLE `civicrm_compu_certificate_template_image_format` (
+CREATE TABLE `compu_certificate_template_image_format` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique CompuCertificateTemplateImageFormat ID',
   `template_id` int unsigned NOT NULL COMMENT 'FK to message template',
   `image_format_id` int unsigned NULL COMMENT 'FK to certificate image format option group',
   PRIMARY KEY (`id`),
-  CONSTRAINT FK_civicrm_compu_certificate_template_image_format_template_id FOREIGN KEY (`template_id`) REFERENCES `civicrm_msg_template`(`id`) ON DELETE CASCADE
+  CONSTRAINT FK_compu_certificate_template_image_format_template_id FOREIGN KEY (`template_id`) REFERENCES `civicrm_msg_template`(`id`) ON DELETE CASCADE
 )
 ENGINE=InnoDB;

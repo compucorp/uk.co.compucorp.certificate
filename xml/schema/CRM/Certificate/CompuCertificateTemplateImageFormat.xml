@@ -3,7 +3,7 @@
 <table>
   <base>CRM/Certificate</base>
   <class>CompuCertificateTemplateImageFormat</class>
-  <name>civicrm_compu_certificate_template_image_format</name>
+  <name>compu_certificate_template_image_format</name>
   <comment>Table to store image format linked to a message template</comment>
   <log>true</log>
 
