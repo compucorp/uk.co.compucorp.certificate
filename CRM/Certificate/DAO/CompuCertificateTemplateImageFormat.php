@@ -22,7 +22,7 @@ class CRM_Certificate_DAO_CompuCertificateTemplateImageFormat extends CRM_Core_D
    *
    * @var string
    */
-  public static $_tableName = 'civicrm_compu_certificate_template_image_format';
+  public static $_tableName = 'compu_certificate_template_image_format';
 
   /**
    * Should CiviCRM log any modifications to this table in the civicrm_log table.
@@ -56,7 +56,7 @@ class CRM_Certificate_DAO_CompuCertificateTemplateImageFormat extends CRM_Core_D
    * Class constructor.
    */
   public function __construct() {
-    $this->__table = 'civicrm_compu_certificate_template_image_format';
+    $this->__table = 'compu_certificate_template_image_format';
     parent::__construct();
   }
 
@@ -98,8 +98,8 @@ class CRM_Certificate_DAO_CompuCertificateTemplateImageFormat extends CRM_Core_D
           'type' => CRM_Utils_Type::T_INT,
           'description' => E::ts('Unique CompuCertificateTemplateImageFormat ID'),
           'required' => TRUE,
-          'where' => 'civicrm_compu_certificate_template_image_format.id',
-          'table_name' => 'civicrm_compu_certificate_template_image_format',
+          'where' => 'compu_certificate_template_image_format.id',
+          'table_name' => 'compu_certificate_template_image_format',
           'entity' => 'CompuCertificateTemplateImageFormat',
           'bao' => 'CRM_Certificate_DAO_CompuCertificateTemplateImageFormat',
           'localizable' => 0,
@@ -114,8 +114,8 @@ class CRM_Certificate_DAO_CompuCertificateTemplateImageFormat extends CRM_Core_D
           'type' => CRM_Utils_Type::T_INT,
           'description' => E::ts('FK to message template'),
           'required' => TRUE,
-          'where' => 'civicrm_compu_certificate_template_image_format.template_id',
-          'table_name' => 'civicrm_compu_certificate_template_image_format',
+          'where' => 'compu_certificate_template_image_format.template_id',
+          'table_name' => 'compu_certificate_template_image_format',
           'entity' => 'CompuCertificateTemplateImageFormat',
           'bao' => 'CRM_Certificate_DAO_CompuCertificateTemplateImageFormat',
           'localizable' => 0,
@@ -130,8 +130,8 @@ class CRM_Certificate_DAO_CompuCertificateTemplateImageFormat extends CRM_Core_D
           'type' => CRM_Utils_Type::T_INT,
           'description' => E::ts('FK to certificate image format option group'),
           'required' => FALSE,
-          'where' => 'civicrm_compu_certificate_template_image_format.image_format_id',
-          'table_name' => 'civicrm_compu_certificate_template_image_format',
+          'where' => 'compu_certificate_template_image_format.image_format_id',
+          'table_name' => 'compu_certificate_template_image_format',
           'entity' => 'CompuCertificateTemplateImageFormat',
           'bao' => 'CRM_Certificate_DAO_CompuCertificateTemplateImageFormat',
           'localizable' => 0,

@@ -5,6 +5,6 @@ return [
   [
     'name' => 'CompuCertificateTemplateImageFormat',
     'class' => 'CRM_Certificate_DAO_CompuCertificateTemplateImageFormat',
-    'table' => 'civicrm_compu_certificate_template_image_format',
+    'table' => 'compu_certificate_template_image_format',
   ],
 ];
