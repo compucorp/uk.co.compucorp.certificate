@@ -67,13 +67,6 @@ class CRM_Certificate_DAO_CompuCertificate extends CRM_Core_DAO {
   public $download_format;
 
   /**
-   * FK to certificate image format option group
-   *
-   * @var int
-   */
-  public $image_format_id;
-
-  /**
    * Date the certificate validity starts
    *
    * @var date
@@ -201,21 +194,6 @@ class CRM_Certificate_DAO_CompuCertificate extends CRM_Core_DAO {
           'description' => E::ts('Predefined CompuCertificate download format (1 - PDF, 2 - IMAGE)'),
           'required' => TRUE,
           'where' => 'compucertificate_certificate.download_format',
-          'table_name' => 'compucertificate_certificate',
-          'entity' => 'CompuCertificate',
-          'bao' => 'CRM_Certificate_DAO_CompuCertificate',
-          'localizable' => 0,
-          'html' => [
-            'type' => 'Number',
-          ],
-          'add' => NULL,
-        ],
-        'image_format_id' => [
-          'name' => 'image_format_id',
-          'type' => CRM_Utils_Type::T_INT,
-          'description' => E::ts('FK to certificate image format option group'),
-          'required' => FALSE,
-          'where' => 'compucertificate_certificate.image_format_id',
           'table_name' => 'compucertificate_certificate',
           'entity' => 'CompuCertificate',
           'bao' => 'CRM_Certificate_DAO_CompuCertificate',

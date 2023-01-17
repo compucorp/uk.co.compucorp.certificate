@@ -1,0 +1,8 @@
+{htxt id="id-image-format-title"}
+  {ts}Image Format{/ts}
+{/htxt}
+{htxt id="id-image-format"}
+  <p>{ts}Select a page format for image files created using this template if you wish to override the default format. Page formats define the image size, output format and quality.{/ts}</p>
+  {capture assign="imageFormatsURL"}{crmURL p="civicrm/admin/certificates/imageFormats" q="reset=1"}{/capture}
+  <p>{ts 1=$imageFormatsURL}Go to <strong><a href="%1">Administer CiviCRM &raquo; Communications &raquo; Image Formats (Certificate)</a></strong> to add or edit formats or set the default format.{/ts}</p>
+{/htxt}
