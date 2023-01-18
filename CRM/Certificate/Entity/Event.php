@@ -94,23 +94,9 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
   /**
    * {@inheritDoc}
    */
-  public function getCertificateConfigurationById($certificateId) {
-    $certificateDAO = CRM_Certificate_BAO_CompuCertificate::findById($certificateId);
-    $statuses = $this->getCertificateConfiguredStatuses($certificateDAO->id);
-    $types = $this->getCertificateConfiguredTypes($certificateDAO->id);
-    $eventAttribute = $this->getCertificateEventAttribute($certificateDAO->id);
-
-    return [
-      'name' => $certificateDAO->name,
-      'type' => $certificateDAO->entity,
-      'end_date' => $certificateDAO->end_date,
-      'start_date' => $certificateDAO->start_date,
-      'download_format' => $certificateDAO->download_format,
-      'message_template_id' => $certificateDAO->template_id,
-      'statuses' => implode(',', array_column($statuses, 'id')),
-      'linked_to' => implode(',', array_column($types, 'id')),
-      'participant_type_id' => implode(', ', array_column($eventAttribute, 'participant_type_id')),
-    ];
+  protected function  addEntityExtraField($certificateBAO, &$certificate) {
+    $eventAttribute = $this->getCertificateEventAttribute($certificateBAO->id);
+    $certificate['participant_type_id'] = implode(', ', array_column($eventAttribute, 'participant_type_id'));
   }
 
   private function getCertificateEventAttribute($certificateId) {
