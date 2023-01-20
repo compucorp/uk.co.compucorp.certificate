@@ -60,10 +60,14 @@ class CRM_Certificate_Token_CaseTest extends BaseHeadlessTest {
     $caseFields = array_merge(array_keys($caseTokenSubscriber::caseFields), [$activeToken]);
 
     $tokenValueEventMock->method('getTokenProcessor')->willReturn($tokenProcessorMock);
-    $tokenProcessorMock->method('getContextValues')->will($this->onConsecutiveCalls(
-      [$case['id']],
-      [array_shift($case['contact_id'])]
-    ));
+    $contextValues = [
+      'entityId' => [$case['id']],
+      'contactId' => [array_shift($case['contact_id'])],
+    ];
+
+    $tokenProcessorMock->method('getContextValues')->willReturnCallback(
+      fn ($context) => $contextValues[$context] ?? NULL
+    );
 
     $prefetchedTokens = $caseTokenSubscriber->prefetch($tokenValueEventMock);
 
