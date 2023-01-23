@@ -6,7 +6,9 @@
 
 SET FOREIGN_KEY_CHECKS=0;
 
+DROP TABLE IF EXISTS `compu_certificate_template_image_format`;
 DROP TABLE IF EXISTS `compucertificate_certificate_status`;
+DROP TABLE IF EXISTS `compucertificate_relationship_type`;
 DROP TABLE IF EXISTS `compucertificate_event_attribute`;
 DROP TABLE IF EXISTS `compucertificate_certificate_entity_type`;
 DROP TABLE IF EXISTS `compucertificate_certificate`;
@@ -67,6 +69,23 @@ CREATE TABLE `compucertificate_event_attribute` (
   `participant_type_id` int unsigned COMMENT 'Particiapnt Type ID',
   PRIMARY KEY (`id`),
   CONSTRAINT FK_compucertificate_event_attribute_certificate_id FOREIGN KEY (`certificate_id`) REFERENCES `compucertificate_certificate`(`id`) ON DELETE CASCADE
+)
+ENGINE=InnoDB;
+
+-- /*******************************************************
+-- *
+-- * compucertificate_relationship_type
+-- *
+-- * Table to store relationship type linked to a certificate
+-- *
+-- *******************************************************/
+CREATE TABLE `compucertificate_relationship_type` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique CompuCertificateRelationshipType ID',
+  `certificate_id` int unsigned COMMENT 'FK to CompuCertificate',
+  `relationship_type_id` int unsigned COMMENT 'FK to CompuCertificate',
+  PRIMARY KEY (`id`),
+  CONSTRAINT FK_compucertificate_relationship_type_certificate_id FOREIGN KEY (`certificate_id`) REFERENCES `compucertificate_certificate`(`id`) ON DELETE CASCADE,
+  CONSTRAINT FK_compucertificate_relationship_type_relationship_type_id FOREIGN KEY (`relationship_type_id`) REFERENCES `civicrm_relationship_type`(`id`) ON DELETE CASCADE
 )
 ENGINE=InnoDB;
 

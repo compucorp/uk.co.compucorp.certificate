@@ -1,13 +1,13 @@
 -- /*******************************************************
 -- *
--- * Clean up the existing tables
--- *
+-- * Clean up the existing tables-- *
 -- *******************************************************/
 
 SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `compu_certificate_template_image_format`;
 DROP TABLE IF EXISTS `compucertificate_certificate_status`;
+DROP TABLE IF EXISTS `compucertificate_relationship_type`;
 DROP TABLE IF EXISTS `compucertificate_event_attribute`;
 DROP TABLE IF EXISTS `compucertificate_certificate_entity_type`;
 DROP TABLE IF EXISTS `compucertificate_certificate`;
