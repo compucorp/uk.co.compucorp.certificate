@@ -5,43 +5,43 @@ trait CRM_Certificate_Test_Helper_Certificate {
   public function provideCertificateDateData(): array {
     return [
       'start_date and end_date is null' => [
-        'start_date' => NULL,
-        'end_date' => NULL,
+        'startDate' => NULL,
+        'endDate' => NULL,
         'valid' => TRUE,
       ],
       'start_date is null and end_date was 3 days ago' => [
-        'start_date' => NULL,
-        'end_date' => $this->getDate("- 3 days"),
+        'startDate' => NULL,
+        'endDate' => $this->getDate("- 3 days"),
         'valid' => FALSE,
       ],
       'start_date is null and end_date is 3 days from now' => [
-        'start_date' => NULL,
-        'end_date' => $this->getDate("3 days"),
+        'startDate' => NULL,
+        'endDate' => $this->getDate("3 days"),
         'valid' => TRUE,
       ],
       'start_date is 3 days from now and end_date is null' => [
-        'start_date' => $this->getDate("3 days"),
-        'end_date' => NULL,
+        'startDate' => $this->getDate("3 days"),
+        'endDate' => NULL,
         'valid' => FALSE,
       ],
       'start_date was 3 days ago and end_date is null' => [
-        'start_date' => $this->getDate("- 3 days"),
-        'end_date' => NULL,
+        'startDate' => $this->getDate("- 3 days"),
+        'endDate' => NULL,
         'valid' => TRUE,
       ],
       'start_date was 3 days ago and end_date is 10 days from now' => [
-        'start_date' => $this->getDate("- 3 days"),
-        'end_date' => $this->getDate("10 days"),
+        'startDate' => $this->getDate("- 3 days"),
+        'endDate' => $this->getDate("10 days"),
         'valid' => TRUE,
       ],
       'start_date was 10 days ago and end_date is 3 days ago' => [
-        'start_date' => $this->getDate("- 10 days"),
-        'end_date' => $this->getDate("- 3 days"),
+        'startDate' => $this->getDate("- 10 days"),
+        'endDate' => $this->getDate("- 3 days"),
         'valid' => FALSE,
       ],
       'start_date is 10 days from now and end_date is 20 days from now' => [
-        'start_date' => $this->getDate("10 days"),
-        'end_date' => $this->getDate("20 days"),
+        'startDate' => $this->getDate("10 days"),
+        'endDate' => $this->getDate("20 days"),
         'valid' => FALSE,
       ],
     ];
