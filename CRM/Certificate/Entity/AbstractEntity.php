@@ -62,6 +62,7 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
     $certificateBAO = CRM_Certificate_BAO_CompuCertificate::findById($certificateId);
     $statuses = $this->getCertificateConfiguredStatuses($certificateBAO->id);
     $types = $this->getCertificateConfiguredTypes($certificateBAO->id);
+    $relationshipTypes = CRM_Certificate_BAO_CompuCertificateRelationshipType::getByCertificateId($certificateId);
 
     $certificate = [
       'name' => $certificateBAO->name,
@@ -72,7 +73,7 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
       'message_template_id' => $certificateBAO->template_id,
       'linked_to' => implode(',', array_column($types, 'id')),
       'statuses' => implode(',', array_column($statuses, 'id')),
-      'relationship_types' => $certificateBAO->relationship_types,
+      'relationship_types' => implode(',', array_column($relationshipTypes, 'relationship_type_id')),
     ];
 
     $this->addEntityExtraField($certificateBAO, $certificate);

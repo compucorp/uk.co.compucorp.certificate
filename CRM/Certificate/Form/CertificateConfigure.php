@@ -209,6 +209,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
 
       $values['statuses'] = empty($values['statuses']) ? [] : explode(',', $values['statuses']);
       $values['linked_to'] = empty($values['linked_to']) ? [] : explode(',', $values['linked_to']);
+      $values['relationship_types'] = empty($values['relationship_types']) ? [] : explode(',', $values['relationship_types']);
 
       $result = $entity->store($values);
     }
