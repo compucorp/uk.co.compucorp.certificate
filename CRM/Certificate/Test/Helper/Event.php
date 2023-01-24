@@ -39,6 +39,7 @@ trait CRM_Certificate_Test_Helper_Event {
       'statuses' => $statuses,
       'participant_type_id' => 1,
       'start_date' => date('Y-m-d'),
+      'relationship_types' => $params['relationship_types'] ?? [],
       'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 10 days")),
     ], $params);
 

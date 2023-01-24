@@ -48,6 +48,7 @@ trait CRM_Certificate_Test_Helper_Case {
       'linked_to' => [$caseType['id']],
       'statuses' => [$caseStatus['value']],
       'start_date' => $params['start_date'] ?? date('Y-m-d'),
+      'relationship_types' => $params['relationship_types'] ?? [],
       'end_date' => $params['end_date'] ?? date('Y-m-d', strtotime(date('Y-m-d') . " 10 days")),
     ];
 
