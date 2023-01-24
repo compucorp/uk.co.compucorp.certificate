@@ -94,26 +94,6 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
   /**
    * {@inheritDoc}
    */
-  public function getCertificateConfigurationById($certificateId) {
-    $certificateDAO = CRM_Certificate_BAO_CompuCertificate::findById($certificateId);
-    $statuses = $this->getCertificateConfiguredStatuses($certificateDAO->id);
-    $types = $this->getCertificateConfiguredTypes($certificateDAO->id);
-
-    return [
-      'name' => $certificateDAO->name,
-      'type' => $certificateDAO->entity,
-      'end_date' => $certificateDAO->end_date,
-      'start_date' => $certificateDAO->start_date,
-      'download_format' => $certificateDAO->download_format,
-      'message_template_id' => $certificateDAO->template_id,
-      'statuses' => implode(',', array_column($statuses, 'id')),
-      'linked_to' => implode(',', array_column($types, 'id')),
-    ];
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   protected function addEntityConditionals($certificateBAO, $entityId, $contactId) {
     $membership = civicrm_api3('Membership', 'getsingle', [
       'id' => $entityId,

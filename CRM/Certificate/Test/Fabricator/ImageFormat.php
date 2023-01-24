@@ -29,6 +29,8 @@ class CRM_Certificate_Test_Fabricator_ImageFormat {
       'option_group_id' => CompuCertificateImageFormat::NAME,
       'label' => $name,
       'name' => $name,
+      'height' => '',
+      'width' => '',
       'value' => '{"extension":"jpg","quality":5,"height":2,"width":12.55}',
     ];
   }

@@ -58,7 +58,28 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
    * @param int $certificateId
    *  Id of the certificate instance to retrieve.
    */
-  abstract public function getCertificateConfigurationById($certificateId);
+  public function getCertificateConfigurationById($certificateId) {
+    $certificateBAO = CRM_Certificate_BAO_CompuCertificate::findById($certificateId);
+    $statuses = $this->getCertificateConfiguredStatuses($certificateBAO->id);
+    $types = $this->getCertificateConfiguredTypes($certificateBAO->id);
+    $relationshipTypes = CRM_Certificate_BAO_CompuCertificateRelationshipType::getByCertificateId($certificateId);
+
+    $certificate = [
+      'name' => $certificateBAO->name,
+      'type' => $certificateBAO->entity,
+      'end_date' => $certificateBAO->end_date,
+      'start_date' => $certificateBAO->start_date,
+      'download_format' => $certificateBAO->download_format,
+      'message_template_id' => $certificateBAO->template_id,
+      'linked_to' => implode(',', array_column($types, 'id')),
+      'statuses' => implode(',', array_column($statuses, 'id')),
+      'relationship_types' => implode(',', array_column($relationshipTypes, 'relationship_type_id')),
+    ];
+
+    $this->addEntityExtraField($certificateBAO, $certificate);
+
+    return $certificate;
+  }
 
   /**
    * Gets a certificate configuration, if a configured certificate for the entity exists
@@ -100,6 +121,16 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
    *  Id of the contact the entity belongs to.
    */
   abstract protected function addEntityConditionals($certificateBAO, $entityId, $contactId);
+
+  /**
+   * Add entity specific fields when retrieving an entity certificate.
+   *
+   * @param \CRM_Certificate_BAO_CompuCertificate $certificateBAO
+   *  Object to add coniditions to.
+   * @param array &$certificate
+   *  Key-value pairs to append extra field to.
+   */
+  protected function addEntityExtraField($certificateBAO, &$certificate) {}
 
   /**
    * Gets all entity certificates vailable for a contact.

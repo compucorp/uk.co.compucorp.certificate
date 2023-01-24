@@ -33,11 +33,13 @@ class CRM_Certificate_Service_Certificate {
 
       $statuses = (array) $values['statuses'];
       $entityTypes = (array) $values['linked_to'];
+      $relationshipTypes = $values['relationship_types'] ?? [];
 
       $result['certificate'] = CRM_Certificate_BAO_CompuCertificate::create($params);
 
       $result['statuses'] = CRM_Certificate_BAO_CompuCertificateStatus::assignCertificateEntityStatuses($result['certificate'], $statuses);
       $result['entityTypes'] = CRM_Certificate_BAO_CompuCertificateEntityType::assignCertificateEntityTypes($result['certificate'], $entityTypes);
+      $result['relationshipTypes'] = CRM_Certificate_BAO_CompuCertificateRelationshipType::assignCertificateRelationshipTypes($result['certificate'], $relationshipTypes);
 
       $this->storeExtraValues($result, $values);
     });
