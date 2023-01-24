@@ -103,7 +103,7 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
 
     $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id'], "LEFT");
     $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id'], "LEFT");
-    $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::MEMBERSHIPS);
+    $certificateBAO->whereAdd('entity = ' . $this->getEntity());
     $certificateBAO->whereAdd("entity_type_id = {$membership['membership_type_id']} OR entity_type_id IS NULL");
     $certificateBAO->whereAdd("status_id = {$membership['status_id']}  OR status_id IS NULL");
   }
@@ -112,9 +112,15 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
    * {@inheritDoc}
    */
   public function getContactCertificates($contactId) {
-    $certificates = [];
+    $configuredCertificates = CompuCertificate::getEntityCertificates($this->getEntity());
+    return $this->formatConfiguredCertificatesForContact($configuredCertificates, $contactId);
+  }
 
-    $configuredCertificates = CompuCertificate::getEntityCertificates(CertificateType::MEMBERSHIPS);
+  /**
+   * {@inheritDoc}
+   */
+  public function formatConfiguredCertificatesForContact(array $configuredCertificates, $contactId) {
+    $certificates = [];
 
     foreach ($configuredCertificates as $configuredCertificate) {
       $condition = [
@@ -164,6 +170,10 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
     $downloadUrl = htmlspecialchars_decode(CRM_Utils_System::url('civicrm/certificates/membership', $query, $absolute));
 
     return $downloadUrl;
+  }
+
+  public function getEntity() {
+    return CertificateType::MEMBERSHIPS;
   }
 
 }

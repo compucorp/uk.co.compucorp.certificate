@@ -121,7 +121,7 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
     $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id'], 'LEFT');
     $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id'], 'LEFT');
     $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEventAttribute(), 'certificate_id'], 'LEFT');
-    $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::EVENTS);
+    $certificateBAO->whereAdd('entity = ' . $this->getEntity());
     $certificateBAO->whereAdd('entity_type_id = ' . $participant['event_id'] . ' OR entity_type_id IS NULL');
     $certificateBAO->whereAdd('status_id = ' . $participant['participant_status_id'] . ' OR status_id IS NULL');
     $certificateBAO->whereAdd('participant_type_id IN (' . $participantRoleIds . ') OR participant_type_id IS NULL');
@@ -131,9 +131,13 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
    * {@inheritDoc}
    */
   public function getContactCertificates($contactId) {
-    $certificates = [];
+    $configuredCertificates = CompuCertificate::getEntityCertificates($this->getEntity());
 
-    $configuredCertificates = CompuCertificate::getEntityCertificates(CertificateType::EVENTS);
+    return $this->formatConfiguredCertificatesForContact($configuredCertificates, $contactId);
+  }
+
+  public function formatConfiguredCertificatesForContact(array $configuredCertificates, $contactId) {
+    $certificates = [];
 
     foreach ($configuredCertificates as $configuredCertificate) {
       $eventAttribute = $this->getCertificateEventAttribute($configuredCertificate['certificate_id']);
@@ -194,6 +198,13 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
     $downloadUrl = htmlspecialchars_decode(CRM_Utils_System::url('civicrm/certificates/event', $query, $absolute));
 
     return $downloadUrl;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getEntity() {
+    return CertificateType::EVENTS;
   }
 
 }
