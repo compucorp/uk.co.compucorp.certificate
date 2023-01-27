@@ -148,6 +148,9 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
           'membership_id' => $membership['id'],
           'name' => $configuredCertificate['name'],
           'type' => 'Membership',
+          'status' => CRM_Member_BAO_MembershipStatus::getMembershipStatus($membership['status_id'])["name"] ?? "",
+          'end_date' => $configuredCertificate['end_date'],
+          'start_date' => $configuredCertificate['start_date'],
           'linked_to' => $membership['membership_name'],
           'download_link' => $this->getCertificateDownloadUrl($membership['id'], $contactId, TRUE),
         ];

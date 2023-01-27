@@ -145,6 +145,7 @@ class CRM_Certificate_Entity_Case extends CRM_Certificate_Entity_AbstractEntity 
             'end_date' => $configuredCertificate['end_date'],
             'start_date' => $configuredCertificate['start_date'],
             'type' => 'Case',
+            'status' => $caseContact['case_id.status_id.label'],
             'linked_to' => $caseContact['case_id.case_type_id.title'],
             'download_link' => $this->getCertificateDownloadUrl($caseContact['case_id'], $contactId, TRUE),
           ];

@@ -176,6 +176,9 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
           'name' => $configuredCertificate['name'],
           'type' => 'Event',
           'linked_to' => $participant['event_title'],
+          'status' => $participant['participant_status'],
+          'end_date' => $configuredCertificate['end_date'],
+          'start_date' => $configuredCertificate['start_date'],
           'download_link' => $this->getCertificateDownloadUrl($participant['id'], $contactId, TRUE),
           'participant_role' => $participant['participant_role'],
         ];
