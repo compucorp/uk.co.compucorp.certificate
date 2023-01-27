@@ -1,9 +1,18 @@
 <?php
 
+use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
+
 /**
  * This is a shared interface for supported certificate entities.
  */
 abstract class CRM_Certificate_Entity_AbstractEntity {
+
+  /**
+   * Returns the current entity;
+   *
+   * @return int
+   */
+  abstract public function getEntity();
 
   /**
    * Stores a certificate configuration
@@ -111,6 +120,26 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
   }
 
   /**
+   * Gets entity certificates available for a contact based on relationship.
+   *
+   * @param int $contactId
+   *  Id of the contact to retrieve related contact certificates for.
+   *
+   * @return Array
+   */
+  public function getRelationshipCertificates($contactId) {
+    $certificates = [];
+    $configuredCertificates = CompuCertificate::getRelationshipEntityCertificates($this->getEntity(), $contactId);
+
+    foreach ($configuredCertificates as $relatedContactId => $configuredCertificate) {
+      //for the related contacts, get their certificates that matches the certificate configuration.
+      $certificates = array_merge($this->formatConfiguredCertificatesForContact($configuredCertificate, $relatedContactId), $certificates);
+    }
+
+    return $certificates;
+  }
+
+  /**
    * Add entity specific retrieval conditions.
    *
    * @param \CRM_Certificate_BAO_CompuCertificate $certificateBAO
@@ -138,9 +167,20 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
    * @param int $contactId
    *  Id of the contact to retrieve certificates for.
    *
-   * @return Array
+   * @return array
    */
   abstract public function getContactCertificates($contactId);
+
+  /**
+   * Formats certificate configurations into an entity certificate.
+   *
+   * @param array $configuredCertificates
+   *  The configured certificates to format.
+   * @param int $contactId
+   *  The contact ID.
+   * @return array
+   */
+  abstract public function formatConfiguredCertificatesForContact(array $configuredCertificates, $contactId);
 
   /**
    * Gets an entity certificate download URL.

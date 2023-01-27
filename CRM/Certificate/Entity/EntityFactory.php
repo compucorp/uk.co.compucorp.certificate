@@ -3,7 +3,7 @@
 class CRM_Certificate_Entity_EntityFactory {
 
   /**
-   * @return CRM_Certificate_Entity_EntityInterface
+   * @return CRM_Certificate_Entity_AbstractEntity
    */
   public static function create($entity) {
     switch ($entity) {

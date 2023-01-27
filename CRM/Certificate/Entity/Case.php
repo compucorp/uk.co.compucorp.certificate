@@ -102,7 +102,7 @@ class CRM_Certificate_Entity_Case extends CRM_Certificate_Entity_AbstractEntity 
 
     $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id']);
     $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id']);
-    $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::CASES);
+    $certificateBAO->whereAdd('entity = ' . $this->getEntity());
     $certificateBAO->whereAdd('entity_type_id = ' . $case['case_type_id']);
     $certificateBAO->whereAdd('status_id = ' . $case['status_id']);
   }
@@ -111,9 +111,16 @@ class CRM_Certificate_Entity_Case extends CRM_Certificate_Entity_AbstractEntity 
    * {@inheritDoc}
    */
   public function getContactCertificates($contactId) {
-    $certificates = [];
+    $configuredCertificates = CompuCertificate::getEntityCertificates($this->getEntity());
 
-    $configuredCertificates = CompuCertificate::getEntityCertificates(CertificateType::CASES);
+    return $this->formatConfiguredCertificatesForContact($configuredCertificates, $contactId);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function formatConfiguredCertificatesForContact(array $configuredCertificates, $contactId) {
+    $certificates = [];
 
     foreach ($configuredCertificates as $configuredCertificate) {
       $result = civicrm_api3('CaseContact', 'get', [
@@ -138,6 +145,7 @@ class CRM_Certificate_Entity_Case extends CRM_Certificate_Entity_AbstractEntity 
             'end_date' => $configuredCertificate['end_date'],
             'start_date' => $configuredCertificate['start_date'],
             'type' => 'Case',
+            'status' => $caseContact['case_id.status_id.label'],
             'linked_to' => $caseContact['case_id.case_type_id.title'],
             'download_link' => $this->getCertificateDownloadUrl($caseContact['case_id'], $contactId, TRUE),
           ];
@@ -160,6 +168,10 @@ class CRM_Certificate_Entity_Case extends CRM_Certificate_Entity_AbstractEntity 
     $downloadUrl = htmlspecialchars_decode(CRM_Utils_System::url('civicrm/certificates/case', $query, $absolute));
 
     return $downloadUrl;
+  }
+
+  public function getEntity() {
+    return CertificateType::CASES;
   }
 
 }

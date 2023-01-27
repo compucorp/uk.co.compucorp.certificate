@@ -36,6 +36,7 @@ trait CRM_Certificate_Test_Helper_Membership {
       'linked_to' => $membershipType['id'],
       'statuses' => $membershipStatus['id'],
       'start_date' => date('Y-m-d'),
+      'relationship_types' => $params['relationship_types'] ?? [],
       'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 10 days")),
     ], $params);
 
