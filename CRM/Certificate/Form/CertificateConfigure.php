@@ -123,12 +123,18 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       ['class' => 'form-control']
     );
 
-    $this->addEntityRef('relationship_types', ts('Access For Related Contacts'), [
-      'entity' => 'RelationshipType',
-      'placeholder' => ts('- Select Relationship -'),
-      'select' => ['multiple' => TRUE],
-      'class' => 'form-control',
-    ], FALSE);
+    $this->add(
+      'select2',
+      'relationship_types',
+      ts('Access For Related Contacts'),
+      $this->getRelationshipTypes(),
+      FALSE,
+      [
+        'class' => 'huge',
+        'placeholder' => ts('- select -'),
+        'multiple' => TRUE,
+      ]
+    );
 
     $this->addButtons([
       [
@@ -334,6 +340,22 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     if (strtotime($values['end_date']) <= strtotime($values['start_date'])) {
       $errors['end_date'] = ts('End date field must be after start date');
     }
+  }
+
+  /**
+   * Returns organisation relationship types.
+   *
+   * @return array
+   */
+  public function getRelationshipTypes() {
+    $relationshipTypes = [];
+    foreach (CRM_Core_PseudoConstant::relationshipType() as $value) {
+      if ($value['contact_type_b'] == 'Organization') {
+        $relationshipTypes[] = ['id' => $value['id'], 'text' => $value['label_a_b']];
+      }
+    }
+
+    return $relationshipTypes;
   }
 
 }
