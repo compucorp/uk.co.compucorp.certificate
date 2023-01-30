@@ -64,7 +64,7 @@ class CRM_Certificate_Service_CertificateAccessChecker {
    */
   private function hasViewPermissionByRelationship() {
     $allowedRelationshipTypeIds = $this->certificate->getRelationshipTypes('relationship_type_id');
-    if (!empty($allowedRelationshipTypeIds)) {
+    if (!empty($allowedRelationshipTypeIds) && !empty(CRM_Core_Session::getLoggedInContactID())) {
       $relationships = Relationship::get()
         ->addWhere('contact_id_a', '=', CRM_Core_Session::getLoggedInContactID())
         ->addWhere('contact_id_b', '=', $this->contactId)
