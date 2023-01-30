@@ -62,46 +62,17 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
    * @param int $entityId
    * @param int $certificateType
    *
-   * @return int - contact id
+   * @return \CRM_Certificate_BAO_CompuCertificate
+   *
+   * @throws \CRM_Core_exception
    */
   public static function checkIfCertificateAvailable($contactId, $entityId, $certificateType) {
-    self::checkPermission($contactId, $entityId);
+    $certificate = self::validateCertificate($contactId, $entityId, $certificateType);
+    $accessChecker = new CRM_Certificate_Service_CertificateAccessChecker($contactId, $certificate);
+    $hasAccess = $accessChecker->check();
 
-    return self::validateCertificate($contactId, $entityId, $certificateType);
-  }
-
-  /**
-   * Performs access level check to ensure user has access to contact certificate
-   *
-   * The user would be granted access to the certificate if any of the condition below is true
-   * - if the contact id is the same as the current logged in user
-   * - if a checksum is provided in the URL and it is valid for the contact id
-   * - Lastly, the user is not logged in and no checksum is provided if the user has
-   *   the express permission to view the contact
-   *
-   * - if all fails return error.
-   * @param int $contactId
-   * @param int $entityId
-   *
-   * @return int - contact id
-   */
-  private static function checkPermission($contactId, $entityId) {
-    if (empty($contactId) || empty($entityId)) {
-      throw new CRM_Core_Exception(ts('Contact Id and Entity Id are required to download a certificate'));
-    }
-
-    $userChecksum = CRM_Utils_Request::retrieve('cs', 'String');
-
-    $isLoggedInUser = CRM_Core_Session::getLoggedInContactID() == $contactId;
-    $hasViewPermission = CRM_Contact_BAO_Contact_Permission::allow($contactId, CRM_Core_Permission::VIEW);
-    $checksumValid = FALSE;
-
-    if ($userChecksum && $contactId) {
-      $checksumValid = CRM_Contact_BAO_Contact_Utils::validChecksum($contactId, $userChecksum);
-    }
-
-    if ($checksumValid || $isLoggedInUser || $hasViewPermission) {
-      return $contactId;
+    if ($hasAccess) {
+      return $certificate;
     }
 
     throw new CRM_Core_Exception('You do not have permission to access this contact.', 403);

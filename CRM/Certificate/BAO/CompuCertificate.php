@@ -122,4 +122,16 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
     $this->whereAdd("({$prefix}.start_date IS NULL OR date({$prefix}.start_date) <= date(NOW())) AND ({$prefix}.end_date IS NULL OR date({$prefix}.end_date) >= date(NOW()) )");
   }
 
+  /**
+   * Get the instance relationship types
+   */
+  public function getRelationshipTypes(string $column = NULL) {
+    $relationshipTypes = CompuCertificateRelationshipType::getByCertificateId($this->id);
+    if (!empty($relationshipTypes) && !empty($relationshipTypes)) {
+      $relationshipTypes = array_column($relationshipTypes, $column);
+    }
+
+    return $relationshipTypes;
+  }
+
 }
