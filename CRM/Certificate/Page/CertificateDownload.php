@@ -51,8 +51,14 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
       CRM_Utils_System::redirect('/civicrm?reset=1');
     }
 
-    $certificateDownload = new CRM_Certificate_Service_CertificateDownloader();
-    $certificateDownload->download($certificate, $contactId, $entityId);
+    $format = $certificate->download_format;
+    $overrideFormat = CRM_Utils_Request::retrieve('format', 'String');
+    if (!empty($overrideFormat) && $overrideFormat === 'html') {
+      $format = CRM_Certificate_Enum_DownloadFormat::HTML;
+    }
+
+    $certificateDownload = new CRM_Certificate_Service_CertificateDownloader($certificate, $contactId, $entityId, $format);
+    $certificateDownload->download();
   }
 
   /**
@@ -67,6 +73,10 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
    * @throws \CRM_Core_exception
    */
   public static function checkIfCertificateAvailable($contactId, $entityId, $certificateType) {
+    if (empty($contactId) || empty($entityId)) {
+      throw new CRM_Core_Exception('You do not have permission to access this contact.', 403);
+    }
+
     $certificate = self::validateCertificate($contactId, $entityId, $certificateType);
     $accessChecker = new CRM_Certificate_Service_CertificateAccessChecker($contactId, $certificate);
     $hasAccess = $accessChecker->check();
