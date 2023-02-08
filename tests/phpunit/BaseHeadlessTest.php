@@ -7,7 +7,7 @@ use Civi\Test\TransactionalInterface;
 /**
  * Base test class.
  */
-abstract class BaseHeadlessTest extends PHPUnit_Framework_TestCase implements
+abstract class BaseHeadlessTest extends PHPUnit\Framework\TestCase implements
     HeadlessInterface,
     TransactionalInterface {
 
