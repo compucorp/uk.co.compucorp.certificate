@@ -22,7 +22,7 @@
       extraCanvas.setAttribute('height',height);
       const ctx = extraCanvas.getContext('2d');
       ctx.drawImage(canvas,0,0,canvas.width, canvas.height,0,0,width,height);
-      const dataURL = extraCanvas.toDataURL(imageTypes[`${format}`] || imageTypes['jpg'], quality / 10);
+      const dataURL = extraCanvas.toDataURL(imageTypes[`${format.extension}`] || imageTypes['jpg'], quality / 10);
 
       const img = new Image();
       img.src = dataURL
