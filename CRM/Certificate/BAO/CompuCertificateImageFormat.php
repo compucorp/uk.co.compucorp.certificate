@@ -252,10 +252,26 @@ class CRM_Certificate_BAO_CompuCertificateImageFormat extends CRM_Core_DAO_Optio
    *   Field value to search for.
    *
    * @return array
-   *   associative array of name/value pairs
+   *   Associative array of name/value pairs
    */
   public static function getImageFormat($field, $val) {
     $params = ['is_active' => 1, $field => $val];
+    $imageFormat = [];
+    if (self::retrieve($params, $imageFormat)) {
+      return $imageFormat;
+    }
+
+    return NULL;
+  }
+
+  /**
+   * Get the default Image Format values.
+   *
+   * @return array
+   *   Associative array containing the default Image Format values.
+   */
+  public static function getDefaultFormat() {
+    $params = ['is_active' => 1, 'is_default' => 1];
     $imageFormat = [];
     if (self::retrieve($params, $imageFormat)) {
       return $imageFormat;
