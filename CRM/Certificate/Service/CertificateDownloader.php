@@ -86,7 +86,7 @@ class CRM_Certificate_Service_CertificateDownloader {
 
     $page = new CRM_Certificate_Page_CertificateDownload();
     $page->assign('certificateContent', $html);
-    $page->assign('imageFormat', json_encode($imageFormat));
+    $page->assign('imageFormat', json_encode($imageFormat ?? []));
     $page->run();
   }
 
