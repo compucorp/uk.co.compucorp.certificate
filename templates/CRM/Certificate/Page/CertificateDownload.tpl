@@ -9,6 +9,7 @@
 
   { literal }
   CRM.$(function ($) {
+   format = format || {}
    const container = document.getElementById("compu-certificate-content");
    let extension = format.extension || 'jpg';
    let quality = Math.max(format.quality || 10, 10);
@@ -22,7 +23,7 @@
       extraCanvas.setAttribute('height',height);
       const ctx = extraCanvas.getContext('2d');
       ctx.drawImage(canvas,0,0,canvas.width, canvas.height,0,0,width,height);
-      const dataURL = extraCanvas.toDataURL(imageTypes[`${format.extension}`] || imageTypes['jpg'], quality / 10);
+      const dataURL = extraCanvas.toDataURL(imageTypes[`${extension}`], quality / 10);
 
       const img = new Image();
       img.src = dataURL

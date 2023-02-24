@@ -77,16 +77,17 @@ class CRM_Certificate_Service_CertificateDownloader {
    */
   private function renderImage($html, $imageFormatId) {
     $imageFormat = [];
-    if (is_null($imageFormatId)) {
-      $imageFormat = CompuCertificateImageFormatBAO::getDefaultFormat();
-    }
-    else {
+    if (!is_null($imageFormatId)) {
       $imageFormat = CompuCertificateImageFormatBAO::getImageFormat('id', $imageFormatId);
+    }
+
+    if (empty($imageFormat)) {
+      $imageFormat = CompuCertificateImageFormatBAO::getDefaultFormat();
     }
 
     $page = new CRM_Certificate_Page_CertificateDownload();
     $page->assign('certificateContent', $html);
-    $page->assign('imageFormat', json_encode($imageFormat));
+    $page->assign('imageFormat', json_encode($imageFormat ?? []));
     $page->run();
   }
 
