@@ -42,6 +42,11 @@ class CRM_Certificate_Form_CertificateImageFormats extends CRM_Admin_Form {
       return;
     }
 
+    $minWidthAndHeight = 1;
+    if ($this->_action & CRM_Core_Action::UPDATE) {
+      $minWidthAndHeight = 0;
+    }
+
     $descriptions = [
       'name' => '',
       'description' => '',
@@ -53,8 +58,8 @@ class CRM_Certificate_Form_CertificateImageFormats extends CRM_Admin_Form {
     ];
     $this->add('text', 'name', ts('Name'), [], TRUE);
     $this->add('text', 'description', ts('Description'));
-    $this->add('text', 'width', ts('Width (px)'), ['min' => 1, 'step' => '0.01'], FALSE);
-    $this->add('text', 'height', ts('Height (px)'), ['min' => 1, 'step' => '0.01'], FALSE);
+    $this->add('text', 'width', ts('Width (px)'), ['min' => $minWidthAndHeight, 'step' => '0.01'], FALSE);
+    $this->add('text', 'height', ts('Height (px)'), ['min' => $minWidthAndHeight, 'step' => '0.01'], FALSE);
     $this->add('text', 'quality', ts('Quality'), ['min' => 1, 'max' => 10, 'value' => 10], TRUE);
     $this->add('select', 'extension', ts('Extension'), CompuCertificateImageFormat::getSupportedExtensions(), FALSE);
     $this->add('checkbox', 'is_default', ts('Is this Image Format the default?'));
@@ -66,7 +71,16 @@ class CRM_Certificate_Form_CertificateImageFormats extends CRM_Admin_Form {
    * @return array
    */
   public function setDefaultValues() {
-    return $this->_values;
+    $default = $this->_values;
+    if ($this->_action & CRM_Core_Action::UPDATE) {
+      if ($default['width'] == 0) {
+        $default['width'] = NULL;
+      }
+      if ($default['height'] == 0) {
+        $default['height'] = NULL;
+      }
+    }
+    return $default;
   }
 
   /**
