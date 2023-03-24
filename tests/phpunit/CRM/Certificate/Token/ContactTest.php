@@ -31,8 +31,8 @@ class CRM_Certificate_Token_ContactTest extends BaseHeadlessTest {
     $address = explode(", ", $res["employer_inline_address"]);
 
     // Ensure the order is as expected.
-    $this->assertEquals($address[0], $employer["address"]["supplemental_address_1"]);
-    $this->assertEquals($address[1], $employer["address"]["supplemental_address_2"]);
+    $this->assertEquals($address[0], $employer["address"]["street_address"]);
+    $this->assertEquals($address[1], $employer["address"]["supplemental_address_1"]);
     $this->assertEquals($address[2], $employer["address"]["city"]);
     $this->assertEquals($address[3], $country["name"]);
   }

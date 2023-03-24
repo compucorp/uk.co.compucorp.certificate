@@ -50,7 +50,7 @@ class CRM_Certificate_Token_Contact extends CRM_Certificate_Token_AbstractCertif
           ->addSelect('employer_id')
           ->addWhere('id', '=', $contactId)
           ->addChain('employerAddress', \Civi\Api4\Address::get()
-            ->addSelect('supplemental_address_1', 'supplemental_address_2', 'county_id:label', 'country_id:label', 'city')
+            ->addSelect('street_address', 'supplemental_address_1', 'county_id:label', 'country_id:label', 'city')
             ->addWhere('contact_id', '=', '$employer_id')
             ->addWhere('is_primary', '=', TRUE)
           )
@@ -80,8 +80,8 @@ class CRM_Certificate_Token_Contact extends CRM_Certificate_Token_AbstractCertif
   private function resolveFields($contact, &$resolvedTokens) {
     if (!empty($contact["employerAddress"])) {
       $address = [
+        $contact["employerAddress"][0]["street_address"],
         $contact["employerAddress"][0]["supplemental_address_1"],
-        $contact["employerAddress"][0]["supplemental_address_2"],
         $contact["employerAddress"][0]["city"],
         $contact["employerAddress"][0]["county_id:label"],
         $contact["employerAddress"][0]["country_id:label"],
