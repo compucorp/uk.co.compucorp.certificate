@@ -16,36 +16,46 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
    * {@inheritdoc}
    */
   public function getTypes() {
-    $result = civicrm_api3('event', 'get', [
-      'sequential' => 1,
-      'is_active' => 1,
-      'return' => ["id"],
-      'options' => ['limit' => 0],
-    ]);
+    try {
+      $result = civicrm_api3('event', 'get', [
+        'sequential' => 1,
+        'is_active' => 1,
+        'return' => ["id"],
+        'options' => ['limit' => 0],
+      ]);
 
-    if ($result["is_error"]) {
-      return NULL;
+      if ($result["is_error"]) {
+        return NULL;
+      }
+
+      return array_column($result["values"], 'id');
     }
-
-    return array_column($result["values"], 'id');
+    catch (\Throwable $th) {
+      return [];
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function getStatuses() {
-    $result = civicrm_api3('ParticipantStatusType', 'get', [
-      'sequential' => 1,
-      'is_active' => 1,
-      'return' => ["id"],
-      'options' => ['limit' => 0],
-    ]);
+    try {
+      $result = civicrm_api3('ParticipantStatusType', 'get', [
+        'sequential' => 1,
+        'is_active' => 1,
+        'return' => ["id"],
+        'options' => ['limit' => 0],
+      ]);
 
-    if ($result["is_error"]) {
-      return NULL;
+      if ($result["is_error"]) {
+        return NULL;
+      }
+
+      return array_column($result["values"], 'id');
     }
-
-    return array_column($result["values"], 'id');
+    catch (\Throwable $th) {
+      return [];
+    }
   }
 
   /**
@@ -160,7 +170,13 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
         $condition['participant_role_id'] = ['IN' => (array) $participantTypeId];
       }
 
-      $result = civicrm_api3('Participant', 'get', $condition);
+      $result = [];
+      try {
+        $result = civicrm_api3('Participant', 'get', $condition);
+      }
+      catch (\Throwable $th) {
+        continue;
+      }
 
       if ($result['is_error']) {
         continue;

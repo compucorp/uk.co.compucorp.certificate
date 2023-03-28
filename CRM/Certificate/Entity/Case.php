@@ -16,37 +16,47 @@ class CRM_Certificate_Entity_Case extends CRM_Certificate_Entity_AbstractEntity 
    * {@inheritDoc}
    */
   public function getTypes() {
-    $result = civicrm_api3('CaseType', 'get', [
-      'sequential' => 1,
-      'is_active' => 1,
-      'return' => ["id"],
-      'options' => ['limit' => 0],
-    ]);
+    try {
+      $result = civicrm_api3('CaseType', 'get', [
+        'sequential' => 1,
+        'is_active' => 1,
+        'return' => ["id"],
+        'options' => ['limit' => 0],
+      ]);
 
-    if ($result["is_error"]) {
-      return NULL;
+      if ($result["is_error"]) {
+        return NULL;
+      }
+
+      return array_column($result["values"], 'id');
     }
-
-    return array_column($result["values"], 'id');
+    catch (\Throwable $th) {
+      return [];
+    }
   }
 
   /**
    * @inheritdoc
    */
   public function getStatuses() {
-    $result = civicrm_api3('OptionValue', 'get', [
-      'sequential' => 1,
-      'is_active' => 1,
-      'return' => ["value"],
-      'options' => ['limit' => 0],
-      'option_group_id' => "case_status",
-    ]);
+    try {
+      $result = civicrm_api3('OptionValue', 'get', [
+        'sequential' => 1,
+        'is_active' => 1,
+        'return' => ["value"],
+        'options' => ['limit' => 0],
+        'option_group_id' => "case_status",
+      ]);
 
-    if ($result["is_error"]) {
-      return NULL;
+      if ($result["is_error"]) {
+        return NULL;
+      }
+
+      return array_column($result["values"], 'value');
     }
-
-    return array_column($result["values"], 'value');
+    catch (\Throwable $th) {
+      return [];
+    }
   }
 
   /**
@@ -123,14 +133,21 @@ class CRM_Certificate_Entity_Case extends CRM_Certificate_Entity_AbstractEntity 
     $certificates = [];
 
     foreach ($configuredCertificates as $configuredCertificate) {
-      $result = civicrm_api3('CaseContact', 'get', [
-        'sequential' => 1,
-        'return' => ['case_id.case_type_id.title', 'case_id.status_id.label', 'case_id'],
-        'case_id.case_type_id' => $configuredCertificate['entity_type_id'],
-        'case_id.status_id' => $configuredCertificate['status_id'],
-        'contact_id' => $contactId,
-        'case_id.is_deleted' => 0,
-      ]);
+
+      $result = [];
+      try {
+        $result = civicrm_api3('CaseContact', 'get', [
+          'sequential' => 1,
+          'return' => ['case_id.case_type_id.title', 'case_id.status_id.label', 'case_id'],
+          'case_id.case_type_id' => $configuredCertificate['entity_type_id'],
+          'case_id.status_id' => $configuredCertificate['status_id'],
+          'contact_id' => $contactId,
+          'case_id.is_deleted' => 0,
+        ]);
+      }
+      catch (\Throwable $th) {
+        continue;
+      }
 
       if ($result['is_error']) {
         continue;
