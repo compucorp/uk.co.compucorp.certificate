@@ -46,7 +46,7 @@ class CRM_Certificate_Token_Contact extends CRM_Certificate_Token_AbstractCertif
     try {
       if (is_array($contactId)) {
         $contactId = $contactId[0];
-        $contact = \Civi\Api4\Contact::get()
+        $contact = \Civi\Api4\Contact::get(FALSE)
           ->addSelect('employer_id')
           ->addWhere('id', '=', $contactId)
           ->addChain('employerAddress', \Civi\Api4\Address::get()
