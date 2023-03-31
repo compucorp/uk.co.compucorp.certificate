@@ -16,36 +16,46 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
    * {@inheritDoc}
    */
   public function getTypes() {
-    $result = civicrm_api3('MembershipType', 'get', [
-      'sequential' => 1,
-      'is_active' => 1,
-      'return' => ["id"],
-      'options' => ['limit' => 0],
-    ]);
+    try {
+      $result = civicrm_api3('MembershipType', 'get', [
+        'sequential' => 1,
+        'is_active' => 1,
+        'return' => ["id"],
+        'options' => ['limit' => 0],
+      ]);
 
-    if ($result["is_error"]) {
-      return NULL;
+      if ($result["is_error"]) {
+        return NULL;
+      }
+
+      return array_column($result["values"], 'id');
     }
-
-    return array_column($result["values"], 'id');
+    catch (\Throwable $th) {
+      return [];
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function getStatuses() {
-    $result = civicrm_api3('MembershipStatus', 'get', [
-      'sequential' => 1,
-      'is_active' => 1,
-      'return' => ["id"],
-      'options' => ['limit' => 0],
-    ]);
+    try {
+      $result = civicrm_api3('MembershipStatus', 'get', [
+        'sequential' => 1,
+        'is_active' => 1,
+        'return' => ["id"],
+        'options' => ['limit' => 0],
+      ]);
 
-    if ($result["is_error"]) {
-      return NULL;
+      if ($result["is_error"]) {
+        return NULL;
+      }
+
+      return array_column($result["values"], 'id');
     }
-
-    return array_column($result["values"], 'id');
+    catch (\Throwable $th) {
+      return [];
+    }
   }
 
   /**
@@ -137,7 +147,13 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
         $condition['membership_type_id'] = $configuredCertificate['entity_type_id'];
       }
 
-      $result = civicrm_api3('Membership', 'get', $condition);
+      $result = [];
+      try {
+        $result = civicrm_api3('Membership', 'get', $condition);
+      }
+      catch (\Throwable $th) {
+        continue;
+      }
 
       if ($result['is_error']) {
         continue;
