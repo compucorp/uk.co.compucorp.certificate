@@ -3,7 +3,7 @@
 use CRM_Certificate_Enum_CertificateType as CertificateType;
 use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
 
-class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterface {
+class CRM_Certificate_Entity_Case extends CRM_Certificate_Entity_AbstractEntity {
 
   /**
    * {@inheritDoc}
@@ -16,37 +16,47 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
    * {@inheritDoc}
    */
   public function getTypes() {
-    $result = civicrm_api3('CaseType', 'get', [
-      'sequential' => 1,
-      'is_active' => 1,
-      'return' => ["id"],
-      'options' => ['limit' => 0],
-    ]);
+    try {
+      $result = civicrm_api3('CaseType', 'get', [
+        'sequential' => 1,
+        'is_active' => 1,
+        'return' => ["id"],
+        'options' => ['limit' => 0],
+      ]);
 
-    if ($result["is_error"]) {
-      return NULL;
+      if ($result["is_error"]) {
+        return NULL;
+      }
+
+      return array_column($result["values"], 'id');
     }
-
-    return array_column($result["values"], 'id');
+    catch (\Throwable $th) {
+      return [];
+    }
   }
 
   /**
    * @inheritdoc
    */
   public function getStatuses() {
-    $result = civicrm_api3('OptionValue', 'get', [
-      'sequential' => 1,
-      'is_active' => 1,
-      'return' => ["value"],
-      'options' => ['limit' => 0],
-      'option_group_id' => "case_status",
-    ]);
+    try {
+      $result = civicrm_api3('OptionValue', 'get', [
+        'sequential' => 1,
+        'is_active' => 1,
+        'return' => ["value"],
+        'options' => ['limit' => 0],
+        'option_group_id' => "case_status",
+      ]);
 
-    if ($result["is_error"]) {
-      return NULL;
+      if ($result["is_error"]) {
+        return NULL;
+      }
+
+      return array_column($result["values"], 'value');
     }
-
-    return array_column($result["values"], 'value');
+    catch (\Throwable $th) {
+      return [];
+    }
   }
 
   /**
@@ -93,67 +103,51 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
   /**
    * {@inheritDoc}
    */
-  public function getCertificateConfigurationById($certificateId) {
-    $certificateDAO = CRM_Certificate_BAO_CompuCertificate::findById($certificateId);
-    $statuses = $this->getCertificateConfiguredStatuses($certificateDAO->id);
-    $types = $this->getCertificateConfiguredTypes($certificateDAO->id);
+  protected function addEntityConditionals($certificateBAO, $entityId, $contactId) {
+    $case = civicrm_api3('Case', 'getsingle', [
+      'id' => $entityId,
+      'contact_id' => $contactId,
+      'is_active' => 1,
+    ]);
 
-    return [
-      'name' => $certificateDAO->name,
-      'type' => $certificateDAO->entity,
-      'message_template_id' => $certificateDAO->template_id,
-      'statuses' => implode(',', array_column($statuses, 'id')),
-      'linked_to' => implode(',', array_column($types, 'id')),
-    ];
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function getCertificateConfiguration($entityId, $contactId) {
-    try {
-      $case = civicrm_api3('Case', 'getsingle', [
-        'id' => $entityId,
-        'contact_id' => $contactId,
-        'is_active' => 1,
-      ]);
-
-      $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
-      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id']);
-      $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id']);
-      $certificateBAO->whereAdd('entity = ' . CRM_Certificate_Enum_CertificateType::CASES);
-      $certificateBAO->whereAdd('entity_type_id = ' . $case['case_type_id']);
-      $certificateBAO->whereAdd('status_id = ' . $case['status_id']);
-      $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '.id Desc');
-      $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificateStatus::$_tableName . '.id');
-      $certificateBAO->find(TRUE);
-
-      if (!empty($certificateBAO->id)) {
-        return $certificateBAO;
-      }
-    }
-    catch (Exception $e) {
-    }
-    return FALSE;
+    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id']);
+    $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id']);
+    $certificateBAO->whereAdd('entity = ' . $this->getEntity());
+    $certificateBAO->whereAdd('entity_type_id = ' . $case['case_type_id']);
+    $certificateBAO->whereAdd('status_id = ' . $case['status_id']);
   }
 
   /**
    * {@inheritDoc}
    */
   public function getContactCertificates($contactId) {
+    $configuredCertificates = CompuCertificate::getEntityCertificates($this->getEntity());
+
+    return $this->formatConfiguredCertificatesForContact($configuredCertificates, $contactId);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function formatConfiguredCertificatesForContact(array $configuredCertificates, $contactId) {
     $certificates = [];
 
-    $configuredCertificates = CompuCertificate::getEntityCertificates(CertificateType::CASES);
-
     foreach ($configuredCertificates as $configuredCertificate) {
-      $result = civicrm_api3('CaseContact', 'get', [
-        'sequential' => 1,
-        'return' => ['case_id.case_type_id.title', 'case_id.status_id.label', 'case_id'],
-        'case_id.case_type_id' => $configuredCertificate['entity_type_id'],
-        'case_id.status_id' => $configuredCertificate['status_id'],
-        'contact_id' => $contactId,
-        'case_id.is_deleted' => 0,
-      ]);
+
+      $result = [];
+      try {
+        $result = civicrm_api3('CaseContact', 'get', [
+          'sequential' => 1,
+          'return' => ['case_id.case_type_id.title', 'case_id.status_id.label', 'case_id'],
+          'case_id.case_type_id' => $configuredCertificate['entity_type_id'],
+          'case_id.status_id' => $configuredCertificate['status_id'],
+          'contact_id' => $contactId,
+          'case_id.is_deleted' => 0,
+        ]);
+      }
+      catch (\Throwable $th) {
+        continue;
+      }
 
       if ($result['is_error']) {
         continue;
@@ -165,7 +159,10 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
           $certificate = [
             'case_id' => $caseContact['case_id'],
             'name' => $configuredCertificate['name'],
+            'end_date' => $configuredCertificate['end_date'],
+            'start_date' => $configuredCertificate['start_date'],
             'type' => 'Case',
+            'status' => $caseContact['case_id.status_id.label'],
             'linked_to' => $caseContact['case_id.case_type_id.title'],
             'download_link' => $this->getCertificateDownloadUrl($caseContact['case_id'], $contactId, TRUE),
           ];
@@ -188,6 +185,10 @@ class CRM_Certificate_Entity_Case implements CRM_Certificate_Entity_EntityInterf
     $downloadUrl = htmlspecialchars_decode(CRM_Utils_System::url('civicrm/certificates/case', $query, $absolute));
 
     return $downloadUrl;
+  }
+
+  public function getEntity() {
+    return CertificateType::CASES;
   }
 
 }

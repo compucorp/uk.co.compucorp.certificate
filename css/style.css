@@ -7,3 +7,6 @@ div.certificate__action-link {
 .crm-ajax-container #bootstrap-theme > .certificate__create-form-panel.panel > div.panel-body {
   border-top: unset;
 }
+#bootstrap-theme > .certificate__create-form-panel.panel > div.panel-body > div > div.form-group.row.relationship_types > div.col-sm-2.control-label > label {
+  display: inline;
+}

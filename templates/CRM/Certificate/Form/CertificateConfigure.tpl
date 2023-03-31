@@ -1,12 +1,17 @@
 {crmStyle ext=uk.co.compucorp.certificate file=css/style.css}
 
 <div id="bootstrap-theme">
-  <div class="panel panel-default certificate__create-form-panel"">
+  <div class="panel panel-default certificate__create-form-panel">
     <div class=" panel-body">
     <div class="form-hoizontal">
       {foreach from=$elementNames item=elementName}
       <div class="form-group row {$elementName}">
-        <label class="col-sm-2 control-label">{$form.$elementName.label}</label>
+        <div class="col-sm-2 control-label">
+          {$form.$elementName.label}
+          {if in_array($elementName, $help)} 
+            {help id="$elementName" file="CRM/Certificate/Form/CertificateConfigure.hlp"}
+          {/if}
+        </div>
         <div class="col-sm-7 col-md-5">
           {$form.$elementName.html}
         </div>
@@ -28,6 +33,7 @@
   let performingUpdate = false
   const TYPE_CASES = "1";
   const TYPE_EVENTS = "2";
+  const FORMAT_IMAGE = "2";
 
   { literal }
 
@@ -76,7 +82,7 @@
 
         toggleRequiredMarker($, e.target.value);
       }
-    })
+    });
 
     CRM.$('[name=linked_to]').on('change', function (e) {
       if (e.target.value > 0 && CRM.$('[name=type]').val() === TYPE_EVENTS) {
@@ -93,7 +99,7 @@
             }
           })
       }
-    })
+    });
 
     //this is to trigger the entity ref, when value of certifcate type is set from the backend
     if ($('[name=type]')[0].value) {
@@ -101,6 +107,7 @@
       $('[name=type]').change();
     }
 
+    CRM.$('#download_format').change();
   });
 
   { /literal}

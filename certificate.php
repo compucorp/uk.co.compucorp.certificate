@@ -15,15 +15,6 @@ function certificate_civicrm_config(&$config) {
 }
 
 /**
- * Implements hook_civicrm_xmlMenu().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_xmlMenu
- */
-function certificate_civicrm_xmlMenu(&$files) {
-  _certificate_civix_civicrm_xmlMenu($files);
-}
-
-/**
  * Implements hook_civicrm_install().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_install
@@ -78,54 +69,6 @@ function certificate_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
 }
 
 /**
- * Implements hook_civicrm_managed().
- *
- * Generate a list of entities to create/deactivate/delete when this module
- * is installed, disabled, uninstalled.
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_managed
- */
-function certificate_civicrm_managed(&$entities) {
-  _certificate_civix_civicrm_managed($entities);
-}
-
-/**
- * Implements hook_civicrm_caseTypes().
- *
- * Generate a list of case-types.
- *
- * Note: This hook only runs in CiviCRM 4.4+.
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_caseTypes
- */
-function certificate_civicrm_caseTypes(&$caseTypes) {
-  _certificate_civix_civicrm_caseTypes($caseTypes);
-}
-
-/**
- * Implements hook_civicrm_angularModules().
- *
- * Generate a list of Angular modules.
- *
- * Note: This hook only runs in CiviCRM 4.5+. It may
- * use features only available in v4.6+.
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_angularModules
- */
-function certificate_civicrm_angularModules(&$angularModules) {
-  _certificate_civix_civicrm_angularModules($angularModules);
-}
-
-/**
- * Implements hook_civicrm_alterSettingsFolders().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterSettingsFolders
- */
-function certificate_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
-  _certificate_civix_civicrm_alterSettingsFolders($metaDataFolders);
-}
-
-/**
  * Implements hook_civicrm_entityTypes().
  *
  * Declare entity types provided by this module.
@@ -134,13 +77,6 @@ function certificate_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  */
 function certificate_civicrm_entityTypes(&$entityTypes) {
   _certificate_civix_civicrm_entityTypes($entityTypes);
-}
-
-/**
- * Implements hook_civicrm_themes().
- */
-function certificate_civicrm_themes(&$themes) {
-  _certificate_civix_civicrm_themes($themes);
 }
 
 /**
@@ -153,6 +89,13 @@ function certificate_civicrm_navigationMenu(&$menu) {
     'label' => E::ts('Certificates'),
     'name' => 'compu-configure-certificate',
     'url' => 'civicrm/admin/certificates',
+    'permission' => 'configure certificates',
+  ));
+
+  _certificate_civix_insert_navigation_menu($menu, 'Administer/Communications', array(
+    'label' => E::ts('Image Formats (Certificates)'),
+    'name' => 'compucertificate-configure-imageformats',
+    'url' => 'civicrm/admin/certificates/imageFormats?reset=1',
     'permission' => 'configure certificates',
   ));
 }
@@ -177,8 +120,10 @@ function certificate_civicrm_permission(&$permissions) {
 function _compucertificate_add_token_subscribers() {
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Case());
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Event());
+  Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Contact());
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Participant());
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Membership());
+  Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Certificate());
 }
 
 function _compucertificate_getCaseIdFromUrlIfExist() {
@@ -198,8 +143,10 @@ function _compucertificate_getCaseIdFromUrlIfExist() {
 function certificate_civicrm_tokens(&$tokens) {
   $tokens[CRM_Certificate_Token_Case::TOKEN] = CRM_Certificate_Token_Case::prefixedEntityTokens();
   $tokens[CRM_Certificate_Token_Event::TOKEN] = CRM_Certificate_Token_Event::prefixedEntityTokens();
+  $tokens[CRM_Certificate_Token_Contact::TOKEN] = CRM_Certificate_Token_Contact::prefixedEntityTokens();
   $tokens[CRM_Certificate_Token_Participant::TOKEN] = CRM_Certificate_Token_Participant::prefixedEntityTokens();
   $tokens[CRM_Certificate_Token_Membership::TOKEN] = CRM_Certificate_Token_Membership::prefixedEntityTokens();
+  $tokens[CRM_Certificate_Token_Certificate::TOKEN] = CRM_Certificate_Token_Certificate::prefixedEntityTokens();
 
   if (_compucertificate_getCaseIdFromUrlIfExist()) {
     $tokens['certificate_url']['certificate_url.case'] = 'Case Certificate URL';
@@ -243,6 +190,34 @@ function certificate_civicrm_pageRun(&$page) {
     new CRM_Certificate_Hook_PageRun_EventPageTab($page),
     new CRM_Certificate_Hook_PageRun_MemberPageTab($page),
   ];
+
+  array_walk($hooks, function ($hook) {
+    $hook->run();
+  });
+}
+
+/**
+ * Implements hook_civicrm_buildForm().
+ */
+function certificate_civicrm_buildForm($formName, &$form) {
+  $hooks = [];
+  if (CRM_Certificate_Hook_BuildForm_MessageTemplates::shouldRun($form)) {
+    $hooks[] = new CRM_Certificate_Hook_BuildForm_MessageTemplates($form);
+  }
+
+  array_walk($hooks, function ($hook) {
+    $hook->run();
+  });
+}
+
+/**
+ * Implements hook_civicrm_postProcess().
+ */
+function certificate_civicrm_postProcess($formName, &$form) {
+  $hooks = [];
+  if (CRM_Certificate_Hook_PostProcess_MessageTemplates::shouldRun($form)) {
+    $hooks[] = new CRM_Certificate_Hook_PostProcess_MessageTemplates($formName, $form);
+  }
 
   array_walk($hooks, function ($hook) {
     $hook->run();

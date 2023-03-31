@@ -1,5 +1,7 @@
 <?php
 
+use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
+
 /**
  * Fabricates ccertificate configuration for an entity.
  */
@@ -86,6 +88,10 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
     return [
       'name' => $name,
       'message_template_id'  => 1,
+      'downolad_format' => DownloadFormat::IMAGE,
+      'start_date' => date("Y-m-d"),
+      'end_date' => date("Y-m-d", strtotime(date("Y-m-d") . " + 10 days")),
+      'relationship_types' => [],
     ];
   }
 

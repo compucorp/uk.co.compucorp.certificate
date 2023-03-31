@@ -8,6 +8,7 @@
 class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
 
   use CRM_Certificate_Test_Helper_Case;
+  use CRM_Certificate_Test_Helper_Certificate;
 
   /**
    * Test the appropraite types are returned
@@ -167,6 +168,52 @@ class CRM_Certificate_Entity_CaseTest extends BaseHeadlessTest {
     $expectedCasesId = array_column($contactCases, "id");
     $avaliableCertificatesCaseId = array_column($avaliableCertificates, "case_id");
     $this->assertCount(0, array_diff($expectedCasesId, $avaliableCertificatesCaseId));
+  }
+
+  /**
+   * Test that only certificates wihthin the validitly period is returned.
+   */
+  public function testExpiredCaseCertificatesAreNotReturned() {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+
+    $validCertificate[] = $this->createCaseCertificate(['start_date' => date('Y-m-d'), 'client_id' => $contact["id"]]);
+    $invalidCertificate[] = $this->createCaseCertificate(['start_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")), 'client_id' => $contact["id"]]);
+    $invalidCertificate[] = $this->createCaseCertificate([
+      'start_date' => $this->getDate("- 10 days"),
+      'end_date' => $this->getDate("- 6 days"),
+      'client_id' => $contact["id"],
+    ]);
+
+    $caseEntity = new CRM_Certificate_Entity_Case();
+    $avaliableCertificates = $caseEntity->getContactCertificates($contact["id"]);
+
+    $this->assertEquals(count($validCertificate), count($avaliableCertificates));
+
+    $expectedCasesId = array_column($validCertificate, "id");
+    $avaliableCertificatesCaseId = array_column($avaliableCertificates, "case_id");
+    $this->assertCount(0, array_diff($expectedCasesId, $avaliableCertificatesCaseId));
+  }
+
+  /**
+   * Test that only certificates wihthin the validitly period is returned.
+   *
+   * @param string $startDate
+   *  Validity start date.
+   * @param string $endDate
+   *  Validity end date.
+   * @param boolean $valid
+   *  If the date is considered valid.
+   *
+   * @dataProvider provideCertificateDateData
+   */
+  public function testCaseCertificatesValidityByDate($startDate, $endDate, $valid) {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+
+    $this->createCaseCertificate(['start_date' => $startDate, 'end_date' => $endDate, 'client_id' => $contact["id"]]);
+    $caseEntity = new CRM_Certificate_Entity_Case();
+    $avaliableCertificates = $caseEntity->getContactCertificates($contact["id"]);
+
+    $this->assertEquals(count($avaliableCertificates) > 0, $valid);
   }
 
   private function createCertificate($values = []) {

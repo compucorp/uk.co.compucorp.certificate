@@ -20,6 +20,8 @@ class CRM_Certificate_Service_CertificateCaseTest extends BaseHeadlessTest {
       'message_template_id'  => 1,
       'statuses' => $caseStatus,
       'linked_to' => $caseType,
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
     ];
 
     $certificateCreator = new CRM_Certificate_Service_CertificateCase();

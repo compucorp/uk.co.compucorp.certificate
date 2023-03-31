@@ -1,5 +1,7 @@
 <?php
 
+use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
+
 class CRM_Certificate_Service_Certificate {
 
   /**
@@ -24,14 +26,20 @@ class CRM_Certificate_Service_Certificate {
       }
       $params['name'] = $values['name'];
       $params['entity'] = $values['type'];
+      $params['end_date'] = $values['end_date'];
+      $params['start_date'] = $values['start_date'];
       $params['template_id'] = $values['message_template_id'];
+      $params['download_format'] = $values['download_format'] ?? DownloadFormat::PDF;
+
       $statuses = (array) $values['statuses'];
       $entityTypes = (array) $values['linked_to'];
+      $relationshipTypes = $values['relationship_types'] ?? [];
 
       $result['certificate'] = CRM_Certificate_BAO_CompuCertificate::create($params);
 
       $result['statuses'] = CRM_Certificate_BAO_CompuCertificateStatus::assignCertificateEntityStatuses($result['certificate'], $statuses);
       $result['entityTypes'] = CRM_Certificate_BAO_CompuCertificateEntityType::assignCertificateEntityTypes($result['certificate'], $entityTypes);
+      $result['relationshipTypes'] = CRM_Certificate_BAO_CompuCertificateRelationshipType::assignCertificateRelationshipTypes($result['certificate'], $relationshipTypes);
 
       $this->storeExtraValues($result, $values);
     });

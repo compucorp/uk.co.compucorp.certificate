@@ -20,6 +20,8 @@ class CRM_Certificate_Service_CertificateMembershipTest extends BaseHeadlessTest
       'message_template_id'  => 1,
       'statuses' => $statuses,
       'linked_to' => $types,
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 2 days")),
     ];
 
     $certificateCreator = new CRM_Certificate_Service_CertificateMembership();
@@ -41,6 +43,8 @@ class CRM_Certificate_Service_CertificateMembershipTest extends BaseHeadlessTest
       'statuses' => [],
       'linked_to' => [],
       'participant_type_id' => 1,
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d'),
     ];
 
     $certificateCreator = new CRM_Certificate_Service_CertificateMembership();
@@ -64,6 +68,8 @@ class CRM_Certificate_Service_CertificateMembershipTest extends BaseHeadlessTest
       'type' => CRM_Certificate_Enum_CertificateType::MEMBERSHIPS,
       'statuses' => $statuses,
       'linked_to' => $types,
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d'),
     ];
 
     $this->createCertificate($values);
@@ -83,6 +89,8 @@ class CRM_Certificate_Service_CertificateMembershipTest extends BaseHeadlessTest
       'type' => CRM_Certificate_Enum_CertificateType::MEMBERSHIPS,
       'statuses' => $statuses,
       'linked_to' => $types,
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d'),
     ];
 
     $this->createCertificate($values);

@@ -1,6 +1,7 @@
 <?php
 
 use CRM_Certificate_ExtensionUtil as E;
+use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
 
 /**
  * CertificateConfigure Form controller class
@@ -95,6 +96,40 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       TRUE
     );
 
+    $this->add(
+      'datepicker',
+      'start_date',
+      ts('Start Date'),
+      NULL,
+      FALSE,
+      ['time' => FALSE]
+    );
+
+    $this->add(
+      'datepicker',
+      'end_date',
+      ts('End Date'),
+      NULL,
+      FALSE,
+      ['time' => FALSE]
+    );
+
+    $this->add(
+      'select',
+      'download_format',
+      ts('Download Format'),
+      CompuCertificate::getSupportedDownloadFormats(),
+      TRUE,
+      ['class' => 'form-control']
+    );
+
+    $this->addEntityRef('relationship_types', ts('Access For Related Contacts'), [
+      'entity' => 'RelationshipType',
+      'placeholder' => ts('- Select Relationship -'),
+      'select' => ['multiple' => TRUE],
+      'class' => 'form-control',
+    ], FALSE);
+
     $this->addButtons([
       [
         'type' => 'submit',
@@ -108,6 +143,9 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       ],
     ]);
 
+    $elementWithHelpTexts = ['relationship_types'];
+
+    $this->assign('help', $elementWithHelpTexts);
     $this->assign('elementNames', $this->getRenderableElementNames());
     $this->assign('entityRefs', CRM_Certificate_Enum_CertificateType::getEnityRefs());
     $this->assign('entityStatusRefs', CRM_Certificate_Enum_CertificateType::getEntityStatusRefs());
@@ -171,6 +209,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
 
       $values['statuses'] = empty($values['statuses']) ? [] : explode(',', $values['statuses']);
       $values['linked_to'] = empty($values['linked_to']) ? [] : explode(',', $values['linked_to']);
+      $values['relationship_types'] = empty($values['relationship_types']) ? [] : explode(',', $values['relationship_types']);
 
       $result = $entity->store($values);
     }
@@ -221,6 +260,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $this->validateCertificateName($values, $errors);
     $this->validateLinkedToField($values, $errors);
     $this->validateStatusesField($values, $errors);
+    $this->validateDateField($values, $errors);
 
     // The participant_type field should only be validated for Event Certificate.
     if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
@@ -276,6 +316,23 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
   public function validateParticipantTypeField($values, &$errors) {
     if (empty($values['participant_type_id'])) {
       $errors['participant_type_id'] = ts('The "Event role" field is required');
+    }
+  }
+
+  /**
+   * Validates date field.
+   *
+   * @param array $values
+   * @param array $errors
+   */
+  public function validateDateField($values, &$errors) {
+    // Ignore validation if either of the dates are empty.
+    if (empty($values['end_date']) || empty($values['start_date'])) {
+      return;
+    }
+
+    if (strtotime($values['end_date']) <= strtotime($values['start_date'])) {
+      $errors['end_date'] = ts('End date field must be after start date');
     }
   }
 

@@ -59,6 +59,7 @@ class CRM_Certificate_Enum_CertificateType {
         ],
         'select' => [
           'minimumInputLength' => 0,
+          'multiple' => FALSE,
         ],
       ],
       self::MEMBERSHIPS => [
@@ -71,6 +72,7 @@ class CRM_Certificate_Enum_CertificateType {
         ],
         'select' => [
           'minimumInputLength' => 0,
+          'multiple' => TRUE,
         ],
       ],
     ]);
