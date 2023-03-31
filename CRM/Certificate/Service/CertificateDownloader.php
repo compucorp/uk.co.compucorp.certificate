@@ -6,7 +6,7 @@ use CRM_Certificate_BAO_CompuCertificateTemplateImageFormat as CompuCertificateT
 
 class CRM_Certificate_Service_CertificateDownloader {
 
-  public int $format;
+  public ?int $format;
   public int $entityId;
   public int $contactId;
   public \CRM_Certificate_BAO_CompuCertificate $certificate;

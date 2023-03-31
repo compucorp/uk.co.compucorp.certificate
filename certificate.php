@@ -120,6 +120,7 @@ function certificate_civicrm_permission(&$permissions) {
 function _compucertificate_add_token_subscribers() {
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Case());
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Event());
+  Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Contact());
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Participant());
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Membership());
   Civi::dispatcher()->addSubscriber(new CRM_Certificate_Token_Certificate());
@@ -142,6 +143,7 @@ function _compucertificate_getCaseIdFromUrlIfExist() {
 function certificate_civicrm_tokens(&$tokens) {
   $tokens[CRM_Certificate_Token_Case::TOKEN] = CRM_Certificate_Token_Case::prefixedEntityTokens();
   $tokens[CRM_Certificate_Token_Event::TOKEN] = CRM_Certificate_Token_Event::prefixedEntityTokens();
+  $tokens[CRM_Certificate_Token_Contact::TOKEN] = CRM_Certificate_Token_Contact::prefixedEntityTokens();
   $tokens[CRM_Certificate_Token_Participant::TOKEN] = CRM_Certificate_Token_Participant::prefixedEntityTokens();
   $tokens[CRM_Certificate_Token_Membership::TOKEN] = CRM_Certificate_Token_Membership::prefixedEntityTokens();
   $tokens[CRM_Certificate_Token_Certificate::TOKEN] = CRM_Certificate_Token_Certificate::prefixedEntityTokens();
