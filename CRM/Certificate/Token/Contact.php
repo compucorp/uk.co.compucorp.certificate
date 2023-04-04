@@ -18,6 +18,7 @@ class CRM_Certificate_Token_Contact extends CRM_Certificate_Token_AbstractCertif
    */
   const customFields = [
     "employer_inline_address" => "Employer Inline Address",
+    "contact_inline_address" => "Contact Inline Address",
   ];
 
   public function __construct($tokenNames = []) {
@@ -47,13 +48,20 @@ class CRM_Certificate_Token_Contact extends CRM_Certificate_Token_AbstractCertif
       if (is_array($contactId)) {
         $contactId = $contactId[0];
         $contact = \Civi\Api4\Contact::get(FALSE)
-          ->addSelect('employer_id')
+          ->addSelect('employer_id', 'id')
           ->addWhere('id', '=', $contactId)
           ->addChain('employerAddress', \Civi\Api4\Address::get()
             ->addSelect('street_address', 'supplemental_address_1', 'county_id:label',
               'country_id:label', 'state_province_id:label', 'city'
             )
             ->addWhere('contact_id', '=', '$employer_id')
+            ->addWhere('is_primary', '=', TRUE)
+          )
+          ->addChain('contactAddress', \Civi\Api4\Address::get()
+            ->addSelect('street_address', 'supplemental_address_1', 'county_id:label',
+              'country_id:label', 'state_province_id:label', 'city'
+            )
+            ->addWhere('contact_id', '=', '$id')
             ->addWhere('is_primary', '=', TRUE)
           )
           ->execute()
@@ -81,17 +89,31 @@ class CRM_Certificate_Token_Contact extends CRM_Certificate_Token_AbstractCertif
    */
   private function resolveFields($contact, &$resolvedTokens) {
     if (!empty($contact["employerAddress"])) {
-      $address = [
-        $contact["employerAddress"][0]["street_address"],
-        $contact["employerAddress"][0]["supplemental_address_1"],
-        $contact["employerAddress"][0]["city"],
-        $contact["employerAddress"][0]["county_id:label"],
-        $contact["employerAddress"][0]["state_province_id:label"],
-        $contact["employerAddress"][0]["country_id:label"],
-      ];
-
-      $resolvedTokens['employer_inline_address'] = implode(", ", array_filter($address));
+      $employerAddress = $this->getInlinedContactAddress($contact["employerAddress"][0]);
+      $resolvedTokens['employer_inline_address'] = $employerAddress;
     }
+
+    if (!empty($contact["contactAddress"])) {
+      $resolvedTokens['contact_inline_address'] = $this->getInlinedContactAddress($contact["contactAddress"][0]);
+    }
+  }
+
+  /**
+   * Inlines a contact address.
+   *
+   * @param array $contact
+   */
+  private function getInlinedContactAddress($contact) {
+    $address = [
+      $contact["street_address"],
+      $contact["supplemental_address_1"],
+      $contact["city"],
+      $contact["county_id:label"],
+      $contact["state_province_id:label"],
+      $contact["country_id:label"],
+    ];
+
+    return implode(", ", array_filter($address));
   }
 
 }

@@ -37,4 +37,28 @@ class CRM_Certificate_Token_ContactTest extends BaseHeadlessTest {
     $this->assertEquals($address[3], $country["name"]);
   }
 
+  public function testCanResolveContactAddressTokenFields() {
+    $contactTokenSubscriber = new CRM_Certificate_Token_Contact([]);
+
+    $contact = ContactFabricator::fabricateWithAddress();
+
+    $tokenValueEventMock = $this->createMock(\Civi\Token\Event\TokenValueEvent::class);
+    $tokenProcessorMock = $this->createMock(\Civi\Token\TokenProcessor::class);
+
+    $tokenValueEventMock->method('getTokenProcessor')->willReturn($tokenProcessorMock);
+    $tokenProcessorMock->method('getContextValues')->willReturn([$contact['id']]);
+
+    $country = Country::get(FALSE)->addWhere('id', '=', $contact['address']['country_id'])->execute()->first();
+    $res = $contactTokenSubscriber->prefetch($tokenValueEventMock);
+
+    $this->assertArrayHasKey("contact_inline_address", $res);
+    $address = explode(", ", $res["contact_inline_address"]);
+
+    // Ensure the order is as expected.
+    $this->assertEquals($address[0], $contact["address"]["street_address"]);
+    $this->assertEquals($address[1], $contact["address"]["supplemental_address_1"]);
+    $this->assertEquals($address[2], $contact["address"]["city"]);
+    $this->assertEquals($address[3], $country["name"]);
+  }
+
 }
