@@ -51,8 +51,8 @@ The standard CiviCRM message templates are used as the certificate template, whi
 ## Installation
 ### Dependencies
 
-- PHP 7.4+
-- CiviCRM 5.39.1+
+- PHP 8.0+
+- CiviCRM 5.51+
 - To be able to use this extension for Case entity, you will need to install the [Civicase extension](https://github.com/compucorp/uk.co.compucorp.civicase)
 ## Installation via git/cli
 To install the extension on an existing CiviCRM site:
