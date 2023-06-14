@@ -92,6 +92,7 @@
           .crmEntityRef({
             entity: 'OptionValue',
             api: {
+              description_field: null,
               params: {active: true, option_group_id: 'participant_role'}
             },
             select: {
