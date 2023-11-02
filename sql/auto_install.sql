@@ -35,6 +35,8 @@ CREATE TABLE `compucertificate_certificate` (
   `download_format` int unsigned NOT NULL COMMENT 'Predefined CompuCertificate download format (1 - PDF, 2 - IMAGE)',
   `start_date` date NULL COMMENT 'Date the certificate validity starts',
   `end_date` date NULL COMMENT 'Date the certificate validity ends',
+  `min_valid_from_date` date NULL COMMENT 'Min date the certificate validity starts',
+  `max_valid_through_date` date NULL COMMENT 'Max date the certificate validity ends',
   PRIMARY KEY (`id`),
   CONSTRAINT FK_compucertificate_certificate_template_id FOREIGN KEY (`template_id`) REFERENCES `civicrm_msg_template`(`id`) ON DELETE CASCADE
 )
@@ -60,7 +62,7 @@ ENGINE=InnoDB;
 -- *
 -- * compucertificate_event_attribute
 -- *
--- * Table to store attributes peculiar to CompuCertificate of type event 
+-- * Table to store attributes peculiar to CompuCertificate of type event
 -- *
 -- *******************************************************/
 CREATE TABLE `compucertificate_event_attribute` (
