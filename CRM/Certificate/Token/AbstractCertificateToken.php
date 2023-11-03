@@ -102,7 +102,8 @@ abstract class CRM_Certificate_Token_AbstractCertificateToken extends AbstractTo
     }
 
     if ($value) {
-      $row->tokens($prefix, $field, $value);
+      $row->format('text/plain')->tokens($prefix, $field, $value);
+      $row->format('text/html')->tokens($prefix, $field, $value);
     }
   }
 
