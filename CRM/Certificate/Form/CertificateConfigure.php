@@ -130,6 +130,24 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       'class' => 'form-control',
     ], FALSE);
 
+    $this->add(
+      'datepicker',
+      'min_valid_from_date',
+      ts('Min Valid From Date'),
+      NULL,
+      FALSE,
+      ['time' => FALSE, 'class' => 'form-control']
+    );
+
+    $this->add(
+      'datepicker',
+      'max_valid_through_date',
+      ts('Max Valid Through Date'),
+      NULL,
+      FALSE,
+      ['time' => FALSE, 'class' => 'form-control']
+    );
+
     $this->addButtons([
       [
         'type' => 'submit',
@@ -143,7 +161,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       ],
     ]);
 
-    $elementWithHelpTexts = ['relationship_types'];
+    $elementWithHelpTexts = ['relationship_types', 'min_valid_from_date', 'max_valid_through_date'];
 
     $this->assign('help', $elementWithHelpTexts);
     $this->assign('elementNames', $this->getRenderableElementNames());
@@ -260,7 +278,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $this->validateCertificateName($values, $errors);
     $this->validateLinkedToField($values, $errors);
     $this->validateStatusesField($values, $errors);
-    $this->validateDateField($values, $errors);
+    $this->validateDateFields($values, $errors);
 
     // The participant_type field should only be validated for Event Certificate.
     if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
@@ -325,14 +343,13 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
    * @param array $values
    * @param array $errors
    */
-  public function validateDateField($values, &$errors) {
-    // Ignore validation if either of the dates are empty.
-    if (empty($values['end_date']) || empty($values['start_date'])) {
-      return;
+  public function validateDateFields($values, &$errors) {
+    if (!empty($values['start_date']) && !empty($values['end_date']) && strtotime($values['end_date']) <= strtotime($values['start_date'])) {
+      $errors['end_date'] = ts('End date field must be after start date');
     }
 
-    if (strtotime($values['end_date']) <= strtotime($values['start_date'])) {
-      $errors['end_date'] = ts('End date field must be after start date');
+    if (!empty($values['max_valid_through_date']) && !empty($values['min_valid_from_date']) && strtotime($values['max_valid_through_date']) <= strtotime($values['min_valid_from_date'])) {
+      $errors['max_valid_through_date'] = ts('Max valid through date field must be after min valid from date');
     }
   }
 

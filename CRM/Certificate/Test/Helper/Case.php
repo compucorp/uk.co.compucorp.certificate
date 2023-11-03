@@ -48,6 +48,8 @@ trait CRM_Certificate_Test_Helper_Case {
       'linked_to' => [$caseType['id']],
       'statuses' => [$caseStatus['value']],
       'start_date' => $params['start_date'] ?? date('Y-m-d'),
+      'min_valid_from_date' => $params['min_valid_from_date'] ?? date("Y-m-d"),
+      'max_valid_through_date' => $params['max_valid_through_date'] ?? date("Y-m-d", strtotime(date("Y-m-d") . " + 30 days")),
       'relationship_types' => $params['relationship_types'] ?? [],
       'end_date' => $params['end_date'] ?? date('Y-m-d', strtotime(date('Y-m-d') . " 10 days")),
     ];

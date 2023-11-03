@@ -38,6 +38,8 @@ trait CRM_Certificate_Test_Helper_Membership {
       'start_date' => date('Y-m-d'),
       'relationship_types' => $params['relationship_types'] ?? [],
       'end_date' => date('Y-m-d', strtotime(date('Y-m-d') . " 10 days")),
+      'min_valid_from_date' => date("Y-m-d"),
+      'max_valid_through_date' => date("Y-m-d", strtotime(date("Y-m-d") . " + 30 days")),
     ], $params);
 
     return CompuCertificateFabricator::fabricate(CertificateType::MEMBERSHIPS, $values);
