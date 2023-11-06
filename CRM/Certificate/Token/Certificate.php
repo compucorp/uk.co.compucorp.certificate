@@ -23,6 +23,7 @@ class CRM_Certificate_Token_Certificate extends CRM_Certificate_Token_AbstractCe
     "end_date" => "Certificate End Date",
     "valid_from" => "Certificate Valid From Date",
     "valid_to" => "Certificate Valid To Date",
+    "rolling_start_or_renewal_date" => "Certificate Rolling Start Or Renewal Date",
   ];
 
   public function __construct($tokenNames = []) {
@@ -101,6 +102,14 @@ class CRM_Certificate_Token_Certificate extends CRM_Certificate_Token_AbstractCe
     $membershipEndTimestamp = !empty($membershipDates['end_date']) ? strtotime($membershipDates['end_date']) : '';
     $certificateValidityStartTimestamp = !empty($certificate->min_valid_from_date) ? strtotime($certificate->min_valid_from_date) : '';
     $certificateValidityEndTimestamp = !empty($certificate->max_valid_through_date) ? strtotime($certificate->max_valid_through_date) : '';
+    $resolvedTokens['rolling_start_or_renewal_date'] = '';
+
+    if ($membershipStartTimestamp && $membershipEndTimestamp) {
+      $renewalTimestamp = strtotime($membershipDates['end_date'] . " -1 year 1 day");
+      $resolvedTokens['rolling_start_or_renewal_date'] = $renewalTimestamp > $membershipStartTimestamp
+        ? CRM_Utils_Date::customFormat(date('Y-m-d', $renewalTimestamp), '%e/%b/%Y')
+        : CRM_Utils_Date::customFormat($membershipDates['start_date'], '%e/%b/%Y');
+    }
 
     $validityStartDate = empty($certificateValidityStartTimestamp) || $membershipStartTimestamp > $certificateValidityStartTimestamp ?
       $membershipDates['start_date'] : (string) $certificate->min_valid_from_date;
