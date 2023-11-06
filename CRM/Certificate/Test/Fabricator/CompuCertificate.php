@@ -91,6 +91,8 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
       'downolad_format' => DownloadFormat::IMAGE,
       'start_date' => date("Y-m-d"),
       'end_date' => date("Y-m-d", strtotime(date("Y-m-d") . " + 10 days")),
+      'min_valid_from_date' => date("Y-m-d"),
+      'max_valid_through_date' => date("Y-m-d", strtotime(date("Y-m-d") . " + 30 days")),
       'relationship_types' => [],
     ];
   }

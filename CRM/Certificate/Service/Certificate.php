@@ -28,6 +28,8 @@ class CRM_Certificate_Service_Certificate {
       $params['entity'] = $values['type'];
       $params['end_date'] = $values['end_date'];
       $params['start_date'] = $values['start_date'];
+      $params['min_valid_from_date'] = $values['min_valid_from_date'] ?? NULL;
+      $params['max_valid_through_date'] = $values['max_valid_through_date'] ?? NULL;
       $params['template_id'] = $values['message_template_id'];
       $params['download_format'] = $values['download_format'] ?? DownloadFormat::PDF;
 

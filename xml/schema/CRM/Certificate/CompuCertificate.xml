@@ -83,6 +83,26 @@
     </html>
   </field>
 
+  <field>
+    <name>min_valid_from_date</name>
+    <type>date</type>
+    <required>false</required>
+    <comment>Min date the certificate validity starts</comment>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+
+  <field>
+    <name>max_valid_through_date</name>
+    <type>date</type>
+    <required>false</required>
+    <comment>Max date the certificate validity ends</comment>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+
   <foreignKey>
     <name>template_id</name>
     <table>civicrm_msg_template</table>
