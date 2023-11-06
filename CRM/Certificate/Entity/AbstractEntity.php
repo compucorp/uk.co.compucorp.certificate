@@ -83,6 +83,8 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
       'linked_to' => implode(',', array_column($types, 'id')),
       'statuses' => implode(',', array_column($statuses, 'id')),
       'relationship_types' => implode(',', array_column($relationshipTypes, 'relationship_type_id')),
+      'min_valid_from_date' => $certificateBAO->min_valid_from_date,
+      'max_valid_through_date' => $certificateBAO->max_valid_through_date,
     ];
 
     $this->addEntityExtraField($certificateBAO, $certificate);
