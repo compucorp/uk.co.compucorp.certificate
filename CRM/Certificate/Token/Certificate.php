@@ -78,7 +78,7 @@ class CRM_Certificate_Token_Certificate extends CRM_Certificate_Token_AbstractCe
         'version' => 3,
         'return' => ['start_date', 'end_date'],
         'contact_id' => $contactId,
-        'status_id' => 2,
+        'status_id' => 'Current',
         'sequential' => 1,
         'options' => ['sort' => 'end_date desc', 'limit' => 1],
       ]
