@@ -1,6 +1,7 @@
 <?php
 
 use Civi\Token\Event\TokenValueEvent;
+use Civi\Api4\Membership;
 
 /**
  * Class CRM_Certificate_Token_Certificate
@@ -12,6 +13,8 @@ use Civi\Token\Event\TokenValueEvent;
 class CRM_Certificate_Token_Certificate extends CRM_Certificate_Token_AbstractCertificateToken {
 
   const TOKEN = 'certificate';
+
+  private const MEMBERSHIP_STATUS_CURRENT = 2;
 
   /**
    * Here we define list of standard certificate configuration fields
@@ -69,25 +72,28 @@ class CRM_Certificate_Token_Certificate extends CRM_Certificate_Token_AbstractCe
   }
 
   private function getMembershipDates(TokenValueEvent $e): array {
+    $startDate = NULL;
+    $endDate = NULL;
+
     $contactIds = $e->getTokenProcessor()->getContextValues('contactId');
     $contactId = (is_array($contactIds) && !empty($contactIds[0])) ? $contactIds[0] : 0;
 
-    $membershipRows = civicrm_api3(
-      'membership',
-      'get',
-      [
-        'version' => 3,
-        'return' => ['start_date', 'end_date'],
-        'contact_id' => $contactId,
-        'status_id' => 'Current',
-        'sequential' => 1,
-        'options' => ['sort' => 'end_date desc', 'limit' => 1],
-      ]
-    );
+    // get all memberships for given contact to get min start_date and max end_date of all memberships
+    $memberships = Membership::get(FALSE)
+      ->addSelect('start_date', 'end_date')
+      ->addWhere('contact_id', '=', $contactId)
+      ->addWhere('status_id', '=', self::MEMBERSHIP_STATUS_CURRENT)
+      ->execute()
+      ->getArrayCopy();
 
-    return !empty($membershipRows['values'][0])
-      ? $membershipRows['values'][0]
-      : ['start_date' => '', 'end_date' => ''];
+    foreach ($memberships as $membership) {
+      $startDate = $startDate === NULL || strtotime($membership['start_date']) < strtotime($startDate) ?
+        $membership['start_date'] : $startDate;
+      $endDate = $endDate === NULL || strtotime($membership['end_date']) > strtotime($endDate) ?
+        $membership['end_date'] : $endDate;
+    }
+
+    return ['start_date' => $startDate, 'end_date' => $endDate];
   }
 
   /**
