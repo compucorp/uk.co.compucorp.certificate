@@ -1,6 +1,7 @@
 <?php
 
 use Civi\Api4\Relationship;
+use Civi\Api4\Membership;
 
 class CRM_Certificate_Service_CertificateAccessChecker {
 
@@ -23,7 +24,7 @@ class CRM_Certificate_Service_CertificateAccessChecker {
    * @return bool
    */
   public function check() {
-    return $this->hasViewPermission() || $this->hasViewPermissionByRelationship();
+    return $this->checkMembershipDates() && ($this->hasViewPermission() || $this->hasViewPermissionByRelationship());
   }
 
   /**
@@ -78,6 +79,38 @@ class CRM_Certificate_Service_CertificateAccessChecker {
       }
     }
     return FALSE;
+  }
+
+  private function checkMembershipDates(): bool {
+    $membershipDates = $this->getMembershipDates();
+    $membershipStartDate = $membershipDates['start_date'];
+    $membershipEndDate = $membershipDates['end_date'];
+    $certificateStartDate = $this->certificate->min_valid_from_date ?? $membershipEndDate;
+    $certificateEndDate = $this->certificate->max_valid_through_date ?? $membershipStartDate;
+
+    return !empty($membershipStartDate) && !empty($membershipEndDate) && strtotime($membershipStartDate) <= strtotime($certificateEndDate) &&
+      strtotime($membershipEndDate) >= strtotime($certificateStartDate);
+  }
+
+  private function getMembershipDates(): array {
+    $startDate = NULL;
+    $endDate = NULL;
+
+    $memberships = Membership::get(FALSE)
+      ->addSelect('start_date', 'end_date')
+      ->addWhere('contact_id', '=', $this->contactId)
+      ->addWhere('status_id', '=', 2)
+      ->execute()
+      ->getArrayCopy();
+
+    foreach ($memberships as $membership) {
+      $startDate = $startDate === NULL || strtotime($membership['start_date']) < strtotime($startDate) ?
+        $membership['start_date'] : $startDate;
+      $endDate = $endDate === NULL || strtotime($membership['end_date']) > strtotime($endDate) ?
+        $membership['end_date'] : $endDate;
+    }
+
+    return ['start_date' => $startDate, 'end_date' => $endDate];
   }
 
 }
