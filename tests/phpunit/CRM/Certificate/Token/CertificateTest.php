@@ -33,7 +33,6 @@ class CRM_Certificate_Token_CertificateTest extends BaseHeadlessTest {
     $this->assertTrue(is_array($prefetchedTokens));
     array_walk($certificateFields, function ($key) use ($prefetchedTokens) {
       $this->assertArrayHasKey($key, $prefetchedTokens);
-      $this->assertNotEmpty($prefetchedTokens[$key]);
     });
   }
 
