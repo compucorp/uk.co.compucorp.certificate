@@ -46,7 +46,7 @@
   <field>
     <name>template_id</name>
     <type>int unsigned</type>
-    <required>true</required>
+    <required>false</required>
     <comment>FK to message template</comment>
     <html>
       <type>Number</type>
@@ -58,6 +58,17 @@
     <type>int unsigned</type>
     <required>true</required>
     <comment>Predefined CompuCertificate download format (1 - PDF, 2 - IMAGE)</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <field>
+    <name>download_type</name>
+    <type>int unsigned</type>
+    <required>false</required>
+    <comment>Predefined CompuCertificate download type (1 - MESSAGE TEMPLATE, 2 - FILE)</comment>
+    <default>1</default>
     <html>
       <type>Number</type>
     </html>

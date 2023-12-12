@@ -1,5 +1,6 @@
 <?php
 
+use CRM_Certificate_Enum_DownloadType as DownloadType;
 use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
 
 class CRM_Certificate_Service_Certificate {
@@ -31,6 +32,7 @@ class CRM_Certificate_Service_Certificate {
       $params['min_valid_from_date'] = $values['min_valid_from_date'] ?? NULL;
       $params['max_valid_through_date'] = $values['max_valid_through_date'] ?? NULL;
       $params['template_id'] = $values['message_template_id'];
+      $params['download_type'] = $values['download_type'] ?? DownloadType::TEMPLATE;
       $params['download_format'] = $values['download_format'] ?? DownloadFormat::PDF;
 
       $statuses = (array) $values['statuses'];
@@ -44,9 +46,37 @@ class CRM_Certificate_Service_Certificate {
       $result['relationshipTypes'] = CRM_Certificate_BAO_CompuCertificateRelationshipType::assignCertificateRelationshipTypes($result['certificate'], $relationshipTypes);
 
       $this->storeExtraValues($result, $values);
+      $this->storeFile($values, $result['certificate']->id);
     });
 
     return $result;
+  }
+
+  public function storeFile($values, $id) {
+    if (empty($values['download_type']) || $values['download_type'] !== DownloadType::FILE_DOWNLOAD) {
+      return;
+    }
+
+    if (empty($values['download_file'])) {
+      return;
+    }
+
+    $ext = CRM_Utils_File::getAcceptableExtensionsForMimeType($values['download_file']['type'])[0];
+    $newPath = $values['download_file']['tmp_name'] . '.' . $ext;
+    rename($values['download_file']['tmp_name'], $newPath);
+    // Delete previously uploaded files if any
+    \CRM_Core_BAO_File::deleteEntityFile(CRM_Certificate_DAO_CompuCertificate::getTableName(), $id);
+    \CRM_Core_BAO_File::filePostProcess(
+      $newPath,
+      NULL,
+      CRM_Certificate_DAO_CompuCertificate::getTableName(),
+      $id,
+      NULL,
+      TRUE,
+      NULL,
+      'download_file',
+      $values['download_file']['type']
+    );
   }
 
   /**

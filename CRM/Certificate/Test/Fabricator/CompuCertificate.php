@@ -1,5 +1,6 @@
 <?php
 
+use CRM_Certificate_Enum_DownloadType as DownloadType;
 use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
 
 /**
@@ -89,6 +90,7 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
       'name' => $name,
       'message_template_id'  => 1,
       'downolad_format' => DownloadFormat::IMAGE,
+      'download_type' => DownloadType::TEMPLATE,
       'start_date' => date("Y-m-d"),
       'end_date' => date("Y-m-d", strtotime(date("Y-m-d") . " + 10 days")),
       'min_valid_from_date' => date("Y-m-d"),

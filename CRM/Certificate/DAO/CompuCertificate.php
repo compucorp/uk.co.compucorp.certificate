@@ -34,7 +34,9 @@ class CRM_Certificate_DAO_CompuCertificate extends CRM_Core_DAO {
   /**
    * Unique CompuCertificate ID
    *
-   * @var int
+   * @var int|string|null
+   *   (SQL type: int unsigned)
+   *   Note that values will be retrieved from the database as a string.
    */
   public $id;
 
@@ -42,41 +44,62 @@ class CRM_Certificate_DAO_CompuCertificate extends CRM_Core_DAO {
    * Certificate name
    *
    * @var string
+   *   (SQL type: varchar(255))
+   *   Note that values will be retrieved from the database as a string.
    */
   public $name;
 
   /**
    * Predefined CompuCertificate Entity ID (1 - CASE, 2 - MEMBERSHIP, 3 - EVENT)
    *
-   * @var int
+   * @var int|string
+   *   (SQL type: int unsigned)
+   *   Note that values will be retrieved from the database as a string.
    */
   public $entity;
 
   /**
    * FK to message template
    *
-   * @var int
+   * @var int|string
+   *   (SQL type: int unsigned)
+   *   Note that values will be retrieved from the database as a string.
    */
   public $template_id;
 
   /**
    * Predefined CompuCertificate download format (1 - PDF, 2 - IMAGE)
    *
-   * @var int
+   * @var int|string
+   *   (SQL type: int unsigned)
+   *   Note that values will be retrieved from the database as a string.
    */
   public $download_format;
 
   /**
+   * Predefined CompuCertificate download type (1 - MESSAGE TEMPLATE, 2 - FILE)
+   *
+   * @var int|string
+   *   (SQL type: int unsigned)
+   *   Note that values will be retrieved from the database as a string.
+   */
+  public $download_type;
+
+  /**
    * Date the certificate validity starts
    *
-   * @var date
+   * @var string
+   *   (SQL type: date)
+   *   Note that values will be retrieved from the database as a string.
    */
   public $start_date;
 
   /**
    * Date the certificate validity ends
    *
-   * @var date
+   * @var string
+   *   (SQL type: date)
+   *   Note that values will be retrieved from the database as a string.
    */
   public $end_date;
 
@@ -189,7 +212,7 @@ class CRM_Certificate_DAO_CompuCertificate extends CRM_Core_DAO {
           'name' => 'template_id',
           'type' => CRM_Utils_Type::T_INT,
           'description' => E::ts('FK to message template'),
-          'required' => TRUE,
+          'required' => FALSE,
           'where' => 'compucertificate_certificate.template_id',
           'table_name' => 'compucertificate_certificate',
           'entity' => 'CompuCertificate',
@@ -208,6 +231,23 @@ class CRM_Certificate_DAO_CompuCertificate extends CRM_Core_DAO {
           'description' => E::ts('Predefined CompuCertificate download format (1 - PDF, 2 - IMAGE)'),
           'required' => TRUE,
           'where' => 'compucertificate_certificate.download_format',
+          'table_name' => 'compucertificate_certificate',
+          'entity' => 'CompuCertificate',
+          'bao' => 'CRM_Certificate_DAO_CompuCertificate',
+          'localizable' => 0,
+          'html' => [
+            'type' => 'Number',
+          ],
+          'add' => NULL,
+        ],
+        'download_type' => [
+          'name' => 'download_type',
+          'type' => CRM_Utils_Type::T_INT,
+          'title' => E::ts('Download Type'),
+          'description' => E::ts('Predefined CompuCertificate download type (1 - MESSAGE TEMPLATE, 2 - FILE)'),
+          'required' => FALSE,
+          'where' => 'compucertificate_certificate.download_type',
+          'default' => '1',
           'table_name' => 'compucertificate_certificate',
           'entity' => 'CompuCertificate',
           'bao' => 'CRM_Certificate_DAO_CompuCertificate',

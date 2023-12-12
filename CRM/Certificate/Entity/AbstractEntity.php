@@ -78,6 +78,7 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
       'type' => $certificateBAO->entity,
       'end_date' => $certificateBAO->end_date,
       'start_date' => $certificateBAO->start_date,
+      'download_type' => $certificateBAO->download_type,
       'download_format' => $certificateBAO->download_format,
       'message_template_id' => $certificateBAO->template_id,
       'linked_to' => implode(',', array_column($types, 'id')),

@@ -102,7 +102,7 @@ class CRM_Certificate_Upgrader extends CRM_Certificate_Upgrader_Base {
   }
 
   /**
-   * Adds min and max validity dates to certificate.
+   * Adds columns for download type support.
    */
   public function upgrade_0003() {
     $this->ctx->log->info('Applying update 0003');
