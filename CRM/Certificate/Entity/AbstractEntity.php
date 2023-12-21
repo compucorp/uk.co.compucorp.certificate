@@ -113,7 +113,7 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
       $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id');
       $certificateBAO->find(TRUE);
 
-      if (!empty($certificateBAO->id)) {
+      if (!empty($certificateBAO->id) && $this->isCertificateValidForAnEntity($certificateBAO, $contactId)) {
         return $certificateBAO;
       }
     }
@@ -163,6 +163,20 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
    *  Key-value pairs to append extra field to.
    */
   protected function addEntityExtraField($certificateBAO, &$certificate) {}
+
+  /**
+   * Validate a certificate against entity specific checks.
+   *
+   * @param \CRM_Certificate_BAO_CompuCertificate $certificate
+   *  Certificate.
+   * @param int $contactId
+   *  Contact id.
+   *
+   * @return bool
+   */
+  protected function isCertificateValidForAnEntity(\CRM_Certificate_BAO_CompuCertificate $certificate, int $contactId) {
+    return TRUE;
+  }
 
   /**
    * Gets all entity certificates vailable for a contact.

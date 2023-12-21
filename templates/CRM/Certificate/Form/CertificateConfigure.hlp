@@ -17,11 +17,11 @@
       <p>{ts}<b>Tokens:</b> They will create tokens that can be used on certificates as follows:{/ts}</p>
       <ul>
         <li>
-          <p>{ts}'Min Valid From Date' (certificate.valid_from){/ts}</p>
+          <p>{ts}"Min Valid From Date" (certificate.valid_from){/ts}</p>
           <p>{ts}The latter of 1. Min Valid From Date and 2. The users membership start date.{/ts}</p>
         </li>
         <li>
-          <p>{ts}'Max Valid Through Date' (certificate.valid_to){/ts}</p>
+          <p>{ts}"Max Valid Through Date" (certificate.valid_to){/ts}</p>
           <p>{ts}The earlier of 1. The date entered in this field and 2. The users membership end date.{/ts}</p>
         </li>
       </ul>
@@ -42,11 +42,11 @@
       <p>{ts}<b>Tokens:</b> They will create tokens that can be used on certificates as follows:{/ts}</p>
       <ul>
         <li>
-          <p>{ts}'Min Valid From Date' (certificate.valid_from){/ts}</p>
+          <p>{ts}"Min Valid From Date" (certificate.valid_from){/ts}</p>
           <p>{ts}The latter of 1. Min Valid From Date and 2. The users membership start date.{/ts}</p>
         </li>
         <li>
-          <p>{ts}'Max Valid Through Date' (certificate.valid_to){/ts}</p>
+          <p>{ts}"Max Valid Through Date" (certificate.valid_to){/ts}</p>
           <p>{ts}The earlier of 1. The date entered in this field and 2. The users membership end date.{/ts}</p>
         </li>
       </ul>

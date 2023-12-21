@@ -8,7 +8,7 @@
       <div class="form-group row {$elementName}">
         <div class="col-sm-2 control-label">
           {$form.$elementName.label}
-          {if in_array($elementName, $help)} 
+          {if in_array($elementName, $help)}
             {help id="$elementName" file="CRM/Certificate/Form/CertificateConfigure.hlp"}
           {/if}
         </div>
@@ -33,6 +33,7 @@
   let performingUpdate = false
   const TYPE_CASES = "1";
   const TYPE_EVENTS = "2";
+  const TYPE_MEMBERSHIP = "3";
   const FORMAT_IMAGE = "2";
   const TYPE_TEMPLATE = "1";
 
@@ -51,19 +52,31 @@
       $('.participant_type_id').hide()
     }
   }
-  
+
+  let toggleValidityDateFields = ($, val) => {
+    if (val === TYPE_MEMBERSHIP) {
+      $('.row.min_valid_from_date').show();
+      $('.row.max_valid_through_date').show();
+    } else {
+      $('.row.min_valid_from_date').hide();
+      $('.row.max_valid_through_date').hide();
+    }
+  }
+
   CRM.$(function ($) {
 
     $('.participant_type_id').hide();
+    toggleValidityDateFields($, CRM.$('[name=type]').val());
 
     /**
-     * if an entity is selected we want to populate the 
+     * if an entity is selected we want to populate the
      * linked_to (entity type) and status (entity status) entity reference field
      * with the right values
      */
     CRM.$('[name=type]').on('change', function (e) {
       if (e.target.value > 0) {
 
+        toggleValidityDateFields($, e.target.value);
         if (!performingUpdate) {
           $('[name=linked_to]').val('')
           $('[name=statuses]').val('')
