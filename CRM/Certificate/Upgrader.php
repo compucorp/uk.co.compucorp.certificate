@@ -11,7 +11,7 @@ class CRM_Certificate_Upgrader extends CRM_Extension_Upgrader_Base {
   /**
    * {@inheritDoc}
    */
-  public function onPostInstall(): void {
+  public function postInstall(): void {
     try {
       $steps = [
         new CertificateImageFormatManager(),
