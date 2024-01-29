@@ -85,18 +85,14 @@ class CRM_Certificate_Token_Certificate extends CRM_Certificate_Token_AbstractCe
     if ((int) $certificate->entity === CRM_Certificate_Enum_CertificateType::MEMBERSHIPS) {
       $contactIds = $e->getTokenProcessor()->getContextValues('contactId');
       $contactId = (is_array($contactIds) && !empty($contactIds[0])) ? $contactIds[0] : 0;
-      $membershipDates = (new CRM_Certificate_Service_CertificateMembership())->getMembershipDates($certificate->id, $contactId);
+      $service = new CRM_Certificate_Service_CertificateMembership();
+      $membershipDates = $service->getMembershipDates($certificate->id, $contactId);
       $membershipStartTimestamp = !empty($membershipDates['startDate']) ? strtotime($membershipDates['startDate']) : '';
       $membershipEndTimestamp = !empty($membershipDates['endDate']) ? strtotime($membershipDates['endDate']) : '';
       $certificateValidityStartTimestamp = !empty($certificate->min_valid_from_date) ? strtotime($certificate->min_valid_from_date) : '';
       $certificateValidityEndTimestamp = !empty($certificate->max_valid_through_date) ? strtotime($certificate->max_valid_through_date) : '';
 
-      if ($membershipStartTimestamp && $membershipEndTimestamp) {
-        $renewalTimestamp = strtotime($membershipDates['endDate'] . " -1 year 1 day");
-        $resolvedTokens['rolling_start_or_renewal_date'] = $renewalTimestamp > $membershipStartTimestamp
-          ? CRM_Utils_Date::customFormat(date('Y-m-d', $renewalTimestamp), '%e/%b/%Y')
-          : CRM_Utils_Date::customFormat($membershipDates['startDate'], '%e/%b/%Y');
-      }
+      $resolvedTokens['rolling_start_or_renewal_date'] = $service->getMembershipRenewalDate($certificate->id, $contactId);
       $validityStartDate = empty($certificateValidityStartTimestamp) || $membershipStartTimestamp > $certificateValidityStartTimestamp ?
         $membershipDates['startDate'] : (string) $certificate->min_valid_from_date;
       $validityEndDate = empty($certificateValidityEndTimestamp) || (!empty($membershipEndTimestamp) && $certificateValidityEndTimestamp > $membershipEndTimestamp) ?
