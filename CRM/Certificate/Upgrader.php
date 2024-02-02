@@ -6,12 +6,12 @@ use CRM_Certificate_Setup_Manage_CertificateImageFormatManager as CertificateIma
 /**
  * Collection of upgrade steps.
  */
-class CRM_Certificate_Upgrader extends CRM_Certificate_Upgrader_Base {
+class CRM_Certificate_Upgrader extends CRM_Extension_Upgrader_Base {
 
   /**
    * {@inheritDoc}
    */
-  public function onPostInstall(): void {
+  public function postInstall(): void {
     try {
       $steps = [
         new CertificateImageFormatManager(),
