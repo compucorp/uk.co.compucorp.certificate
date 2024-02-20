@@ -180,7 +180,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       ],
     ]);
 
-    $elementWithHelpTexts = ['relationship_types', 'min_valid_from_date', 'max_valid_through_date'];
+    $elementWithHelpTexts = ['relationship_types', 'min_valid_from_date', 'max_valid_through_date', 'download_type'];
 
     $this->assign('help', $elementWithHelpTexts);
     $this->assign('elementNames', $this->getRenderableElementNames());

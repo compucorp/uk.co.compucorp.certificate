@@ -56,3 +56,7 @@
     </li>
   <ol>
 {/htxt}
+
+{htxt id="download_type"}
+  {ts}Specify whether the certificate should be generated dynamically from a CiviCRM message template or be granted access to a downloadable file.{/ts}
+{/htxt}
