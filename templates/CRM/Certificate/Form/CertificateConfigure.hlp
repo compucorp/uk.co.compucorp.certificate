@@ -6,3 +6,57 @@
   <p>{ts}<b>Note:</b> This setting has security implications.
     <br/>System should allow the contacts having this permission to access and download the certificates.{/ts}</p>
 {/htxt}
+
+{htxt id="min_valid_from_date-title"}
+  {ts}Min Valid From Date{/ts}
+{/htxt}
+{htxt id="min_valid_from_date"}
+  <p>{ts}The Min and Max Valid Date fields do 2 things: {/ts}</p>
+  <ol>
+    <li>
+      <p>{ts}<b>Tokens:</b> They will create tokens that can be used on certificates as follows:{/ts}</p>
+      <ul>
+        <li>
+          <p>{ts}"Min Valid From Date" (certificate.valid_from){/ts}</p>
+          <p>{ts}The latter of 1. Min Valid From Date and 2. The users membership start date.{/ts}</p>
+        </li>
+        <li>
+          <p>{ts}"Max Valid Through Date" (certificate.valid_to){/ts}</p>
+          <p>{ts}The earlier of 1. The date entered in this field and 2. The users membership end date.{/ts}</p>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <p>{ts}<b>Access:</b> It will also only allow users to download the certificate if their membership is valid during the validity period of the certificate. For example if a membership ends on or after the start date or a membership starts before the end date.{/ts}</p>
+    </li>
+  <ol>
+{/htxt}
+
+{htxt id="max_valid_through_date-title"}
+  {ts}Max Valid Through Date{/ts}
+{/htxt}
+{htxt id="max_valid_through_date"}
+  <p>{ts}The Min and Max Valid Date fields do 2 things: {/ts}</p>
+  <ol>
+    <li>
+      <p>{ts}<b>Tokens:</b> They will create tokens that can be used on certificates as follows:{/ts}</p>
+      <ul>
+        <li>
+          <p>{ts}"Min Valid From Date" (certificate.valid_from){/ts}</p>
+          <p>{ts}The latter of 1. Min Valid From Date and 2. The users membership start date.{/ts}</p>
+        </li>
+        <li>
+          <p>{ts}"Max Valid Through Date" (certificate.valid_to){/ts}</p>
+          <p>{ts}The earlier of 1. The date entered in this field and 2. The users membership end date.{/ts}</p>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <p>{ts}<b>Access:</b> It will also only allow users to download the certificate if their membership is valid during the validity period of the certificate. For example if a membership ends on or after the start date or a membership starts before the end date.{/ts}</p>
+    </li>
+  <ol>
+{/htxt}
+
+{htxt id="download_type"}
+  {ts}Specify whether the certificate should be generated dynamically from a CiviCRM message template or be granted access to a downloadable file.{/ts}
+{/htxt}

@@ -78,11 +78,14 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
       'type' => $certificateBAO->entity,
       'end_date' => $certificateBAO->end_date,
       'start_date' => $certificateBAO->start_date,
+      'download_type' => $certificateBAO->download_type,
       'download_format' => $certificateBAO->download_format,
       'message_template_id' => $certificateBAO->template_id,
       'linked_to' => implode(',', array_column($types, 'id')),
       'statuses' => implode(',', array_column($statuses, 'id')),
       'relationship_types' => implode(',', array_column($relationshipTypes, 'relationship_type_id')),
+      'min_valid_from_date' => $certificateBAO->min_valid_from_date,
+      'max_valid_through_date' => $certificateBAO->max_valid_through_date,
     ];
 
     $this->addEntityExtraField($certificateBAO, $certificate);
@@ -110,7 +113,7 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
       $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id');
       $certificateBAO->find(TRUE);
 
-      if (!empty($certificateBAO->id)) {
+      if (!empty($certificateBAO->id) && $this->isCertificateValidForAnEntity($certificateBAO, $contactId)) {
         return $certificateBAO;
       }
     }
@@ -160,6 +163,20 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
    *  Key-value pairs to append extra field to.
    */
   protected function addEntityExtraField($certificateBAO, &$certificate) {}
+
+  /**
+   * Validate a certificate against entity specific checks.
+   *
+   * @param \CRM_Certificate_BAO_CompuCertificate $certificate
+   *  Certificate.
+   * @param int $contactId
+   *  Contact id.
+   *
+   * @return bool
+   */
+  protected function isCertificateValidForAnEntity(\CRM_Certificate_BAO_CompuCertificate $certificate, int $contactId) {
+    return TRUE;
+  }
 
   /**
    * Gets all entity certificates vailable for a contact.

@@ -46,7 +46,7 @@
   <field>
     <name>template_id</name>
     <type>int unsigned</type>
-    <required>true</required>
+    <required>false</required>
     <comment>FK to message template</comment>
     <html>
       <type>Number</type>
@@ -58,6 +58,17 @@
     <type>int unsigned</type>
     <required>true</required>
     <comment>Predefined CompuCertificate download format (1 - PDF, 2 - IMAGE)</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+
+  <field>
+    <name>download_type</name>
+    <type>int unsigned</type>
+    <required>false</required>
+    <comment>Predefined CompuCertificate download type (1 - MESSAGE TEMPLATE, 2 - FILE)</comment>
+    <default>1</default>
     <html>
       <type>Number</type>
     </html>
@@ -78,6 +89,26 @@
     <type>date</type>
     <required>false</required>
     <comment>Date the certificate validity ends</comment>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+
+  <field>
+    <name>min_valid_from_date</name>
+    <type>date</type>
+    <required>false</required>
+    <comment>Min date the certificate validity starts</comment>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+
+  <field>
+    <name>max_valid_through_date</name>
+    <type>date</type>
+    <required>false</required>
+    <comment>Max date the certificate validity ends</comment>
     <html>
       <type>Select Date</type>
     </html>

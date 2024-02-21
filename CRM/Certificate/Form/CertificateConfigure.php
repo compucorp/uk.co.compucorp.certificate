@@ -1,6 +1,7 @@
 <?php
 
 use CRM_Certificate_ExtensionUtil as E;
+use CRM_Certificate_Enum_DownloadType as DownloadType;
 use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
 
 /**
@@ -9,6 +10,12 @@ use CRM_Certificate_BAO_CompuCertificate as CompuCertificate;
  * @see https://docs.civicrm.org/dev/en/latest/framework/quickform/
  */
 class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
+
+  /**
+   * @var int
+   * Certificate ID
+   */
+  public $_id;
 
   public function preProcess() {
     $this->_id = CRM_Utils_Request::retrieve('id', 'Positive', $this);
@@ -69,6 +76,15 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       FALSE
     );
 
+    $this->add(
+      'select',
+      'download_type',
+      ts('Certificate Type'),
+      CompuCertificate::getSupportedDownloadTypes(),
+      TRUE,
+      ['class' => 'form-control']
+    );
+
     $this->addEntityRef('message_template_id', ts('Message Template'), [
       'entity' => 'MessageTemplate',
       'placeholder' => ts('- Message Template -'),
@@ -82,7 +98,11 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
         "search_field" => "msg_title",
       ],
       'class' => 'form-control',
-    ], TRUE);
+    ]);
+
+    $safeExtensions = implode(', ', array_keys(CRM_Core_OptionGroup::values('safe_file_extension', TRUE)));
+    $this->addElement('file', 'download_file', E::ts('File Upload'), 'size=30 maxlength=255 class=form-control accept="' . $safeExtensions . '"');
+    $this->addUploadElement('download_file');
 
     $this->add(
       'text',
@@ -119,7 +139,6 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       'download_format',
       ts('Download Format'),
       CompuCertificate::getSupportedDownloadFormats(),
-      TRUE,
       ['class' => 'form-control']
     );
 
@@ -129,6 +148,24 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       'select' => ['multiple' => TRUE],
       'class' => 'form-control',
     ], FALSE);
+
+    $this->add(
+      'datepicker',
+      'min_valid_from_date',
+      ts('Min Valid From Date'),
+      NULL,
+      FALSE,
+      ['time' => FALSE, 'class' => 'form-control']
+    );
+
+    $this->add(
+      'datepicker',
+      'max_valid_through_date',
+      ts('Max Valid Through Date'),
+      NULL,
+      FALSE,
+      ['time' => FALSE, 'class' => 'form-control']
+    );
 
     $this->addButtons([
       [
@@ -143,7 +180,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       ],
     ]);
 
-    $elementWithHelpTexts = ['relationship_types'];
+    $elementWithHelpTexts = ['relationship_types', 'min_valid_from_date', 'max_valid_through_date', 'download_type'];
 
     $this->assign('help', $elementWithHelpTexts);
     $this->assign('elementNames', $this->getRenderableElementNames());
@@ -174,8 +211,9 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
    */
   public function postProcess() {
     $values = $this->exportValues();
+    $files = $this->getVar('_submitFiles');
 
-    $result = $this->saveConfiguration($values);
+    $result = $this->saveConfiguration(array_merge($values, $files));
 
     if (empty($result)) {
       $msg = sprintf('Error %s certificate', !empty($this->_id) ? 'updating' : 'creating');
@@ -251,16 +289,18 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
    * translates to all.
    *
    * @param array $values
+   * @param array $files
    *
    * @return array|bool
    */
-  public function certificateRule($values) {
+  public function certificateRule($values, $files) {
     $errors = [];
 
     $this->validateCertificateName($values, $errors);
     $this->validateLinkedToField($values, $errors);
     $this->validateStatusesField($values, $errors);
-    $this->validateDateField($values, $errors);
+    $this->validateDateFields($values, $errors);
+    $this->validateDownloadType($values, $files, $errors);
 
     // The participant_type field should only be validated for Event Certificate.
     if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
@@ -268,6 +308,39 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     }
 
     return $errors ?: TRUE;
+  }
+
+  /**
+   * Validates the download type related fields.
+   *
+   * @param array $values
+   * @param array $files
+   * @param array $errors
+   */
+  public function validateDownloadType($values, $files, &$errors) {
+    if ($values['download_type'] == DownloadType::TEMPLATE) {
+      if (empty($values['download_format'])) {
+        $errors['download_format'] = ts('The download format field is required');
+      }
+      if (empty($values['message_template_id'])) {
+        $errors['message_template_id'] = ts('The message template field is required');
+      }
+    }
+    else {
+      $ext = CRM_Utils_File::getAcceptableExtensionsForMimeType($files['download_file']['type'])[0] ?? NULL;
+      if (!empty($files['download_file']['tmp_name']) &&
+        !CRM_Utils_File::isExtensionSafe($ext)
+          ) {
+        $errors['download_file'] = ts('Invalid file format');
+      }
+      elseif (empty($files['download_file']['tmp_name']) && !empty($this->_id) && !empty(CompuCertificate::getFile($this->_id))) {
+        // It's an update and already linked to a file.
+        return;
+      }
+      elseif (empty($files['download_file']['tmp_name'])) {
+        $errors['download_file'] = ts('The download file field is required');
+      }
+    }
   }
 
   /**
@@ -325,14 +398,13 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
    * @param array $values
    * @param array $errors
    */
-  public function validateDateField($values, &$errors) {
-    // Ignore validation if either of the dates are empty.
-    if (empty($values['end_date']) || empty($values['start_date'])) {
-      return;
+  public function validateDateFields($values, &$errors) {
+    if (!empty($values['start_date']) && !empty($values['end_date']) && strtotime($values['end_date']) <= strtotime($values['start_date'])) {
+      $errors['end_date'] = ts('End date field must be after start date');
     }
 
-    if (strtotime($values['end_date']) <= strtotime($values['start_date'])) {
-      $errors['end_date'] = ts('End date field must be after start date');
+    if (!empty($values['max_valid_through_date']) && !empty($values['min_valid_from_date']) && strtotime($values['max_valid_through_date']) <= strtotime($values['min_valid_from_date'])) {
+      $errors['max_valid_through_date'] = ts('Max valid through date field must be after min valid from date');
     }
   }
 

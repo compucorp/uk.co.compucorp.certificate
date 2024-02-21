@@ -9,6 +9,8 @@ class CRM_Certificate_Test_Fabricator_Membership {
     'join_date' => '2006-01-21',
     'start_date' => '2006-01-21',
     'end_date' => '2006-12-21',
+    'min_valid_from_date' => '2006-02-01',
+    'max_valid_through_date' => '2006-06-05',
     'source' => 'Payment',
     'is_override' => 1,
   ];

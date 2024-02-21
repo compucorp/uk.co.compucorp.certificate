@@ -195,4 +195,14 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
     return CertificateType::MEMBERSHIPS;
   }
 
+  /**
+   * @inheritDoc
+   */
+  protected function isCertificateValidForAnEntity(\CRM_Certificate_BAO_CompuCertificate $certificate, int $contactId) {
+    $membershipDates = (new CRM_Certificate_Service_CertificateMembership())->getMembershipDates($certificate->id, $contactId);
+
+    return ($membershipDates['startDate'] === NULL || $certificate->max_valid_through_date === NULL || $membershipDates['startDate'] <= $certificate->max_valid_through_date)
+      && ($membershipDates['endDate'] === NULL || $certificate->min_valid_from_date === NULL || $membershipDates['endDate'] >= $certificate->min_valid_from_date);
+  }
+
 }

@@ -2,6 +2,7 @@
 
 use CRM_Certificate_ExtensionUtil as E;
 use CRM_Contact_BAO_Relationship as Relationship;
+use CRM_Certificate_Enum_DownloadType as DownloadType;
 use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
 use CRM_Certificate_BAO_CompuCertificateStatus as CompuCertificateStatus;
 use CRM_Certificate_BAO_CompuCertificateEntityType as CompuCertificateEntityType;
@@ -35,6 +36,8 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
     $entityName = 'CompuCertificate';
 
     CRM_Utils_Hook::pre('delete', $entityName, $id);
+    \CRM_Core_BAO_File::deleteEntityFile(self::getTableName(), $id);
+
     $instance = new $className();
     $instance->id = $id;
     $instance->delete();
@@ -115,6 +118,18 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
   }
 
   /**
+   * Returns the supported download types.
+   *
+   * @return array
+   */
+  public static function getSupportedDownloadTypes() {
+    return [
+      DownloadType::TEMPLATE  => E::ts('Message Template'),
+      DownloadType::FILE_DOWNLOAD  => E::ts('Download File'),
+    ];
+  }
+
+  /**
    * Add condition to ensure the certificate start_date and end_date is valid.
    */
   public function whereDateIsValid() {
@@ -132,6 +147,17 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
     }
 
     return $relationshipTypes;
+  }
+
+  /**
+   * Returens the certificate file
+   *
+   * @param int $id
+   *
+   * @return array
+   */
+  public static function getFile($id) {
+    return \CRM_Core_BAO_File::getEntityFile(CRM_Certificate_DAO_CompuCertificate::getTableName(), $id);
   }
 
 }

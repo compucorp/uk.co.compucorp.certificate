@@ -101,4 +101,14 @@ class CRM_Certificate_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
+  /**
+   * Adds columns for download type support.
+   */
+  public function upgrade_0003() {
+    $this->ctx->log->info('Applying update 0003');
+    $this->executeSqlFile('sql/upgrade_0003.sql');
+
+    return TRUE;
+  }
+
 }

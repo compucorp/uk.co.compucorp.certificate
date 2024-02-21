@@ -1,5 +1,6 @@
 <?php
 
+use CRM_Certificate_Enum_DownloadType as DownloadType;
 use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
 use CRM_Certificate_BAO_CompuCertificateImageFormat as CompuCertificateImageFormatBAO;
 use CRM_Certificate_BAO_CompuCertificateTemplateImageFormat as CompuCertificateTemplateImageFormat;
@@ -30,6 +31,14 @@ class CRM_Certificate_Service_CertificateDownloader {
    * Gets the template associated with a certificate configuration and renders it.
    */
   public function download() {
+    if ($this->certificate->download_type == DownloadType::FILE_DOWNLOAD) {
+      $file = \CRM_Core_BAO_File::getEntityFile(CRM_Certificate_DAO_CompuCertificate::getTableName(), $this->certificate->id);
+      if (!empty($file)) {
+        CRM_Utils_System::redirect(end($file)['url']);
+      }
+      return;
+    }
+
     $generatedTemplate = $this->certificateGenerator->generate($this->certificate->template_id, $this->contactId, $this->entityId);
     return $this->render($generatedTemplate);
   }
