@@ -21,12 +21,14 @@ class CRM_Certificate_Hook_PageRun_MemberPageTab {
 
     $certificateType = CRM_Certificate_Enum_CertificateType::MEMBERSHIPS;
     $entity = CRM_Certificate_Entity_EntityFactory::create($certificateType);
-    $configuredCertificate = $entity->getCertificateConfiguration($id, $contactId);
+    $configuredCertificates = $entity->getCertificateConfiguration($id, $contactId, TRUE);
 
-    if ($configuredCertificate) {
-      $downloadUrl = $entity->getCertificateDownloadUrl($id, $contactId);
+    if (!empty($configuredCertificates)) {
+      foreach ($configuredCertificates as $certificate) {
+        $downloadUrls[] = sprintf("%s&ccid=%s", $entity->getCertificateDownloadUrl($id, $contactId), $certificate->id);
+      }
 
-      Civi::resources()->addVars(E::SHORT_NAME, ['download_url' => $downloadUrl]);
+      Civi::resources()->addVars(E::SHORT_NAME, ['download_url' => $downloadUrls]);
       Civi::resources()->addScriptFile(E::LONG_NAME, "/js/compucertificate.js", 0);
       Civi::resources()->addScriptFile(E::LONG_NAME, "./js/memberDownloadButton.js", 1);
     }

@@ -17,7 +17,8 @@ class CRM_Certificate_Service_Certificate {
   public function store($values) {
     $result = NULL;
 
-    if ($this->configurationExist($values)) {
+    $duplicateSupportEntity = [CRM_Certificate_Enum_CertificateType::MEMBERSHIPS];
+    if (!in_array($values['type'], $duplicateSupportEntity) && $this->configurationExist($values)) {
       throw new CRM_Certificate_Exception_ConfigurationExistException();
     }
 

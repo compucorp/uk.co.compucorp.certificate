@@ -58,8 +58,7 @@ class CRM_Certificate_Service_CertificateMembershipTest extends BaseHeadlessTest
    * Test that duplicate certifiacte configuration
    * cannot be created for the same entity.
    */
-  public function testExceptionThrownForDuplicateCertificateMembershipConfiguration() {
-    $this->expectException(CRM_Certificate_Exception_ConfigurationExistException::class);
+  public function testExceptionNotThrownForDuplicateCertificateMembershipConfiguration() {
     $statuses = CRM_Certificate_Test_Fabricator_MembershipStatus::fabricate()['id'];
     $types = CRM_Certificate_Test_Fabricator_MembershipType::fabricate()['id'];
 
@@ -72,8 +71,11 @@ class CRM_Certificate_Service_CertificateMembershipTest extends BaseHeadlessTest
       'end_date' => date('Y-m-d'),
     ];
 
-    $this->createCertificate($values);
-    $this->createCertificate($values);
+    $cert1 = $this->createCertificate($values);
+    $cert2 = $this->createCertificate($values);
+
+    $this->assertNotEmpty($cert1);
+    $this->assertNotEmpty($cert2);
   }
 
   /**

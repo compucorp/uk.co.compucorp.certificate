@@ -44,7 +44,8 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
    */
   private static function downloadCertificate($contactId, $entityId, $certificateType) {
     try {
-      $certificate = self::checkIfCertificateAvailable($contactId, $entityId, $certificateType);
+      $configurationId = CRM_Utils_Request::retrieve('ccid', 'Positive');
+      $certificate = self::checkIfCertificateAvailable($contactId, $entityId, $certificateType, $configurationId);
     }
     catch (CRM_Core_Exception $e) {
       CRM_Core_Session::setStatus($e->getMessage(), 'Error', 'error');
@@ -67,22 +68,34 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
    * @param int $contactId
    * @param int $entityId
    * @param int $certificateType
+   * @param int|bool $certificateId
    *
    * @return \CRM_Certificate_BAO_CompuCertificate
    *
    * @throws \CRM_Core_exception
    */
-  public static function checkIfCertificateAvailable($contactId, $entityId, $certificateType) {
+  public static function checkIfCertificateAvailable($contactId, $entityId, $certificateType, $certificateId = NULL) {
     if (empty($contactId) || empty($entityId)) {
       throw new CRM_Core_Exception('You do not have permission to access this contact.', 403);
     }
 
-    $certificate = self::validateCertificate($contactId, $entityId, $certificateType);
-    $accessChecker = new CRM_Certificate_Service_CertificateAccessChecker($contactId, $certificate);
-    $hasAccess = $accessChecker->check();
+    $certificates = self::validateCertificate($contactId, $entityId, $certificateType);
+    $certificateWithAccess = [];
+    foreach ($certificates as $certificate) {
+      if (!empty($certificateId) && $certificate->id != $certificateId) {
+        continue;
+      }
 
-    if ($hasAccess) {
-      return $certificate;
+      $accessChecker = new CRM_Certificate_Service_CertificateAccessChecker($contactId, $certificate);
+      $hasAccess = $accessChecker->check();
+
+      if ($hasAccess) {
+        $certificateWithAccess[$certificate->id] = $certificate;
+      }
+    }
+
+    if (!empty($certificateWithAccess)) {
+      return end($certificateWithAccess);
     }
 
     throw new CRM_Core_Exception('You do not have permission to access this contact.', 403);
@@ -96,19 +109,19 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
    * @param $entityId
    * @param int $certificateType
    *
-   * @return \CRM_Certificate_BAO_CompuCertificate
+   * @return \CRM_Certificate_BAO_CompuCertificate[]
    *
    * @throws CRM_Core_Exception;
    */
   private static function validateCertificate(int $contactId, int $entityId, int $certificateType) {
     $entity = CRM_Certificate_Entity_EntityFactory::create($certificateType);
-    $configuredCertificate = $entity->getCertificateConfiguration($entityId, $contactId);
+    $configuredCertificates = $entity->getCertificateConfiguration($entityId, $contactId, TRUE);
 
-    if (!$configuredCertificate) {
+    if (empty($configuredCertificates)) {
       throw new CRM_Core_Exception(ts('Certificate not available for contact'));
     }
 
-    return $configuredCertificate;
+    return $configuredCertificates;
   }
 
 }
