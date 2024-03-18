@@ -101,21 +101,28 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
    *  Id of the entity to get a configured certificate for
    * @param int $contactId
    *  Id of the contact the entity belongs to
+   * @param bool $multiple
+   *  If multiple certificate should be returned
    *
-   * @return \CRM_Certificate_BAO_CompuCertificate|bool
+   * @return \CRM_Certificate_BAO_CompuCertificate|array|bool
    */
-  public function getCertificateConfiguration($entityId, $contactId) {
+  public function getCertificateConfiguration($entityId, $contactId, $multiple = FALSE) {
     try {
       $certificateBAO = new CRM_Certificate_BAO_CompuCertificate();
       $this->addEntityConditionals($certificateBAO, $entityId, $contactId);
       $certificateBAO->whereDateIsValid();
       $certificateBAO->orderBy(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id Desc');
       $certificateBAO->selectAdd(CRM_Certificate_DAO_CompuCertificate::$_tableName . '.id');
-      $certificateBAO->find(TRUE);
+      $certificateBAO->find();
 
-      if (!empty($certificateBAO->id) && $this->isCertificateValidForAnEntity($certificateBAO, $contactId)) {
-        return $certificateBAO;
+      $results = [];
+      while ($certificateBAO->fetch()) {
+        if (!empty($certificateBAO->id) && $this->isCertificateValidForAnEntity($certificateBAO, $contactId)) {
+          $results[] = clone $certificateBAO;
+        }
       }
+
+      return $multiple ? $results : ($results[0] ?? FALSE);
     }
     catch (\Exception $e) {
     }
