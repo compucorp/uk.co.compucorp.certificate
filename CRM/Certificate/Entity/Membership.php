@@ -169,6 +169,7 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
           'start_date' => $configuredCertificate['start_date'],
           'linked_to' => $membership['membership_name'],
           'download_link' => $this->getCertificateDownloadUrl($membership['id'], $contactId, TRUE),
+          'configuration_id' => $configuredCertificate['certificate_id'],
         ];
         array_push($certificates, $certificate);
       });

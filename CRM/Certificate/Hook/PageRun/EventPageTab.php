@@ -32,7 +32,7 @@ class CRM_Certificate_Hook_PageRun_EventPageTab {
       $downloadUrl = htmlspecialchars_decode(CRM_Utils_System::url('civicrm/certificates/event', $query));
       CRM_Core_Resources::singleton()
         ->addScriptFile("uk.co.compucorp.certificate", "./js/eventDownloadButton.js");
-      Civi::resources()->addVars(E::SHORT_NAME, ['download_url' => $downloadUrl]);
+      Civi::resources()->addVars(E::SHORT_NAME, ['download_url' => [$downloadUrl]]);
     }
   }
 
