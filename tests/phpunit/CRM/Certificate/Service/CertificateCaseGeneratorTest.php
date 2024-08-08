@@ -38,8 +38,8 @@ class CRM_Certificate_Service_CaseCertificateGeneratorTest extends BaseHeadlessT
     $generatorService = new CRM_Certificate_Service_CertificateGenerator();
     $result = $generatorService->generate($template['id'], $contactId, $caseId);
 
-    $this->assertContains($contact['display_name'], $result['html']);
-    $this->assertContains($case['subject'], $result['html']);
+    $this->assertStringContainsString($contact['display_name'], $result['html']);
+    $this->assertStringContainsString($case['subject'], $result['html']);
   }
 
   public function testGenerateCertificateWillResolveCaseCustomFieldTokens() {
@@ -58,7 +58,7 @@ class CRM_Certificate_Service_CaseCertificateGeneratorTest extends BaseHeadlessT
     $generatorService = new CRM_Certificate_Service_CertificateGenerator();
     $result = $generatorService->generate($template['id'], $contactId, $caseId);
 
-    $this->assertContains($customTokenValue, $result['html']);
+    $this->assertStringContainsString($customTokenValue, $result['html']);
   }
 
   private function getMsgContent() {

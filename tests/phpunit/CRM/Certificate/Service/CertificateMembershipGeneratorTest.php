@@ -19,8 +19,8 @@ class CRM_Certificate_Service_MembershipCertificateGeneratorTest extends BaseHea
     $generatorService = new CRM_Certificate_Service_CertificateGenerator();
     $result = $generatorService->generate($template['id'], $contact['id'], $membership['id']);
 
-    $this->assertContains($contact['display_name'], $result['html']);
-    $this->assertContains($membership['membership_name'], $result['html']);
+    $this->assertStringContainsString($contact['display_name'], $result['html']);
+    $this->assertStringContainsString($membership['membership_name'], $result['html']);
   }
 
   private function getMsgContent($extra = "") {

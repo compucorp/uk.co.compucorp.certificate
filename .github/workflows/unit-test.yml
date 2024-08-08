@@ -91,4 +91,4 @@ jobs:
       - name: Run phpunit tests
         if: ${{ always() }}
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}/uk.co.compucorp.certificate
-        run: phpunit5
+        run: phpunit8

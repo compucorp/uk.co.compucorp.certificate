@@ -23,7 +23,15 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
    */
   public static function entityTokens() {
     $membershipCustomFields = CRM_Utils_Token::getCustomFieldTokens('Membership');
-    $membershipTokens = CRM_Core_SelectValues::membershipTokens();
+    $membershipTokens = [
+      '{membership.id}' => ts('Membership ID'),
+      '{membership.status_id:label}' => ts('Status'),
+      '{membership.membership_type_id:label}' => ts('Membership Type'),
+      '{membership.start_date}' => ts('Membership Start Date'),
+      '{membership.join_date}' => ts('Member Since'),
+      '{membership.end_date}' => ts('Membership Expiration Date'),
+      '{membership.fee}' => ts('Membership Fee'),
+    ];
     $extraTokens = [
       'source' => ts('Membership Source'),
       'membership_name' => ts('Membership Name'),

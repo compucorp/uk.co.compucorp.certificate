@@ -25,7 +25,7 @@ class api_v3_CompuCertificate_GetrelatedcontactcertificatesTest extends BaseHead
    */
   private $client_id;
 
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $contact = ContactFabricator::fabricate();
     $this->registerCurrentLoggedInContactInSession($contact['id']);
@@ -134,7 +134,7 @@ class api_v3_CompuCertificate_GetrelatedcontactcertificatesTest extends BaseHead
     $this->assertEquals($membership['id'], $results['values'][0]['membership_id']);
   }
 
-  public function tearDown() {
+  public function tearDown(): void {
     $this->unregisterCurrentLoggedInContactFromSession();
     parent::tearDown();
   }
