@@ -115,8 +115,8 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
 
     $status = CRM_Member_BAO_MembershipStatus::getMembershipStatus($result['status_id']);
     $type = CRM_Member_BAO_MembershipType::getMembershipType($result['membership_type_id']);
-    $result['status'] = $status['membership_status'] ?? '';
-    $result['type'] = $type['name'] ?? '';
+    $result['status_idlabel'] = $status['membership_status'] ?? '';
+    $result['membership_type_idlabel'] = $type['name'] ?? '';
     $result['fee'] = CRM_Utils_Money::format($type['minimum_fee'] ?? '');
 
     return $result;
