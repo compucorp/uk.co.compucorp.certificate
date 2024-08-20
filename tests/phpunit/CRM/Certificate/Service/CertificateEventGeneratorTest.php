@@ -20,8 +20,8 @@ class CRM_Certificate_Service_EventCertificateGeneratorTest extends BaseHeadless
     $generatorService = new CRM_Certificate_Service_CertificateGenerator();
     $result = $generatorService->generate($template['id'], $contact['id'], $participant['id']);
 
-    $this->assertContains($contact['display_name'], $result['html']);
-    $this->assertContains($event['title'], $result['html']);
+    $this->assertStringContainsString($contact['display_name'], $result['html']);
+    $this->assertStringContainsString($event['title'], $result['html']);
   }
 
   public function testGenerateCertificateWillResolveParticipantTokens() {
@@ -37,8 +37,8 @@ class CRM_Certificate_Service_EventCertificateGeneratorTest extends BaseHeadless
     $generatorService = new CRM_Certificate_Service_CertificateGenerator();
     $result = $generatorService->generate($template['id'], $contact['id'], $participant['id']);
 
-    $this->assertContains($participant['participant_role'], $result['html']);
-    $this->assertContains($participant['participant_source'], $result['html']);
+    $this->assertStringContainsString($participant['participant_role'], $result['html']);
+    $this->assertStringContainsString($participant['participant_source'], $result['html']);
   }
 
   public function testGenerateCertificateWillResolveEventTokenWithEmptySummaryField() {
@@ -64,9 +64,9 @@ class CRM_Certificate_Service_EventCertificateGeneratorTest extends BaseHeadless
     $generatorService = new CRM_Certificate_Service_CertificateGenerator();
     $result = $generatorService->generate($template["id"], $contact["id"], $participant["id"]);
 
-    $this->assertContains($contact["display_name"], $result["html"]);
-    $this->assertContains($event["title"], $result["html"]);
-    $this->assertContains(CRM_Utils_Date::customFormat($event["start_date"]), $result["html"]);
+    $this->assertStringContainsString($contact["display_name"], $result["html"]);
+    $this->assertStringContainsString($event["title"], $result["html"]);
+    $this->assertStringContainsString(CRM_Utils_Date::customFormat($event["start_date"]), $result["html"]);
   }
 
   private function getMsgContent($extra = "") {

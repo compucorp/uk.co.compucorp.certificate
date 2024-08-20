@@ -23,7 +23,7 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
    */
   private $client_id;
 
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $contact = ContactFabricator::fabricate();
     $this->registerCurrentLoggedInContactInSession($contact['id']);
@@ -240,7 +240,7 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
     $this->assertEquals($results['count'] > 0, $valid);
   }
 
-  public function tearDown() {
+  public function tearDown(): void {
     $this->unregisterCurrentLoggedInContactFromSession();
     parent::tearDown();
   }
