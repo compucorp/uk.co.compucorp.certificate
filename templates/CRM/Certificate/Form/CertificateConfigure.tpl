@@ -36,8 +36,10 @@
   const TYPE_MEMBERSHIP = "3";
   const FORMAT_IMAGE = "2";
   const TYPE_TEMPLATE = "1";
+  const previousFileURL = { $previousFile }
 
   { literal }
+
 
   let toggleRequiredMarker = ($, val) => {
     if (val === TYPE_CASES) {
@@ -66,6 +68,18 @@
   CRM.$(function ($) {
 
     $('.participant_type_id').hide();
+
+    if (previousFileURL && previousFileURL.length > 0) {
+      // Create the anchor element
+      const fileLink = $('<a>')
+          .attr('href', previousFileURL)   // Set the href attribute to the file URL
+          .text('Uploaded File')           // Text for the link
+          .attr('target', '_blank');       // Open in a new tab
+
+      // Append the anchor to the div with the specified class
+      $('.row.download_file > .col-sm-7.col-md-5').append(fileLink);
+    }
+
     toggleValidityDateFields($, CRM.$('[name=type]').val());
 
     /**
