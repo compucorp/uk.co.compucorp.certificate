@@ -183,6 +183,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $elementWithHelpTexts = ['relationship_types', 'min_valid_from_date', 'max_valid_through_date', 'download_type'];
 
     $this->assign('help', $elementWithHelpTexts);
+    $this->assign('previousFile', $this->getPreviousFileURL());
     $this->assign('elementNames', $this->getRenderableElementNames());
     $this->assign('entityRefs', CRM_Certificate_Enum_CertificateType::getEnityRefs());
     $this->assign('entityStatusRefs', CRM_Certificate_Enum_CertificateType::getEntityStatusRefs());
@@ -406,6 +407,22 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     if (!empty($values['max_valid_through_date']) && !empty($values['min_valid_from_date']) && strtotime($values['max_valid_through_date']) <= strtotime($values['min_valid_from_date'])) {
       $errors['max_valid_through_date'] = ts('Max valid through date field must be after min valid from date');
     }
+  }
+
+  public function getPreviousFileURL() {
+    $fileURL = "";
+
+    if (empty($this->_id)) {
+      return json_encode($fileURL);
+    }
+
+    $configuredCertificate = $this->getConfiguredCertificateById($this->_id);
+    if ($configuredCertificate['download_type'] == DownloadType::FILE_DOWNLOAD) {
+      $file = \CRM_Core_BAO_File::getEntityFile(CompuCertificate::getTableName(), $this->_id);
+      $fileURL = end($file)['url'] ?? "";
+    }
+
+    return json_encode($fileURL);
   }
 
 }
