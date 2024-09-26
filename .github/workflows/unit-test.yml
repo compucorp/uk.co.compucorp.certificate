@@ -52,8 +52,8 @@ jobs:
         working-directory: ${{ env.CIVICRM_EXTENSIONS_DIR }}
         run: |
           git clone --depth 1 https://github.com/civicrm/org.civicrm.shoreditch.git
-          git clone --depth 1 -b 4.2.0-dev --no-single-branch https://github.com/compucorp/uk.co.compucorp.civicase.git
-          git clone --depth 1 -b 2.1.0-dev https://github.com/compucorp/uk.co.compucorp.usermenu.git
+          git clone --depth 1 -b master --no-single-branch https://github.com/compucorp/uk.co.compucorp.civicase.git
+          git clone --depth 1 -b master https://github.com/compucorp/uk.co.compucorp.usermenu.git
 
       - name: Setup Test DB
         run: echo "CREATE DATABASE civicrm_test;" | mysql -u root --password=root --host=mysql
