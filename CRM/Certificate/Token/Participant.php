@@ -109,7 +109,7 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
       ];
 
       if (in_array($k, $dateFields)) {
-        $v = CRM_Utils_Date::customFormat($v);
+        $v = !empty($v) ? new \DateTime($v) : '';
       }
 
       if (is_array($v)) {

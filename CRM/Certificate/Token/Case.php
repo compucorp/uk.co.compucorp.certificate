@@ -99,11 +99,13 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
     }
 
     $caseStatus = CRM_Case_PseudoConstant::caseStatus('label', TRUE, 'AND value = ' . $case['status_id']);
+    $startDate = CRM_Utils_Array::value('start_date', $case, '');
+    $endDate = CRM_Utils_Array::value('end_date', $case, '');
 
     $resolvedTokens['id'] = CRM_Utils_Array::value('id', $case, '');
     $resolvedTokens['subject'] = CRM_Utils_Array::value('subject', $case, '');
-    $resolvedTokens['start_date'] = CRM_Utils_Date::customFormat(CRM_Utils_Array::value('start_date', $case, ''));
-    $resolvedTokens['end_date'] = CRM_Utils_Date::customFormat(CRM_Utils_Array::value('end_date', $case, ''));
+    $resolvedTokens['start_date'] = !empty($startDate) ? new \DateTime($startDate) : '';
+    $resolvedTokens['end_date'] = !empty($endDate) ? new \DateTime($endDate) : '';
     $resolvedTokens['created_date'] = CRM_Utils_Date::customFormat(CRM_Utils_Array::value('created_date', $case, ''));
     $resolvedTokens['role'] = $role;
     $resolvedTokens['status'] = array_pop($caseStatus) ?? '';

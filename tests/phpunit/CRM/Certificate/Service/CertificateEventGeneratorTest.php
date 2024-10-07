@@ -66,7 +66,7 @@ class CRM_Certificate_Service_EventCertificateGeneratorTest extends BaseHeadless
 
     $this->assertStringContainsString($contact["display_name"], $result["html"]);
     $this->assertStringContainsString($event["title"], $result["html"]);
-    $this->assertStringContainsString(CRM_Utils_Date::customFormat($event["start_date"]), $result["html"]);
+    $this->assertStringContainsString(CRM_Utils_Date::customFormat($event["start_date"], NULL, ['d']), $result["html"]);
   }
 
   private function getMsgContent($extra = "") {

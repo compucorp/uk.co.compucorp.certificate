@@ -118,8 +118,8 @@ class CRM_Certificate_Token_Event extends CRM_Certificate_Token_AbstractCertific
     ]);
     $tokens['info_url']['text/html'] = \CRM_Utils_System::href('civicrm/event/info', 'reset=1&id=' . $eventId, TRUE, NULL, TRUE);
     $tokens['registration_url']['text/html'] = \CRM_Utils_System::href('civicrm/event/register', 'reset=1&id=' . $eventId, TRUE, NULL, TRUE);
-    $tokens['start_date']['text/html'] = !empty($event['start_date']) ? CRM_Utils_Date::customFormat($event['start_date']) : '';
-    $tokens['end_date']['text/html'] = !empty($event['end_date']) ? CRM_Utils_Date::customFormat($event['end_date']) : '';
+    $tokens['start_date']['text/html'] = !empty($event['start_date']) ? new \DateTime($event['start_date']) : '';
+    $tokens['end_date']['text/html'] = !empty($event['end_date']) ? new \DateTime($event['end_date']) : '';
     $tokens['event_type']['text/html'] = CRM_Core_PseudoConstant::getLabel('CRM_Event_BAO_Event', 'event_type_id', $event['event_type_id']);
     $tokens['contact_phone']['text/html'] = $event['phone.phone'] ?? '';
     $tokens['contact_email']['text/html'] = $event['email.email'] ?? '';
