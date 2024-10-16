@@ -94,7 +94,7 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
       ];
 
       if (in_array($k, $dateFields)) {
-        $v = CRM_Utils_Date::customFormat($v);
+        $v = !empty($v) ? new \DateTime($v) : '';
       }
     });
 

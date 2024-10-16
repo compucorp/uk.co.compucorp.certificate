@@ -91,21 +91,22 @@ class CRM_Certificate_Token_Certificate extends CRM_Certificate_Token_AbstractCe
       $membershipEndTimestamp = !empty($membershipDates['endDate']) ? strtotime($membershipDates['endDate']) : '';
       $certificateValidityStartTimestamp = !empty($certificate->min_valid_from_date) ? strtotime($certificate->min_valid_from_date) : '';
       $certificateValidityEndTimestamp = !empty($certificate->max_valid_through_date) ? strtotime($certificate->max_valid_through_date) : '';
+      $membershipRenewalDate = $service->getMembershipRenewalDate($certificate->id, $contactId);
 
-      $resolvedTokens['rolling_start_or_renewal_date'] = $service->getMembershipRenewalDate($certificate->id, $contactId);
+      $resolvedTokens['rolling_start_or_renewal_date'] = !empty($membershipRenewalDate) ? new \DateTime($membershipRenewalDate) : '';
       $validityStartDate = empty($certificateValidityStartTimestamp) || $membershipStartTimestamp > $certificateValidityStartTimestamp ?
         $membershipDates['startDate'] : (string) $certificate->min_valid_from_date;
       $validityEndDate = empty($certificateValidityEndTimestamp) || (!empty($membershipEndTimestamp) && $certificateValidityEndTimestamp > $membershipEndTimestamp) ?
         $membershipDates['endDate'] : (string) $certificate->max_valid_through_date;
       $resolvedTokens['valid_from'] = !empty($validityStartDate)
-        ? CRM_Utils_Date::customFormat($validityStartDate, '%e/%b/%Y') : '';
+        ? new \DateTime($validityStartDate) : '';
       $resolvedTokens['valid_to'] = !empty($validityEndDate)
-        ? CRM_Utils_Date::customFormat($validityEndDate, '%e/%b/%Y') : '';
+        ? new \DateTime($validityEndDate) : '';
     }
 
     $resolvedTokens['name'] = $certificate->name;
-    $resolvedTokens['start_date'] = CRM_Utils_Date::customFormat($certificate->start_date, '%e/%b/%Y');
-    $resolvedTokens['end_date'] = CRM_Utils_Date::customFormat($certificate->end_date, '%e/%b/%Y');
+    $resolvedTokens['start_date'] = new \DateTime($certificate->start_date);
+    $resolvedTokens['end_date'] = new \DateTime($certificate->end_date);
   }
 
 }

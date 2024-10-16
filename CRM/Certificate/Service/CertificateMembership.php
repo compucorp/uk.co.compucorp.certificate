@@ -30,7 +30,7 @@ class CRM_Certificate_Service_CertificateMembership extends CRM_Certificate_Serv
       $renewalDate = $renewalDate === NULL || $membershipDate < $renewalDate ? $membershipDate : $renewalDate;
     }
 
-    return $renewalDate ? CRM_Utils_Date::customFormat(date('Y-m-d', $renewalDate), '%e/%b/%Y') : '';
+    return $renewalDate ? date('Y-m-d', $renewalDate) : '';
   }
 
   private function getValidMembershipsForCertificate(int $certificateId, int $contactId): array {
