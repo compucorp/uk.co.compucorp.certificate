@@ -45,9 +45,7 @@ class CRM_Certificate_Service_CertificateMembership extends CRM_Certificate_Serv
 
     $query = Membership::get(FALSE)
       ->addSelect('start_date', 'end_date')
-      ->addWhere('contact_id', '=', $contactId)
-      ->addClause('OR', ['start_date', 'IS NULL'], ['start_date', '<=', 'now'])
-      ->addClause('OR', ['end_date', 'IS NULL'], ['end_date', '>', 'now']);
+      ->addWhere('contact_id', '=', $contactId);
 
     if (!empty($certificates[0]['entityTypes'])) {
       $query->addWhere('membership_type_id', 'IN', explode(',', $certificates[0]['entityTypes']));
