@@ -31,6 +31,9 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
       '{membership.join_date}' => ts('Member Since'),
       '{membership.end_date}' => ts('Membership Expiration Date'),
       '{membership.fee}' => ts('Membership Fee'),
+      '{membership.insurance_premium_ex_ipt}' => ts('Insurance Premium (excl IPT)'),
+      '{membership.insurance_premium_ipt_only}' => ts(' Insurance Premium (IPT)'),
+      '{membership.insurance_premium_inc_ipt}' => ts('Insurance Premium (incl IPT)'),
     ];
     $extraTokens = [
       'source' => ts('Membership Source'),
@@ -56,6 +59,7 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
   public function prefetch(TokenValueEvent $e) {
     $entityTypeId = $e->getTokenProcessor()->getContextValues('entityId');
     $contactId = $e->getTokenProcessor()->getContextValues('contactId');
+    $certificateId = $e->getTokenProcessor()->getContextValues('certificateId');
 
     $resolvedTokens = [];
 
@@ -63,7 +67,10 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
       if (is_array($entityTypeId)) {
         $entityTypeId = $entityTypeId[0];
         $contactId = $contactId[0];
-        $result = $this->getMembership($entityTypeId, $contactId);
+        $certificateId = $certificateId[0] ?? 0;
+        $certificate = $certificateId > 0 ?
+          CRM_Certificate_BAO_CompuCertificate::findById($certificateId) : new stdClass();
+        $result = $this->getMembership($entityTypeId, $contactId, $certificate);
         if (empty($result)) {
           return $resolvedTokens;
         }
@@ -108,10 +115,11 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
    *
    * @param int $membershipId
    * @param int $contactId
+   * @param object $certificate
    *
    * @return array
    */
-  private function getMembership($membershipId, $contactId) {
+  private function getMembership($membershipId, $contactId, $certificate) {
     $result = civicrm_api3('Membership', 'getsingle', [
       'id' => $membershipId,
       'contact_id' => $contactId,
@@ -126,8 +134,52 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
     $result['status_idlabel'] = $status['membership_status'] ?? '';
     $result['membership_type_idlabel'] = $type['name'] ?? '';
     $result['fee'] = CRM_Utils_Money::format($type['minimum_fee'] ?? '');
+    $insuranceTokens = ['insurance_premium_ex_ipt', 'insurance_premium_inc_ipt', 'insurance_premium_ipt_only'];
+
+    if (empty(array_intersect($this->activeTokens, $insuranceTokens))) {
+      return $result;
+    }
+
+    $insuranceLineItem = $this->getValidInsuranceLineItem($certificate, $result);
+
+    $result['insurance_premium_ex_ipt'] = !empty($insuranceLineItem['lineTotal']) ?
+      CRM_Utils_Money::format($insuranceLineItem['lineTotal']) : '';
+    $result['insurance_premium_ipt_only'] = !empty($insuranceLineItem['taxAmount']) ?
+      CRM_Utils_Money::format($insuranceLineItem['taxAmount']) : '';
+    $result['insurance_premium_inc_ipt'] = !empty($insuranceLineItem['taxAmount']) || !empty($insuranceLineItem['lineTotal']) ?
+      CRM_Utils_Money::format((float) $insuranceLineItem['taxAmount'] + (float) $insuranceLineItem['lineTotal']) : '';
 
     return $result;
+  }
+
+  private function getValidInsuranceLineItem($certificate, $membership): array {
+    $insuranceFinancialTypes = explode(',', (string) Civi::settings()->get('insurance_premium_financial_type'));
+    $query = "
+SELECT MAX(c.id) FROM civicrm_contribution c
+    INNER JOIN civicrm_membership_payment mp ON c.id = mp.contribution_id
+    WHERE mp.membership_id =" . $membership['id'] ?? 0;
+
+    if (!empty($certificate->min_valid_from_date)) {
+      $query .= " AND c.receive_date >= '" . $certificate->min_valid_from_date . "'";
+    }
+    if (!empty($certificate->max_valid_through_date)) {
+      $query .= " AND c.receive_date < '" . $certificate->max_valid_through_date . "'";
+    }
+
+    $contribution = CRM_Core_DAO::singleValueQuery($query);
+
+    if ($contribution === NULL || empty($insuranceFinancialTypes)) {
+      return [];
+    }
+
+    $lineItem = Civi\Api4\LineItem::get(FALSE)
+      ->addSelect('SUM(tax_amount) AS taxAmount', 'SUM(line_total) AS lineTotal')
+      ->addWhere('contribution_id', '=', $contribution)
+      ->addWhere('financial_type_id', 'IN', $insuranceFinancialTypes)
+      ->execute()
+      ->first();
+
+    return $lineItem ?? [];
   }
 
 }
