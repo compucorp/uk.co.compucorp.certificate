@@ -28,6 +28,7 @@
   </civix>
   <requires>
     <ext>uk.co.compucorp.civicase</ext>
+    <ext>io.compuco.financeextras</ext>
   </requires>
   <mixins>
     <mixin>ang-php@1.0.0</mixin>

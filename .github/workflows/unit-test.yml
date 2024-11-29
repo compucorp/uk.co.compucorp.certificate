@@ -54,6 +54,7 @@ jobs:
           git clone --depth 1 https://github.com/civicrm/org.civicrm.shoreditch.git
           git clone --depth 1 -b master --no-single-branch https://github.com/compucorp/uk.co.compucorp.civicase.git
           git clone --depth 1 -b master https://github.com/compucorp/uk.co.compucorp.usermenu.git
+          git clone --depth 1 -b master https://github.com/compucorp/io.compuco.financeextras.git
 
       - name: Setup Test DB
         run: echo "CREATE DATABASE civicrm_test;" | mysql -u root --password=root --host=mysql
