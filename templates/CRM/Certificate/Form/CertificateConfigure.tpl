@@ -1,4 +1,4 @@
-{crmStyle ext=uk.co.compucorp.certificate file=css/style.css}
+{crmStyle ext='uk.co.compucorp.certificate' file='css/style.css'}
 
 <div id="bootstrap-theme">
   <div class="panel panel-default certificate__create-form-panel">
@@ -28,15 +28,15 @@
 
 <script language="javascript" type="text/javascript">
 
-  let ref = { $entityRefs }
-  let statusRef = { $entityStatusRefs }
+  let ref = {$entityRefs}
+  let statusRef = {$entityStatusRefs}
   let performingUpdate = false
   const TYPE_CASES = "1";
   const TYPE_EVENTS = "2";
   const TYPE_MEMBERSHIP = "3";
   const FORMAT_IMAGE = "2";
   const TYPE_TEMPLATE = "1";
-  const previousFileURL = { $previousFile }
+  const previousFileURL = {$previousFile}
 
   { literal }
 
