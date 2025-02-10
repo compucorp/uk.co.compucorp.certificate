@@ -1,4 +1,4 @@
-{crmStyle ext=uk.co.compucorp.certificate file=css/style.css}
+{crmStyle ext='uk.co.compucorp.certificate' file='css/style.css'}
 
 <div id="bootstrap-theme">
   <div class="certificate__action-link">
