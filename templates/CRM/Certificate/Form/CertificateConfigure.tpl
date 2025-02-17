@@ -38,7 +38,7 @@
   const TYPE_TEMPLATE = "1";
   const previousFileURL = {$previousFile}
 
-  { literal }
+  {literal}
 
 
   let toggleRequiredMarker = ($, val) => {
@@ -121,7 +121,10 @@
             entity: 'OptionValue',
             api: {
               description_field: null,
-              params: {active: true, option_group_id: 'participant_role'}
+              params: {
+                active: true,
+                option_group_id: 'participant_role',
+              }
             },
             select: {
               minimumInputLength: 0
@@ -164,5 +167,5 @@
     CRM.$('[name=download_type]').change();
   });
 
-  { /literal}
+  {/literal}
 </script>

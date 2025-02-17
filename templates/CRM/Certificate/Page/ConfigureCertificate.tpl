@@ -36,11 +36,11 @@
 </div>
 
 <script language="javascript" type="text/javascript">
-  { literal }
+  {literal}
   CRM.$(function ($) {
     $('a.crm-popup').on('crmPopupFormSuccess', function (e) {
       CRM.refreshParent(e);
     });
   });
-  { /literal}
+  {/literal}
 </script>

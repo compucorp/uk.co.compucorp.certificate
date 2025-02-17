@@ -13,9 +13,9 @@
 </div><!-- /.crm-accordion-wrapper -->
 
 <script language="javascript" type="text/javascript">
-  { literal }
+  {literal}
   CRM.$(function ($) {
     $("#image_format").insertAfter("#pdf_format");
   });
-  { /literal}
+  {/literal}
 </script>
