@@ -7,7 +7,7 @@
 <script language="javascript" type="text/javascript">
   let format = {$imageFormat}
 
-  { literal }
+  {literal}
   CRM.$(function ($) {
    format = format || {}
    const container = document.getElementById("compu-certificate-content");
@@ -36,5 +36,5 @@
       a.click();
     });
   });
-  { /literal}
+  {/literal}
 </script>
