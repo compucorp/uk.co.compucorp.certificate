@@ -1,13 +1,13 @@
-{crmScript ext=uk.co.compucorp.certificate file=js/vendor/html2canvas.min.js}
+{crmScript ext='uk.co.compucorp.certificate' file='js/vendor/html2canvas.min.js'}
 
 <div id="compu-certificate-content" style="display: inline-block;">
   {$certificateContent}
 </div>
 
 <script language="javascript" type="text/javascript">
-  let format = { $imageFormat }
+  let format = {$imageFormat}
 
-  { literal }
+  {literal}
   CRM.$(function ($) {
    format = format || {}
    const container = document.getElementById("compu-certificate-content");
@@ -36,5 +36,5 @@
       a.click();
     });
   });
-  { /literal}
+  {/literal}
 </script>
