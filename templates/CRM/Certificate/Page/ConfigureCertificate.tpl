@@ -1,4 +1,4 @@
-{crmStyle ext=uk.co.compucorp.certificate file=css/style.css}
+{crmStyle ext='uk.co.compucorp.certificate' file='css/style.css'}
 
 <div id="bootstrap-theme">
   <div class="certificate__action-link">
@@ -36,11 +36,11 @@
 </div>
 
 <script language="javascript" type="text/javascript">
-  { literal }
+  {literal}
   CRM.$(function ($) {
     $('a.crm-popup').on('crmPopupFormSuccess', function (e) {
       CRM.refreshParent(e);
     });
   });
-  { /literal}
+  {/literal}
 </script>
