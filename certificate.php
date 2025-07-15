@@ -60,8 +60,8 @@ function certificate_civicrm_navigationMenu(&$menu) {
  */
 function certificate_civicrm_permission(&$permissions) {
   $permissions['configure certificates'] = [
-    ts('CompuCertificate: configure certificates'),
-    ts('User can configure which message templates can be downloaded as certificates.'),
+    'label' => ts('CompuCertificate: configure certificates'),
+    'description' => ts('User can configure which message templates can be downloaded as certificates.'),
   ];
 }
 
