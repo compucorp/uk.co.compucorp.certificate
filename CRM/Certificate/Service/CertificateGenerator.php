@@ -65,17 +65,18 @@ class CRM_Certificate_Service_CertificateGenerator {
    *
    * @param array $content
    * @param int $contactId
-   * @param int $entityTypeId
+   * @param int $entityId
    *
    * @return array
    */
-  private function renderMessageTemplate(array $content, $contactId, $entityTypeId) {
+  private function renderMessageTemplate(array $content, $contactId, $entityId) {
     CRM_Core_Smarty::singleton()->pushScope([]);
     $tokenProcessor = new TokenProcessor(\Civi::dispatcher(), ['smarty' => !TRUE]);
     $tokenProcessor->addMessage('html', $content['html'], 'text/html');
     $tokenProcessor->addMessage('text', $content['text'], 'text/plain');
     $tokenProcessor->addMessage('subject', $content['subject'], 'text/plain');
-    $tokenProcessor->addRow(['contactId' => $contactId, 'entityId' => $entityTypeId, 'certificateId' => $this->certificateId]);
+    $context = $this->buildContext((int) $contactId, (int) $entityId);
+    $tokenProcessor->addRow($context);
     $tokenProcessor->evaluate();
     foreach ($tokenProcessor->getRows() as $row) {
       $content['html'] = $row->render('html');
@@ -85,6 +86,30 @@ class CRM_Certificate_Service_CertificateGenerator {
     CRM_Core_Smarty::singleton()->popScope();
     $content['subject'] = trim(preg_replace('/[\r\n]+/', ' ', $content['subject']));
     return $content;
+  }
+
+  private function buildContext(int $contactId, int $entityId): array {
+    $context = ['contactId' => $contactId, 'entityId' => $entityId, 'certificateId' => $this->certificateId];
+
+    try {
+      $certificateBAO = CRM_Certificate_BAO_CompuCertificate::findById($this->certificateId);
+      if ((int) $certificateBAO->entity === CRM_Certificate_Enum_CertificateType::CASES) {
+        $context['caseId'] = $entityId;
+      }
+      elseif ((int) $certificateBAO->entity === CRM_Certificate_Enum_CertificateType::EVENTS) {
+        $participant = CRM_Event_BAO_Participant::findById($entityId);
+        $context['participantId'] = $entityId;
+        $context['eventId'] = $participant->event_id;
+      }
+      elseif ((int) $certificateBAO->entity === CRM_Certificate_Enum_CertificateType::MEMBERSHIPS) {
+        $context['membershipId'] = $entityId;
+      }
+    }
+    catch (Throwable $e) {
+      Civi::log()->error('CRM_Certificate_Service_CertificateGenerator::buildContext Exception: ' . $e->getMessage());
+    }
+
+    return $context;
   }
 
 }
