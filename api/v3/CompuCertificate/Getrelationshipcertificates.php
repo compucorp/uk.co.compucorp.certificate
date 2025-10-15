@@ -19,6 +19,12 @@ function _civicrm_api3_compu_certificate_Getrelationshipcertificates_spec(&$spec
     'description' => 'Id of the contact to retrieve certificates for',
     'type' => CRM_Utils_Type::T_INT,
   ];
+  $spec['primary_contact_id'] = [
+    'title' => 'Primary Contact ID',
+    'description' => 'Return only certificates whose primary (related) contact matches this ID.',
+    'type' => CRM_Utils_Type::T_INT,
+    'FKClassName' => 'CRM_Contact_BAO_Contact',
+  ];
 }
 
 /**

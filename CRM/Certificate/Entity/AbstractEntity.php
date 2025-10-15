@@ -142,8 +142,13 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
     $configuredCertificates = CompuCertificate::getRelationshipEntityCertificates($this->getEntity(), $contactId);
 
     foreach ($configuredCertificates as $relatedContactId => $configuredCertificate) {
-      //for the related contacts, get their certificates that matches the certificate configuration.
-      $certificates = array_merge($this->formatConfiguredCertificatesForContact($configuredCertificate, $relatedContactId), $certificates);
+      // for the related contacts, get their certificates that matches the certificate configuration.
+      $relatedContactCertificates = $this->formatConfiguredCertificatesForContact($configuredCertificate, $relatedContactId);
+      array_walk($relatedContactCertificates, function (&$certificate) use ($relatedContactId) {
+        $certificate['related_contact'] = $relatedContactId;
+      });
+
+      $certificates = array_merge($relatedContactCertificates, $certificates);
     }
 
     return $certificates;
