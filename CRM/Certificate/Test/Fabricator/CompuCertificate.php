@@ -51,15 +51,20 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
   public static function fabricateEventCertificate($values) {
     $values['type'] = CRM_Certificate_Enum_CertificateType::EVENTS;
 
-    if (empty($values['linked_to'])) {
+    if (!array_key_exists('linked_to', $values)) {
       $event = CRM_Certificate_Test_Fabricator_Event::fabricate(['is_active' => 1]);
       $values['linked_to'] = (array) $event['id'];
+    }
+    else {
+      $values['linked_to'] = (array) $values['linked_to'];
     }
 
     if (empty($values['statuses'])) {
       $status = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate(['is_active' => 1]);
       $values['statuses'] = (array) $status['id'];
     }
+
+    $values['event_type_ids'] = array_values(array_filter((array) ($values['event_type_ids'] ?? [])));
 
     $values = array_merge(self::getDefaultParams(), $values);
     $storeCertificate = new CRM_Certificate_Service_CertificateEvent();
@@ -96,6 +101,7 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
       'min_valid_from_date' => date("Y-m-d"),
       'max_valid_through_date' => date("Y-m-d", strtotime(date("Y-m-d") . " + 30 days")),
       'relationship_types' => [],
+      'event_type_ids' => [],
     ];
   }
 

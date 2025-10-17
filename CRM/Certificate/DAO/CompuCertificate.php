@@ -59,6 +59,13 @@ class CRM_Certificate_DAO_CompuCertificate extends CRM_Core_DAO {
   public $entity;
 
   /**
+   * Serialized list of event type IDs associated with an Event certificate
+   *
+   * @var string
+   */
+  public $event_type_ids;
+
+  /**
    * FK to message template
    *
    * @var int|string
@@ -205,6 +212,21 @@ class CRM_Certificate_DAO_CompuCertificate extends CRM_Core_DAO {
           'localizable' => 0,
           'html' => [
             'type' => 'Number',
+          ],
+          'add' => NULL,
+        ],
+        'event_type_ids' => [
+          'name' => 'event_type_ids',
+          'type' => CRM_Utils_Type::T_TEXT,
+          'title' => E::ts('Event Type IDs'),
+          'description' => E::ts('Serialized list of event type IDs associated with an Event certificate'),
+          'where' => 'compucertificate_certificate.event_type_ids',
+          'table_name' => 'compucertificate_certificate',
+          'entity' => 'CompuCertificate',
+          'bao' => 'CRM_Certificate_DAO_CompuCertificate',
+          'localizable' => 0,
+          'html' => [
+            'type' => 'Text',
           ],
           'add' => NULL,
         ],

@@ -64,6 +64,36 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       TRUE
     );
 
+    $eventTypeOptions = [];
+    try {
+      $optionValues = civicrm_api3('OptionValue', 'get', [
+        'option_group_id' => 'event_type',
+        'is_active' => 1,
+        'options' => ['limit' => 0],
+        'return' => ['label'],
+      ]);
+
+      if (empty($optionValues['is_error'])) {
+        foreach ($optionValues['values'] as $optionValue) {
+          $eventTypeOptions[$optionValue['id']] = $optionValue['label'];
+        }
+      }
+    }
+    catch (Exception $exception) {
+      $eventTypeOptions = CRM_Core_PseudoConstant::get('CRM_Event_DAO_Event', 'event_type_id') ?? [];
+    }
+
+    $eventTypeElement = $this->add(
+      'select',
+      'event_type_ids',
+      ts('Event Type'),
+      $eventTypeOptions,
+      FALSE,
+      ['class' => 'form-control', 'multiple' => 'multiple']
+    );
+    $eventTypeElement->setMultiple(TRUE);
+    $eventTypeElement->setDescription(ts('Leave blank to ignore Event Type. You may combine with a specific Event to narrow scope.'));
+
     $this->add(
       'text',
       'participant_type_id',
@@ -214,6 +244,9 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $values = $this->exportValues();
     $files = $this->getVar('_submitFiles');
 
+    $eventSelected = !empty($values['linked_to']);
+    $eventTypeSelected = !empty(array_filter((array) ($values['event_type_ids'] ?? [])));
+
     $result = $this->saveConfiguration(array_merge($values, $files));
 
     if (empty($result)) {
@@ -227,6 +260,10 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     $msg = sprintf('Certificate configuration %s successfully', $createOrUpdate);
 
     CRM_Core_Session::setStatus($msg, 'Item ' . $createOrUpdate, 'success');
+
+    if ((int) $values['type'] === CRM_Certificate_Enum_CertificateType::EVENTS && $eventSelected && $eventTypeSelected) {
+      CRM_Core_Session::setStatus(ts('Event and Event Type are both selected; the certificate will apply only when both match.'), ts('Notice'), 'info');
+    }
   }
 
   public function setDefaultValues() {
@@ -249,6 +286,8 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       $values['statuses'] = empty($values['statuses']) ? [] : explode(',', $values['statuses']);
       $values['linked_to'] = empty($values['linked_to']) ? [] : explode(',', $values['linked_to']);
       $values['relationship_types'] = empty($values['relationship_types']) ? [] : explode(',', $values['relationship_types']);
+      $eventTypeIds = isset($values['event_type_ids']) ? (array) $values['event_type_ids'] : [];
+      $values['event_type_ids'] = array_values(array_filter(array_map('intval', $eventTypeIds)));
 
       $result = $entity->store($values);
     }
@@ -363,6 +402,19 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
    * @param array $errors
    */
   public function validateLinkedToField(&$values, &$errors) {
+    if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
+      $eventTypesSelected = !empty(array_filter((array) ($values['event_type_ids'] ?? [])));
+      $eventSelected = !empty($values['linked_to']);
+
+      if (!$eventSelected && !$eventTypesSelected) {
+        $message = ts('Select at least one Event or Event Type.');
+        $errors['linked_to'] = $message;
+        $errors['event_type_ids'] = $message;
+      }
+
+      return;
+    }
+
     if (empty($values['linked_to'])) {
       $errors['linked_to'] = ts('The "linked to" field is required');
     }

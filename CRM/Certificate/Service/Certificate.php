@@ -2,6 +2,7 @@
 
 use CRM_Certificate_Enum_DownloadType as DownloadType;
 use CRM_Certificate_Enum_DownloadFormat as DownloadFormat;
+use CRM_Certificate_Entity_Event as EventEntity;
 
 class CRM_Certificate_Service_Certificate {
 
@@ -36,6 +37,14 @@ class CRM_Certificate_Service_Certificate {
       $params['template_id'] = $values['message_template_id'];
       $params['download_type'] = $values['download_type'] ?? DownloadType::TEMPLATE;
       $params['download_format'] = $values['download_format'] ?? DownloadFormat::PDF;
+
+      if ((int) $values['type'] === CRM_Certificate_Enum_CertificateType::EVENTS) {
+        $eventTypeIds = isset($values['event_type_ids']) ? (array) $values['event_type_ids'] : [];
+        $params['event_type_ids'] = EventEntity::serializeEventTypeIds($eventTypeIds);
+      }
+      else {
+        $params['event_type_ids'] = NULL;
+      }
 
       $statuses = (array) $values['statuses'];
       $entityTypes = (array) $values['linked_to'];

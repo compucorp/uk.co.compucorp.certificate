@@ -31,6 +31,7 @@ CREATE TABLE `compucertificate_certificate` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique CompuCertificate ID',
   `name` varchar(255) NOT NULL COMMENT 'Certificate name',
   `entity` int unsigned NOT NULL COMMENT 'Predefined CompuCertificate Entity ID (1 - CASE, 2 - MEMBERSHIP, 3 - EVENT) ',
+  `event_type_ids` text NULL COMMENT 'Serialized list of event type IDs associated with an Event certificate',
   `template_id` int unsigned NULL COMMENT 'FK to message template',
   `download_format` int unsigned NOT NULL COMMENT 'Predefined CompuCertificate download format (1 - PDF, 2 - IMAGE)',
   `download_type` int unsigned NULL DEFAULT 1 COMMENT 'Predefined CompuCertificate download type (1 - MESSAGE TEMPLATE, 2 - FILE)',

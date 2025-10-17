@@ -44,6 +44,13 @@
   </field>
 
   <field>
+    <name>event_type_ids</name>
+    <type>text</type>
+    <required>false</required>
+    <comment>Serialized list of event type IDs associated with an Event certificate</comment>
+  </field>
+
+  <field>
     <name>template_id</name>
     <type>int unsigned</type>
     <required>false</required>
