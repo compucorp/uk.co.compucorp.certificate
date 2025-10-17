@@ -111,4 +111,14 @@ class CRM_Certificate_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
+  /**
+   * Adds column for storing configured event type filters.
+   */
+  public function upgrade_0004() {
+    $this->ctx->log->info('Applying update 0004');
+    $this->executeSqlFile('sql/upgrade_0004.sql');
+
+    return TRUE;
+  }
+
 }

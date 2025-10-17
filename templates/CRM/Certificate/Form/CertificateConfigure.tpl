@@ -55,6 +55,17 @@
     }
   }
 
+  let toggleEventTypeField = ($, val) => {
+    if (val === TYPE_EVENTS) {
+      $('.event_type_ids').show()
+    } else {
+      if ($('[name="event_type_ids[]"]').length) {
+        $('[name="event_type_ids[]"]').val([])
+      }
+      $('.event_type_ids').hide()
+    }
+  }
+
   let toggleValidityDateFields = ($, val) => {
     if (val === TYPE_MEMBERSHIP) {
       $('.row.min_valid_from_date').show();
@@ -68,6 +79,7 @@
   CRM.$(function ($) {
 
     $('.participant_type_id').hide();
+    $('.event_type_ids').hide();
 
     if (previousFileURL && previousFileURL.length > 0) {
       // Create the anchor element
@@ -109,6 +121,7 @@
           .crmEntityRef(statusRef[e.target.value])
 
         toggleRequiredMarker($, e.target.value);
+        toggleEventTypeField($, e.target.value);
       }
     });
 
@@ -165,6 +178,7 @@
 
     CRM.$('#download_format').change();
     CRM.$('[name=download_type]').change();
+    toggleEventTypeField($, CRM.$('[name=type]').val());
   });
 
   {/literal}

@@ -57,6 +57,7 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
     $certificateBAO->whereAdd('entity = ' . $entity);
     $certificateBAO->whereDateIsValid();
     $certificateBAO->selectAdd(self::$_tableName . '.id' . ' as certificate_id');
+    $certificateBAO->selectAdd(self::$_tableName . '.event_type_ids');
     $certificateBAO->find();
 
     $configuredCertificates = $certificateBAO->fetchAll();
@@ -93,7 +94,7 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
     $certificateBAO->whereAdd('contact_id_a = ' . $contactId);
     $certificateBAO->whereDateIsValid();
     $certificateBAO->selectAdd();
-    $certificateBAO->selectAdd(self::$_tableName . '.id as certificate_id, ' . self::$_tableName . '.start_date, ' . self::$_tableName . '.end_date, name, entity, entity_type_id, status_id, template_id, download_format, contact_id_b as related_contact, contact_id_a as contact');
+    $certificateBAO->selectAdd(self::$_tableName . '.id as certificate_id, ' . self::$_tableName . '.start_date, ' . self::$_tableName . '.end_date, name, entity, entity_type_id, status_id, template_id, download_format, contact_id_b as related_contact, contact_id_a as contact, ' . self::$_tableName . '.event_type_ids');
     $certificateBAO->find();
 
     $configuredCertificates = $certificateBAO->fetchAll();
