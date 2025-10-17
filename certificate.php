@@ -117,6 +117,9 @@ function certificate_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens =
   foreach ($hooks as &$hook) {
     $hook->run($values, $cids, $job, $tokens, $context);
   }
+  
+  // Adaptive memory management for token value processing
+  CRM_Certificate_Common_GCManager::maybeCollectGarbage('token_values');
 }
 
 /**
