@@ -29,7 +29,7 @@ class CRM_Certificate_Form_CertificateTemplateImageFormat {
 
   public function postProcess() {
     $values = $this->form->exportValues();
-    $params['template_id'] = $this->form->_id;
+    $params['template_id'] = $this->form->getVar('_id');
     $params['image_format_id'] = $values['image_format_id'];
     CompuCertificateTemplateImageFormat::upsert($params);
   }
@@ -50,12 +50,12 @@ class CRM_Certificate_Form_CertificateTemplateImageFormat {
   }
 
   private function setDefaultValues() {
-    if (empty($this->form->_id)) {
+    if (empty($this->form->getVar('_id'))) {
       return;
     }
 
     $defaults = $this->form->_defaultValues;
-    $templateImageFormat = CompuCertificateTemplateImageFormat::getByTemplateId($this->form->_id);
+    $templateImageFormat = CompuCertificateTemplateImageFormat::getByTemplateId($this->form->getVar('_id'));
     $imageFormatId = $templateImageFormat->image_format_id ?? NULL;
     $defaults['image_format_id'] = $imageFormatId;
     $this->form->setDefaults($defaults);
