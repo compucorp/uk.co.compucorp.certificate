@@ -76,6 +76,19 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       FALSE
     );
 
+    $this->addEntityRef('event_type_ids', ts('Event Types'), [
+      'entity' => 'OptionValue',
+      'placeholder' => ts('- Select -'),
+      'select' => ['multiple' => TRUE, 'minimumInputLength' => 0],
+      'api' => [
+        'params' => [
+          'option_group_id' => 'event_type',
+          'is_active' => 1,
+        ],
+      ],
+      'class' => 'form-control',
+    ], FALSE);
+
     $this->add(
       'select',
       'download_type',
@@ -180,7 +193,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       ],
     ]);
 
-    $elementWithHelpTexts = ['relationship_types', 'min_valid_from_date', 'max_valid_through_date', 'download_type'];
+    $elementWithHelpTexts = ['relationship_types', 'min_valid_from_date', 'max_valid_through_date', 'download_type', 'event_type_ids'];
 
     $this->assign('help', $elementWithHelpTexts);
     $this->assign('previousFile', $this->getPreviousFileURL());
@@ -249,6 +262,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
       $values['statuses'] = empty($values['statuses']) ? [] : explode(',', $values['statuses']);
       $values['linked_to'] = empty($values['linked_to']) ? [] : explode(',', $values['linked_to']);
       $values['relationship_types'] = empty($values['relationship_types']) ? [] : explode(',', $values['relationship_types']);
+      $values['event_type_ids'] = empty($values['event_type_ids']) ? [] : explode(',', $values['event_type_ids']);
 
       $result = $entity->store($values);
     }
@@ -306,6 +320,7 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     // The participant_type field should only be validated for Event Certificate.
     if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
       $this->validateParticipantTypeField($values, $errors);
+      $this->validateEventCertificateFilters($values, $errors);
     }
 
     return $errors ?: TRUE;
@@ -363,6 +378,10 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
    * @param array $errors
    */
   public function validateLinkedToField(&$values, &$errors) {
+    if ($values['type'] == CRM_Certificate_Enum_CertificateType::EVENTS) {
+      return;
+    }
+
     if (empty($values['linked_to'])) {
       $errors['linked_to'] = ts('The "linked to" field is required');
     }
@@ -391,6 +410,25 @@ class CRM_Certificate_Form_CertificateConfigure extends CRM_Core_Form {
     if (empty($values['participant_type_id'])) {
       $errors['participant_type_id'] = ts('The "Event role" field is required');
     }
+  }
+
+  /**
+   * Validates that either event type or event is selected for event certificates.
+   *
+   * @param array $values
+   * @param array $errors
+   */
+  public function validateEventCertificateFilters($values, &$errors) {
+    $hasEventType = !empty($values['event_type_ids']);
+    $hasEvent = !empty($values['linked_to']);
+
+    if ($hasEventType || $hasEvent) {
+      return;
+    }
+
+    $message = ts('Select at least one Event Type or Specific Event.');
+    $errors['event_type_ids'] = $message;
+    $errors['linked_to'] = $message;
   }
 
   /**

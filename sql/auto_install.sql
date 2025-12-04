@@ -70,6 +70,7 @@ CREATE TABLE `compucertificate_event_attribute` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique CompuCertificateEventAttribute ID',
   `certificate_id` int unsigned COMMENT 'FK to CompuCertificate',
   `participant_type_id` int unsigned COMMENT 'Particiapnt Type ID',
+  `event_type_ids` text COMMENT 'Comma separated event type ids.',
   PRIMARY KEY (`id`),
   CONSTRAINT FK_compucertificate_event_attribute_certificate_id FOREIGN KEY (`certificate_id`) REFERENCES `compucertificate_certificate`(`id`) ON DELETE CASCADE
 )

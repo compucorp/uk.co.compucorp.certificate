@@ -23,16 +23,19 @@ class CRM_Certificate_BAO_CompuCertificateEventAttribute extends CRM_Certificate
     return $instance;
   }
 
-  public static function assignCertificateEventAttribute($certificateId, $participantTypeId) {
+  public static function assignCertificateEventAttribute($certificateId, $participantTypeId, array $eventTypeIds = []) {
     self::removeCertificateCurrentEventAttribute($certificateId);
 
     if (empty($participantTypeId)) {
       return NULL;
     }
 
+    $eventTypeIds = self::sanitizeEventTypeIds($eventTypeIds);
+
     $values = [
       'certificate_id' => $certificateId,
       'participant_type_id' => (int) $participantTypeId,
+      'event_type_ids' => empty($eventTypeIds) ? NULL : implode(',', $eventTypeIds),
     ];
 
     $eventAttributeDAO = CRM_Certificate_BAO_CompuCertificateEventAttribute::create($values);
@@ -50,6 +53,20 @@ class CRM_Certificate_BAO_CompuCertificateEventAttribute extends CRM_Certificate
     $statusBAO = new self();
     $statusBAO->whereAdd("certificate_id = $certificateId");
     $statusBAO->delete(TRUE);
+  }
+
+  /**
+   * Clean up event type ids.
+   *
+   * @param array $eventTypeIds
+   *
+   * @return array
+   */
+  private static function sanitizeEventTypeIds(array $eventTypeIds) {
+    $eventTypes = CRM_Core_OptionGroup::values('event_type', FALSE, FALSE, FALSE, 'AND is_active = 1');
+    $eventTypeIds = array_map('intval', $eventTypeIds);
+
+    return array_values(array_intersect($eventTypeIds, array_keys($eventTypes)));
   }
 
 }

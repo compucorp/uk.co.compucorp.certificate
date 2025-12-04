@@ -107,6 +107,7 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
   protected function  addEntityExtraField($certificateBAO, &$certificate) {
     $eventAttribute = $this->getCertificateEventAttribute($certificateBAO->id);
     $certificate['participant_type_id'] = implode(', ', array_column($eventAttribute, 'participant_type_id'));
+    $certificate['event_type_ids'] = implode(',', $this->getEventAttributeEventTypeIds($eventAttribute));
   }
 
   private function getCertificateEventAttribute($certificateId) {
@@ -115,6 +116,58 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
     $eventAttribute->find();
 
     return $eventAttribute->fetchAll();
+  }
+
+  /**
+   * Retrieves event type ids from an event attribute configuration.
+   *
+   * @param array $eventAttribute
+   *
+   * @return array
+   */
+  private function getEventAttributeEventTypeIds(array $eventAttribute) {
+    $eventTypeIds = [];
+
+    foreach ($eventAttribute as $attribute) {
+      if (!empty($attribute['event_type_ids'])) {
+        $eventTypeIds = array_merge($eventTypeIds, explode(',', $attribute['event_type_ids']));
+      }
+    }
+
+    return $this->sanitizeEventTypeIds($eventTypeIds);
+  }
+
+  /**
+   * Sanitizes event type ids and removes deleted values.
+   *
+   * @param array $eventTypeIds
+   *
+   * @return array
+   */
+  private function sanitizeEventTypeIds(array $eventTypeIds) {
+    $eventTypes = CRM_Core_OptionGroup::values('event_type', FALSE, FALSE, FALSE, 'AND is_active = 1');
+
+    $eventTypeIds = array_map('intval', $eventTypeIds);
+
+    return array_values(array_intersect($eventTypeIds, array_keys($eventTypes)));
+  }
+
+  /**
+   * Build event type condition for certificate retrieval.
+   *
+   * @param int $eventTypeId
+   *
+   * @return string
+   */
+  private function getEventTypeCondition($eventTypeId) {
+    $column = CRM_Certificate_BAO_CompuCertificateEventAttribute::getTableName() . '.event_type_ids';
+    $eventTypeCondition = "$column IS NULL";
+
+    if (!empty($eventTypeId)) {
+      $eventTypeCondition = sprintf('(%s OR FIND_IN_SET(%s, %s))', $eventTypeCondition, $eventTypeId, $column);
+    }
+
+    return $eventTypeCondition;
   }
 
   /**
@@ -127,6 +180,11 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
       'is_active' => 1,
     ]);
     $participantRoleIds = implode(',', (array) $participant['participant_role_id']);
+    $event = civicrm_api3('Event', 'getsingle', [
+      'id' => $participant['event_id'],
+      'return' => ['event_type_id'],
+    ]);
+    $eventTypeId = (int) ($event['event_type_id'] ?? 0);
 
     $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateEntityType(), 'certificate_id'], 'LEFT');
     $certificateBAO->joinAdd(['id', new CRM_Certificate_BAO_CompuCertificateStatus(), 'certificate_id'], 'LEFT');
@@ -135,6 +193,7 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
     $certificateBAO->whereAdd('entity_type_id = ' . $participant['event_id'] . ' OR entity_type_id IS NULL');
     $certificateBAO->whereAdd('status_id = ' . $participant['participant_status_id'] . ' OR status_id IS NULL');
     $certificateBAO->whereAdd('participant_type_id IN (' . $participantRoleIds . ') OR participant_type_id IS NULL');
+    $certificateBAO->whereAdd($this->getEventTypeCondition($eventTypeId));
   }
 
   /**
@@ -152,6 +211,7 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
     foreach ($configuredCertificates as $configuredCertificate) {
       $eventAttribute = $this->getCertificateEventAttribute($configuredCertificate['certificate_id']);
       $participantTypeId = array_column($eventAttribute, 'participant_type_id');
+      $eventTypeIds = $this->getEventAttributeEventTypeIds($eventAttribute);
 
       $condition = [
         'contact_id' => $contactId,
@@ -170,6 +230,10 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
         $condition['participant_role_id'] = ['IN' => (array) $participantTypeId];
       }
 
+      if (!empty($eventTypeIds)) {
+        $condition['event_type_id'] = ['IN' => $eventTypeIds];
+      }
+
       $result = [];
       try {
         $result = civicrm_api3('Participant', 'get', $condition);
@@ -182,9 +246,17 @@ class CRM_Certificate_Entity_Event extends CRM_Certificate_Entity_AbstractEntity
         continue;
       }
 
-      array_walk($result['values'], function ($participant) use (&$certificates, $configuredCertificate, $contactId) {
+      array_walk($result['values'], function ($participant) use (&$certificates, $configuredCertificate, $contactId, $eventTypeIds) {
         if (empty($participant['api.Event.get']['values'])) {
           return;
+        }
+
+        if (!empty($eventTypeIds)) {
+          $matchedEvent = reset($participant['api.Event.get']['values']);
+          $matchedEventTypeId = (int) ($matchedEvent['event_type_id'] ?? 0);
+          if (empty($matchedEventTypeId) || !in_array($matchedEventTypeId, $eventTypeIds)) {
+            return;
+          }
         }
         $certificate = [
           'participant_id' => $participant['id'],

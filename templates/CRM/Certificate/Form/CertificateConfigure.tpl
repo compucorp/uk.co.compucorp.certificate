@@ -44,14 +44,17 @@
   let toggleRequiredMarker = ($, val) => {
     if (val === TYPE_CASES) {
       $('.participant_type_id').hide()
+      $('.event_type_ids').hide()
     } else if (val === TYPE_EVENTS) {
       if (!$('.participant_type_id > label > span.crm-marker').length) {
         $('.participant_type_id > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
       }
       $('.participant_type_id').show()
+      $('.event_type_ids').show()
     }
     else {
       $('.participant_type_id').hide()
+      $('.event_type_ids').hide()
     }
   }
 
@@ -68,6 +71,7 @@
   CRM.$(function ($) {
 
     $('.participant_type_id').hide();
+    $('.event_type_ids').hide();
 
     if (previousFileURL && previousFileURL.length > 0) {
       // Create the anchor element
@@ -108,6 +112,25 @@
           .attr('disabled', false)
           .crmEntityRef(statusRef[e.target.value])
 
+        if (e.target.value === TYPE_EVENTS) {
+          $('[name=event_type_ids]')
+            .attr('placeholder', '- Select -')
+            .attr('disabled', false)
+            .crmEntityRef({
+              entity: 'OptionValue',
+              api: {
+                params: {
+                  option_group_id: 'event_type',
+                  is_active: 1,
+                }
+              },
+              select: {
+                multiple: true,
+                minimumInputLength: 0
+              }
+            })
+        }
+
         toggleRequiredMarker($, e.target.value);
       }
     });
@@ -132,6 +155,22 @@
           })
       }
     });
+
+    const showEventTypeWarning = () => {
+      if (CRM.$('[name=type]').val() !== TYPE_EVENTS) {
+        return;
+      }
+
+      const hasEvent = Boolean(CRM.$('[name=linked_to]').val());
+      const hasEventType = Boolean(CRM.$('[name=event_type_ids]').val());
+
+      if (hasEvent && hasEventType) {
+        CRM.alert('Event and Event Type are both selected; the certificate will apply only when both match.', 'Notice', 'info', {expires: 5000, unique: 'certificate-event-type-warning'});
+      }
+    }
+
+    $('[name=event_type_ids]').on('change', showEventTypeWarning);
+    $('[name=linked_to]').on('change', showEventTypeWarning);
 
     CRM.$('[name=download_type]').on('change', function (e) {
       if (e.target.value === TYPE_TEMPLATE) {

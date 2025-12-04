@@ -53,6 +53,13 @@ class CRM_Certificate_DAO_CompuCertificateEventAttribute extends CRM_Core_DAO {
   public $participant_type_id;
 
   /**
+   * Comma separated event type ids.
+   *
+   * @var string
+   */
+  public $event_type_ids;
+
+  /**
    * Class constructor.
    */
   public function __construct() {
@@ -125,6 +132,18 @@ class CRM_Certificate_DAO_CompuCertificateEventAttribute extends CRM_Core_DAO {
           'type' => CRM_Utils_Type::T_INT,
           'description' => E::ts('Particiapnt Type ID'),
           'where' => 'compucertificate_event_attribute.participant_type_id',
+          'table_name' => 'compucertificate_event_attribute',
+          'entity' => 'CompuCertificateEventAttribute',
+          'bao' => 'CRM_Certificate_DAO_CompuCertificateEventAttribute',
+          'localizable' => 0,
+          'add' => NULL,
+        ],
+        'event_type_ids' => [
+          'name' => 'event_type_ids',
+          'type' => CRM_Utils_Type::T_STRING,
+          'title' => E::ts('Event Type Ids'),
+          'description' => E::ts('Comma separated event type ids.'),
+          'where' => 'compucertificate_event_attribute.event_type_ids',
           'table_name' => 'compucertificate_event_attribute',
           'entity' => 'CompuCertificateEventAttribute',
           'bao' => 'CRM_Certificate_DAO_CompuCertificateEventAttribute',
