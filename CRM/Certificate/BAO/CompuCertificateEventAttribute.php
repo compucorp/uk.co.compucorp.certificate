@@ -62,7 +62,7 @@ class CRM_Certificate_BAO_CompuCertificateEventAttribute extends CRM_Certificate
    *
    * @return array
    */
-  private static function sanitizeEventTypeIds(array $eventTypeIds) {
+  public static function sanitizeEventTypeIds(array $eventTypeIds) {
     $eventTypes = CRM_Core_OptionGroup::values('event_type', FALSE, FALSE, FALSE, 'AND is_active = 1');
     $eventTypeIds = array_map('intval', $eventTypeIds);
 

@@ -42,27 +42,16 @@ class CRM_Certificate_Service_CertificateEvent extends CRM_Certificate_Service_C
    * @return string
    */
   private function eventTypesCondition(array $eventTypeIds) {
+    $eventTypeIds = CRM_Certificate_BAO_CompuCertificateEventAttribute::sanitizeEventTypeIds($eventTypeIds);
+
     if (empty($eventTypeIds)) {
       // Only block when existing configuration also has no event type filter.
       return '(cert_event_attr.event_type_ids IS NULL OR cert_event_attr.event_type_ids = "")';
     }
 
-    $eventTypeIds = array_values(array_unique(array_map('intval', $eventTypeIds)));
-    sort($eventTypeIds);
+    $normalizedIds = implode(',', $eventTypeIds);
 
-    $expectedCount = count($eventTypeIds);
-    $tokensCountExpr = 'LENGTH(cert_event_attr.event_type_ids) - LENGTH(REPLACE(cert_event_attr.event_type_ids, ",", "")) + 1';
-    $allIdsPresentCondition = implode(' AND ', array_map(function ($eventTypeId) {
-      return sprintf('FIND_IN_SET(%s, cert_event_attr.event_type_ids)', $eventTypeId);
-    }, $eventTypeIds));
-
-    return sprintf(
-      '(%s IS NOT NULL AND %s AND %s = %d)',
-      'cert_event_attr.event_type_ids',
-      $allIdsPresentCondition,
-      $tokensCountExpr,
-      $expectedCount
-    );
+    return sprintf('cert_event_attr.event_type_ids = "%s"', $normalizedIds);
   }
 
   /**
