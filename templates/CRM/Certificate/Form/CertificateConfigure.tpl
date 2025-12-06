@@ -44,14 +44,17 @@
   let toggleRequiredMarker = ($, val) => {
     if (val === TYPE_CASES) {
       $('.participant_type_id').hide()
+      $('.event_type_ids').hide()
     } else if (val === TYPE_EVENTS) {
       if (!$('.participant_type_id > label > span.crm-marker').length) {
         $('.participant_type_id > label ').append('<span class="crm-marker" title="This field is required."> *</span>');
       }
       $('.participant_type_id').show()
+      $('.event_type_ids').show()
     }
     else {
       $('.participant_type_id').hide()
+      $('.event_type_ids').hide()
     }
   }
 
@@ -68,6 +71,7 @@
   CRM.$(function ($) {
 
     $('.participant_type_id').hide();
+    $('.event_type_ids').hide();
 
     if (previousFileURL && previousFileURL.length > 0) {
       // Create the anchor element
@@ -113,7 +117,7 @@
     });
 
     CRM.$('[name=linked_to]').on('change', function (e) {
-      if (e.target.value > 0 && CRM.$('[name=type]').val() === TYPE_EVENTS) {
+      if (e.target.value > 0 && CRM.$('[name=type]').val() === TYPE_EVENTS && $('[name=participant_type_id]').attr('disabled') === 'disabled') {
         $('[name=participant_type_id]')
           .attr('placeholder', '- Select Participant Type -')
           .attr('disabled', false)
@@ -132,6 +136,42 @@
           })
       }
     });
+
+    $('[name=event_type_ids]').on('change', function (e) {
+      if (e.target.value && CRM.$('[name=type]').val() === TYPE_EVENTS && $('[name=participant_type_id]').attr('disabled') === 'disabled') {
+        $('[name=participant_type_id]').attr('placeholder', '- Select Participant Type -').attr('disabled', false)
+          .crmEntityRef({
+            entity: 'OptionValue',
+            api: {
+              description_field: null,
+              params: {
+                active: true,
+                option_group_id: 'participant_role',
+              }
+            },
+            select: {
+              minimumInputLength: 0
+            }
+        });
+      }
+    });
+
+    if (CRM.$('[name=event_type_ids]').val() && CRM.$('[name=type]').val() === TYPE_EVENTS  && $('[name=participant_type_id]').attr('disabled') === 'disabled') {
+      $('[name=participant_type_id]').attr('placeholder', '- Select Participant Type -').attr('disabled', false)
+        .crmEntityRef({
+          entity: 'OptionValue',
+          api: {
+            description_field: null,
+            params: {
+              active: true,
+              option_group_id: 'participant_role',
+            }
+          },
+          select: {
+            minimumInputLength: 0
+          }
+        });
+    }
 
     CRM.$('[name=download_type]').on('change', function (e) {
       if (e.target.value === TYPE_TEMPLATE) {
