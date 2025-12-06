@@ -66,7 +66,10 @@ class CRM_Certificate_BAO_CompuCertificateEventAttribute extends CRM_Certificate
     $eventTypes = CRM_Core_OptionGroup::values('event_type', FALSE, FALSE, FALSE, 'AND is_active = 1');
     $eventTypeIds = array_map('intval', $eventTypeIds);
 
-    return array_values(array_intersect($eventTypeIds, array_keys($eventTypes)));
+    $eventTypeIds = array_values(array_unique(array_intersect($eventTypeIds, array_keys($eventTypes))));
+    sort($eventTypeIds);
+
+    return $eventTypeIds;
   }
 
 }

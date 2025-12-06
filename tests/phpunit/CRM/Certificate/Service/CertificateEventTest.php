@@ -186,6 +186,58 @@ class CRM_Certificate_Service_CertificateEventTest extends BaseHeadlessTest {
     $this->assertTrue(is_array($result));
   }
 
+  /**
+   * Test certificates with overlapping but not identical event types are allowed.
+   */
+  public function testExceptionNotThrownWhenEventTypesDoNotMatchExactly() {
+    $statuses = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate()['id'];
+    $types = CRM_Certificate_Test_Fabricator_Event::fabricate()['id'];
+
+    $values = [
+      'name' => 'first cert',
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'statuses' => $statuses,
+      'linked_to' => $types,
+      'participant_type_id' => 1,
+      'event_type_ids' => [1, 2],
+    ];
+
+    $this->createCertificate($values);
+
+    $values['name'] = 'second cert different event types';
+    $values['event_type_ids'] = [2];
+
+    $result = $this->createCertificate($values);
+
+    $this->assertTrue(is_array($result));
+  }
+
+  /**
+   * Test certificates are blocked when event types match exactly, regardless of order.
+   */
+  public function testExceptionThrownWhenEventTypesMatchExactly() {
+    $this->expectException(CRM_Certificate_Exception_ConfigurationExistException::class);
+
+    $statuses = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate()['id'];
+    $types = CRM_Certificate_Test_Fabricator_Event::fabricate()['id'];
+
+    $values = [
+      'name' => 'first cert',
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'statuses' => $statuses,
+      'linked_to' => $types,
+      'participant_type_id' => 1,
+      'event_type_ids' => [3, 1],
+    ];
+
+    $this->createCertificate($values);
+
+    $values['name'] = 'duplicate event types';
+    $values['event_type_ids'] = [1, 3];
+
+    $this->createCertificate($values);
+  }
+
   private function createCertificate($values = []) {
     return CRM_Certificate_Test_Fabricator_CompuCertificate::fabricate(CRM_Certificate_Enum_CertificateType::EVENTS, $values);
   }
