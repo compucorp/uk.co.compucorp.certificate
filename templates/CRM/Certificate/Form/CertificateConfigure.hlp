@@ -60,3 +60,10 @@
 {htxt id="download_type"}
   {ts}Specify whether the certificate should be generated dynamically from a CiviCRM message template or be granted access to a downloadable file.{/ts}
 {/htxt}
+
+{htxt id="event_type_ids-title"}
+  {ts}Event Types{/ts}
+{/htxt}
+{htxt id="event_type_ids"}
+  <p>{ts}Leave blank to ignore Event Type. You may combine with a specific Event to narrow scope.{/ts}</p>
+{/htxt}
