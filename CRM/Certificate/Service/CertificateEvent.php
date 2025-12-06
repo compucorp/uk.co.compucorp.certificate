@@ -6,37 +6,22 @@ class CRM_Certificate_Service_CertificateEvent extends CRM_Certificate_Service_C
 
   /**
    * {@inheritDoc}
-   */
+  */
   protected function addOptionsCondition(&$query, $values) {
     $query->join('cert_event_attr', 'LEFT JOIN `' . CertificateEventAttribute::getTableName() . '` cert_event_attr ON (cert_event_attr.certificate_id = ccc.id)');
 
-    $participantTypeCondition = "cert_event_attr.participant_type_id IS NULL";
-
-    if (!empty($values['participant_type_id'])) {
-      $attrValues = sprintf('(%s)', implode(',', (array) $values['participant_type_id']));
-      $participantTypeCondition = "($participantTypeCondition OR cert_event_attr.participant_type_id IN $attrValues)";
-    }
-
+    $linkedToCondition = $this->overlapLinkedToCondition($values['linked_to']);
+    $participantTypeCondition = $this->participantTypeCondition($values['participant_type_id']);
+    $statusesCondition = $this->statusesOverlapCondition($values['statuses']);
     $eventTypeCondition = $this->eventTypesCondition($values['event_type_ids'] ?? []);
 
-    $linkedToCondition = $this->linkedToCondition($values['linked_to']);
-    $statusesCondition = $this->statusesCondition($values['statuses']);
-
-    $query = $query->where($linkedToCondition);
-
-    if (empty($values['participant_type_id']) && empty($values['statuses']) && empty($values['event_type_ids'])) {
-      return;
-    }
-
     // This is to avoid event entity from having multiple certificate configuration.
-    $nonEmptyConditions = array_filter([
-      $values['participant_type_id'],
-      $values['statuses'],
-      $values['event_type_ids'] ?? [],
-    ]);
-
-    $conjuction = count($nonEmptyConditions) < 3 ? ' OR ' : ' AND ';
-    $query = $query->where(implode($conjuction, [$statusesCondition, $participantTypeCondition, $eventTypeCondition]));
+    $query = $query->where(implode(' AND ', [
+      $linkedToCondition,
+      $participantTypeCondition,
+      $statusesCondition,
+      $eventTypeCondition,
+    ]));
   }
 
   /**
@@ -57,19 +42,70 @@ class CRM_Certificate_Service_CertificateEvent extends CRM_Certificate_Service_C
    * @return string
    */
   private function eventTypesCondition(array $eventTypeIds) {
-    $eventTypeCondition = 'cert_event_attr.event_type_ids IS NULL';
-
-    if (!empty($eventTypeIds)) {
-      $eventTypeIds = array_map('intval', $eventTypeIds);
-      $eventTypeCondition = sprintf(
-        '(%s OR ' . implode(' OR ', array_map(function ($eventTypeId) {
-          return sprintf('FIND_IN_SET(%s, cert_event_attr.event_type_ids)', $eventTypeId);
-        }, $eventTypeIds)) . ')',
-        $eventTypeCondition
-      );
+    if (empty($eventTypeIds)) {
+      // No filter means this configuration applies to all event types, so it overlaps with
+      // any other configuration regardless of its event type filter.
+      return '1';
     }
 
-    return $eventTypeCondition;
+    $eventTypeIds = array_map('intval', $eventTypeIds);
+
+    return sprintf(
+      '(cert_event_attr.event_type_ids IS NULL OR ' . implode(' OR ', array_map(function ($eventTypeId) {
+        return sprintf('FIND_IN_SET(%s, cert_event_attr.event_type_ids)', $eventTypeId);
+      }, $eventTypeIds)) . ')'
+    );
+  }
+
+  /**
+   * Build participant type overlap condition.
+   *
+   * @param array|int|null $participantTypeIds
+   *
+   * @return string
+   */
+  private function participantTypeCondition($participantTypeIds) {
+    if (empty($participantTypeIds)) {
+      return '1';
+    }
+
+    $attrValues = sprintf('(%s)', implode(',', (array) $participantTypeIds));
+
+    return "(cert_event_attr.participant_type_id IS NULL OR cert_event_attr.participant_type_id IN $attrValues)";
+  }
+
+  /**
+   * Build linked to overlap condition.
+   *
+   * @param array|int|null $linkedTo
+   *
+   * @return string
+   */
+  private function overlapLinkedToCondition($linkedTo) {
+    if (empty($linkedTo)) {
+      return '1';
+    }
+
+    $entityTypes = sprintf('(%s)', implode(',', (array) $linkedTo));
+
+    return "(cet.entity_type_id IS NULL OR cet.entity_type_id in $entityTypes)";
+  }
+
+  /**
+   * Build statuses overlap condition.
+   *
+   * @param array|int|null $statuses
+   *
+   * @return string
+   */
+  private function statusesOverlapCondition($statuses) {
+    if (empty($statuses)) {
+      return '1';
+    }
+
+    $statuses = sprintf('(%s)', implode(',', (array) $statuses));
+
+    return "(cs.status_id IS NULL OR cs.status_id in $statuses)";
   }
 
 }

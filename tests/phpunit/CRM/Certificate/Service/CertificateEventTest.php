@@ -159,6 +159,33 @@ class CRM_Certificate_Service_CertificateEventTest extends BaseHeadlessTest {
     $this->assertTrue(is_array($result));
   }
 
+  /**
+   * Test certificates with different event types can be created for the same
+   * participant role and statuses.
+   */
+  public function testExceptionNotThrownForDifferentEventTypes() {
+    $statuses = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate()['id'];
+    $types = CRM_Certificate_Test_Fabricator_Event::fabricate()['id'];
+
+    $values = [
+      'name' => 'test cert',
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'statuses' => $statuses,
+      'linked_to' => $types,
+      'participant_type_id' => 1,
+      'event_type_ids' => [1],
+    ];
+
+    $this->createCertificate($values);
+
+    $values['event_type_ids'] = [2];
+    $values['name'] = 'test cert other event type';
+
+    $result = $this->createCertificate($values);
+
+    $this->assertTrue(is_array($result));
+  }
+
   private function createCertificate($values = []) {
     return CRM_Certificate_Test_Fabricator_CompuCertificate::fabricate(CRM_Certificate_Enum_CertificateType::EVENTS, $values);
   }
