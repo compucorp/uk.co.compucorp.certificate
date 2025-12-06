@@ -36,7 +36,7 @@ class CRM_Certificate_Page_ConfigureCertificate extends CRM_Core_Page {
       $entity = CRM_Certificate_Entity_EntityFactory::create($certificateBAO->entity);
 
       $options = CRM_Certificate_Enum_CertificateType::getOptions();
-      $configuredTypes = $entity->getCertificateConfiguredTypes($certificateBAO->id);
+      $configuredTypes = $entity->getCertificateConfiguredTypes($certificateBAO->id, TRUE);
       $configuredStatuses = $entity->getCertificateConfiguredStatuses($certificateBAO->id);
       $action = CRM_Core_Action::formLink($this->actionLinks(), NULL, ['id' => $certificateBAO->id]);
 
