@@ -56,10 +56,12 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
    *
    * @param int $certificateId
    *  Id of the certificate instance to retrieve entity types for
+   * @param bool $includeAttrs
+   *  Include attributes or not
    *
    * @return Array
    */
-  abstract public function getCertificateConfiguredTypes($certificateId);
+  abstract public function getCertificateConfiguredTypes($certificateId, bool $includeAttrs = FALSE);
 
   /**
    * Returns a configured certificate by ID

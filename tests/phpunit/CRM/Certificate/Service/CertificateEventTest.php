@@ -59,6 +59,32 @@ class CRM_Certificate_Service_CertificateEventTest extends BaseHeadlessTest {
   }
 
   /**
+   * Test event type ids are stored for event certificate configuration.
+   */
+  public function testEventAttributeStoresEventTypeIds() {
+    $statuses[] = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate()['id'];
+    $types[] = CRM_Certificate_Test_Fabricator_Event::fabricate(['event_type_id' => 1])['id'];
+
+    $certificateConfiguration = [
+      'name' => 'test cert',
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'message_template_id'  => 1,
+      'statuses' => $statuses,
+      'linked_to' => $types,
+      'participant_type_id' => 1,
+      'event_type_ids' => [1, 999],
+      'start_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d'),
+    ];
+
+    $certificateCreator = new CRM_Certificate_Service_CertificateEvent();
+    $result = $certificateCreator->store($certificateConfiguration);
+
+    $this->assertArrayHasKey('eventAttribute', $result);
+    $this->assertEquals('1', $result['eventAttribute']['event_type_ids']);
+  }
+
+  /**
    * Test new instance of event certificate configuration is created
    * for empty status and type.
    */

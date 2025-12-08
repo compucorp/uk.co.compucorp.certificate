@@ -43,6 +43,96 @@ class CRM_Certificate_Entity_EventTest extends BaseHeadlessTest {
   }
 
   /**
+   * Test event certificate respects configured event type filter.
+   */
+  public function testCertificateConfigurationRespectsEventType() {
+    $contactId = CRM_Certificate_Test_Fabricator_Contact::fabricate()['id'];
+    $eventTypeA = 1;
+    $eventTypeB = 2;
+    $eventA = CRM_Certificate_Test_Fabricator_Event::fabricate(['is_active' => 1, 'event_type_id' => $eventTypeA]);
+    $eventB = CRM_Certificate_Test_Fabricator_Event::fabricate(['is_active' => 1, 'event_type_id' => $eventTypeB]);
+    $statusId = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate(['is_active' => 1])['id'];
+
+    $participantA = CRM_Certificate_Test_Fabricator_Participant::fabricate([
+      'contact_id' => $contactId,
+      'event_id' => $eventA['id'],
+      'status_id' => $statusId,
+      'role_id'  => [1, 2],
+    ]);
+
+    $participantB = CRM_Certificate_Test_Fabricator_Participant::fabricate([
+      'contact_id' => $contactId,
+      'event_id' => $eventB['id'],
+      'status_id' => $statusId,
+      'role_id'  => [1, 2],
+    ]);
+
+    $values = [
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'linked_to' => [],
+      'statuses' => [$statusId],
+      'participant_type_id' => 1,
+      'event_type_ids' => [$eventTypeA],
+    ];
+    $this->createCertificate($values);
+
+    $eventEntity = new CRM_Certificate_Entity_Event();
+    $matchingConfiguration = $eventEntity->getCertificateConfiguration($participantA['id'], $contactId);
+    $nonMatchingConfiguration = $eventEntity->getCertificateConfiguration($participantB['id'], $contactId);
+
+    $this->assertInstanceOf(CRM_Certificate_BAO_CompuCertificate::class, $matchingConfiguration);
+    $this->assertFalse($nonMatchingConfiguration);
+  }
+
+  /**
+   * Test event certificate requires both event and event type when both configured.
+   */
+  public function testCertificateRequiresMatchingEventAndEventTypeWhenBothProvided() {
+    $contactId = CRM_Certificate_Test_Fabricator_Contact::fabricate()['id'];
+    $eventType = 1;
+    $eventA = CRM_Certificate_Test_Fabricator_Event::fabricate(['is_active' => 1, 'event_type_id' => $eventType]);
+    $eventB = CRM_Certificate_Test_Fabricator_Event::fabricate(['is_active' => 1, 'event_type_id' => $eventType]);
+    $eventC = CRM_Certificate_Test_Fabricator_Event::fabricate(['is_active' => 1, 'event_type_id' => 2]);
+    $statusId = CRM_Certificate_Test_Fabricator_ParticipantStatusType::fabricate(['is_active' => 1])['id'];
+
+    $participantA = CRM_Certificate_Test_Fabricator_Participant::fabricate([
+      'contact_id' => $contactId,
+      'event_id' => $eventA['id'],
+      'status_id' => $statusId,
+    ]);
+
+    $participantB = CRM_Certificate_Test_Fabricator_Participant::fabricate([
+      'contact_id' => $contactId,
+      'event_id' => $eventB['id'],
+      'status_id' => $statusId,
+    ]);
+
+    $participantC = CRM_Certificate_Test_Fabricator_Participant::fabricate([
+      'contact_id' => $contactId,
+      'event_id' => $eventC['id'],
+      'status_id' => $statusId,
+    ]);
+
+    $values = [
+      'type' => CRM_Certificate_Enum_CertificateType::EVENTS,
+      'linked_to' => [$eventA['id']],
+      'statuses' => [$statusId],
+      'participant_type_id' => NULL,
+      'event_type_ids' => [$eventType],
+    ];
+    $this->createCertificate($values);
+
+    $eventEntity = new CRM_Certificate_Entity_Event();
+    $matchingConfiguration = $eventEntity->getCertificateConfiguration($participantA['id'], $contactId);
+    $configurationForOtherEvent = $eventEntity->getCertificateConfiguration($participantB['id'], $contactId);
+    $configurationForOtherType = $eventEntity->getCertificateConfiguration($participantC['id'], $contactId);
+
+    $this->assertInstanceOf(CRM_Certificate_BAO_CompuCertificate::class, $matchingConfiguration);
+    $this->assertFalse($configurationForOtherEvent);
+    $this->assertFalse($configurationForOtherType);
+  }
+
+  /**
    * Test that a certificate configuration is returned
    * for a participant that meets the status and type of the
    * certificate configuration
