@@ -51,7 +51,7 @@ class CRM_Certificate_Test_Fabricator_CompuCertificate {
   public static function fabricateEventCertificate($values) {
     $values['type'] = CRM_Certificate_Enum_CertificateType::EVENTS;
 
-    if (empty($values['linked_to'])) {
+    if (!isset($values['linked_to'])) {
       $event = CRM_Certificate_Test_Fabricator_Event::fabricate(['is_active' => 1]);
       $values['linked_to'] = (array) $event['id'];
     }

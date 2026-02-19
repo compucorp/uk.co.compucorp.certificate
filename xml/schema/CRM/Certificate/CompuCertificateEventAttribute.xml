@@ -39,4 +39,10 @@
     <comment>Particiapnt Type ID</comment>
   </field>
 
+  <field>
+    <name>event_type_ids</name>
+    <type>text</type>
+    <comment>Comma separated event type ids.</comment>
+  </field>
+
 </table>

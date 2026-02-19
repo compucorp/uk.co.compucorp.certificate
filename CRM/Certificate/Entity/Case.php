@@ -81,7 +81,7 @@ class CRM_Certificate_Entity_Case extends CRM_Certificate_Entity_AbstractEntity 
   /**
    * {@inheritDoc}
    */
-  public function getCertificateConfiguredTypes($certificateId) {
+  public function getCertificateConfiguredTypes($certificateId, $includeAttrs = FALSE) {
     $entityTypeBAO = new CRM_Certificate_BAO_CompuCertificateEntityType();
     $entityTypeBAO->whereAdd("certificate_id = " . $certificateId);
 
