@@ -3,7 +3,7 @@
 use Civi\Token\Event\TokenValueEvent;
 
 /**
- * Class CRM_Certificate_Token_Participant
+ * Class CRM_Certificate_Token_Participant.
  *
  * Generate "certificate_participant.*" tokens.
  *
@@ -19,7 +19,7 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public static function entityTokens() {
     $participantFields = CRM_Event_BAO_Participant::exportableFields();
@@ -58,7 +58,7 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
   }
 
   /**
-   * To perform a bulk lookup before rendering tokens
+   * To perform a bulk lookup before rendering tokens.
    *
    * @param \Civi\Token\Event\TokenValueEvent $e
    *
@@ -100,6 +100,10 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
    * @param array &$resolvedTokens
    */
   private function resolveFields($participant, &$resolvedTokens) {
+    // Keep a copy before array_walk so custom field option lookups receive
+    // the unmodified value (array or VALUE_SEPARATOR string).
+    $originalParticipant = $participant;
+
     // Convert date fields to human readable format (2022-12-01 12:12:00 -> 1st December 2022 12:12 PM).
     array_walk($participant, function(&$v, $k) {
       $dateFields = [
@@ -119,9 +123,50 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
     });
 
     foreach ($this->activeTokens as $value) {
-      $resolvedTokens[$value] = CRM_Utils_Array::value($value, $participant, '');
+      if ($fieldId = CRM_Core_BAO_CustomField::getKeyID($value)) {
+        $originalValue = CRM_Utils_Array::value($value, $originalParticipant, '');
+        $resolvedTokens[$value] = $this->getCustomFieldDisplayValue(
+          $fieldId, $originalValue
+        );
+      }
+      else {
+        $resolvedTokens[$value] = CRM_Utils_Array::value($value, $participant, '');
+      }
     }
 
+  }
+
+  /**
+   * Get display labels for a custom field, one per line.
+   *
+   * @param int $fieldId
+   *   Custom field ID.
+   * @param mixed $value
+   *   Raw value (array or VALUE_SEPARATOR-delimited string).
+   *
+   * @return string
+   *   Labels joined by <br> for option fields; raw value otherwise.
+   */
+  private function getCustomFieldDisplayValue($fieldId, $value) {
+    if (empty($value)) {
+      return '';
+    }
+
+    $field = CRM_Core_BAO_CustomField::getField($fieldId);
+    if (empty($field['option_group_id'])) {
+      return is_array($value) ? implode('<br>', $value) : (string) $value;
+    }
+
+    if (!is_array($value)) {
+      $value = CRM_Utils_Array::explodePadded($value);
+    }
+
+    $options = CRM_Core_OptionGroup::valuesByID($field['option_group_id']);
+    $labels = array_filter(array_map(function ($v) use ($options) {
+      return $options[trim($v)] ?? NULL;
+    }, $value));
+
+    return implode('<br>', $labels);
   }
 
 }
