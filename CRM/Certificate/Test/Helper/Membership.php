@@ -14,6 +14,8 @@ trait CRM_Certificate_Test_Helper_Membership {
       'contact_id' => $contact['id'],
       'membership_type_id' => $membershipType["id"],
       'status_id'  => $membershipStatus["id"],
+      'start_date' => date('Y-m-d', strtotime('-1 month')),
+      'end_date' => date('Y-m-d', strtotime('+1 year')),
     ], $params);
 
     $membership = CRM_Certificate_Test_Fabricator_Membership::fabricate($params);
