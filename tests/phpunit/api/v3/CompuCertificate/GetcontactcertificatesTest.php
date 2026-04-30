@@ -240,6 +240,100 @@ class api_v3_CompuCertificate_GetcontactcertificatesTest extends BaseHeadlessTes
     $this->assertEquals($results['count'] > 0, $valid);
   }
 
+  /**
+   * Membership ending before the certificate's Min Valid From date should not
+   * appear in the API result, even when its status and type otherwise match.
+   */
+  public function testMembershipEndingBeforeMinValidFromDateIsExcluded() {
+    $membership = $this->createMembership([
+      'start_date' => $this->getDate('-2 years'),
+      'end_date'   => $this->getDate('-1 year'),
+    ]);
+    $this->createMembershipCertificate([
+      'linked_to' => [$membership['membership_type_id']],
+      'statuses'  => [$membership['status_id']],
+      'min_valid_from_date'    => $this->getDate('0 days'),
+      'max_valid_through_date' => $this->getDate('+1 year'),
+    ]);
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', [
+      'entity'     => 'membership',
+      'contact_id' => $membership['contact']['id'],
+    ]);
+
+    $this->assertEquals(0, $results['count']);
+  }
+
+  /**
+   * Membership starting after the certificate's Max Valid Through date should
+   * not appear in the API result.
+   */
+  public function testMembershipStartingAfterMaxValidThroughDateIsExcluded() {
+    $membership = $this->createMembership([
+      'start_date' => $this->getDate('+2 years'),
+      'end_date'   => $this->getDate('+3 years'),
+    ]);
+    $this->createMembershipCertificate([
+      'linked_to' => [$membership['membership_type_id']],
+      'statuses'  => [$membership['status_id']],
+      'min_valid_from_date'    => $this->getDate('0 days'),
+      'max_valid_through_date' => $this->getDate('+1 year'),
+    ]);
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', [
+      'entity'     => 'membership',
+      'contact_id' => $membership['contact']['id'],
+    ]);
+
+    $this->assertEquals(0, $results['count']);
+  }
+
+  /**
+   * Regression test for MMMM-190.
+   *
+   * Contact has two memberships of the same type — one whose dates overlap
+   * the certificate window and one whose dates do not. Only the overlapping
+   * membership should be returned by the API, so the listing does not display
+   * a stale status pulled from a long-expired duplicate membership.
+   */
+  public function testOnlyMembershipWithOverlappingDatesIsReturnedWhenDuplicateExists() {
+    $membershipType = CRM_Certificate_Test_Fabricator_MembershipType::fabricate(['is_active' => 1]);
+    $membershipStatus = CRM_Certificate_Test_Fabricator_MembershipStatus::fabricate(['is_active' => 1]);
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+
+    $validMembership = CRM_Certificate_Test_Fabricator_Membership::fabricate([
+      'contact_id'         => $contact['id'],
+      'membership_type_id' => $membershipType['id'],
+      'status_id'          => $membershipStatus['id'],
+      'start_date'         => $this->getDate('-1 month'),
+      'end_date'           => $this->getDate('+1 year'),
+    ]);
+
+    $staleMembership = CRM_Certificate_Test_Fabricator_Membership::fabricate([
+      'contact_id'         => $contact['id'],
+      'membership_type_id' => $membershipType['id'],
+      'status_id'          => $membershipStatus['id'],
+      'start_date'         => $this->getDate('-3 years'),
+      'end_date'           => $this->getDate('-2 years'),
+    ]);
+
+    $this->createMembershipCertificate([
+      'linked_to' => [$membershipType['id']],
+      'statuses'  => [$membershipStatus['id']],
+      'min_valid_from_date'    => $this->getDate('-2 months'),
+      'max_valid_through_date' => $this->getDate('+2 years'),
+    ]);
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getcontactcertificates', [
+      'entity'     => 'membership',
+      'contact_id' => $contact['id'],
+    ]);
+
+    $returnedMembershipIds = array_column($results['values'], 'membership_id');
+    $this->assertContains($validMembership['id'], $returnedMembershipIds);
+    $this->assertNotContains($staleMembership['id'], $returnedMembershipIds);
+  }
+
   public function tearDown(): void {
     $this->unregisterCurrentLoggedInContactFromSession();
     parent::tearDown();
