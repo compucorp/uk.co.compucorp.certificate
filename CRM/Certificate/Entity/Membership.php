@@ -160,6 +160,9 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
       }
 
       array_walk($result['values'], function ($membership) use (&$certificates, $configuredCertificate, $contactId) {
+        if (!$this->membershipDatesOverlapCertificate($membership, $configuredCertificate)) {
+          return;
+        }
         $certificate = [
           'membership_id' => $membership['id'],
           'name' => $configuredCertificate['name'],
@@ -176,6 +179,27 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
     }
 
     return $certificates;
+  }
+
+  /**
+   * Checks whether a membership overlaps the certificate's validity window.
+   *
+   * The membership end_date must be on or after Min Valid From and the
+   * start_date on or before Max Valid Through. Either bound may be NULL
+   * meaning unbounded.
+   */
+  private function membershipDatesOverlapCertificate(array $membership, array $configuredCertificate): bool {
+    $minFrom = !empty($configuredCertificate['min_valid_from_date']) ? strtotime($configuredCertificate['min_valid_from_date']) : NULL;
+    if ($minFrom && !empty($membership['end_date']) && strtotime($membership['end_date']) < $minFrom) {
+      return FALSE;
+    }
+
+    $maxThrough = !empty($configuredCertificate['max_valid_through_date']) ? strtotime($configuredCertificate['max_valid_through_date']) : NULL;
+    if ($maxThrough && !empty($membership['start_date']) && strtotime($membership['start_date']) > $maxThrough) {
+      return FALSE;
+    }
+
+    return TRUE;
   }
 
   /**
