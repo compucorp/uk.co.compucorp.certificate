@@ -132,6 +132,8 @@ class CRM_Certificate_Api_Wrapper_CompuCertificateFilterTest extends BaseHeadles
       'contact_id' => $organisationId,
       'membership_type_id' => $this->membershipType['id'],
       'status_id' => $this->membershipStatus['id'],
+      'start_date' => date('Y-m-d', strtotime('-1 month')),
+      'end_date' => date('Y-m-d', strtotime('+1 year')),
     ]);
   }
 

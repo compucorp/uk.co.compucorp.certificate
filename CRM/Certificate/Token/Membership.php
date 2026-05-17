@@ -120,12 +120,14 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
    * @return array
    */
   private function getMembership($membershipId, $contactId, $certificate) {
-    $result = civicrm_api3('Membership', 'getsingle', [
-      'id' => $membershipId,
-      'contact_id' => $contactId,
-    ]);
+    $result = \Civi\Api4\Membership::get(FALSE)
+      ->addSelect('*')
+      ->addWhere('id', '=', $membershipId)
+      ->addWhere('contact_id', '=', $contactId)
+      ->execute()
+      ->first();
 
-    if (!empty($result['is_error'])) {
+    if (empty($result)) {
       return [];
     }
 
@@ -133,6 +135,7 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
     $type = CRM_Member_BAO_MembershipType::getMembershipType($result['membership_type_id']);
     $result['status_idlabel'] = $status['membership_status'] ?? '';
     $result['membership_type_idlabel'] = $type['name'] ?? '';
+    $result['membership_name'] = $type['name'] ?? '';
     $result['fee'] = CRM_Utils_Money::format($type['minimum_fee'] ?? '');
     $insuranceTokens = ['insurance_premium_ex_ipt', 'insurance_premium_inc_ipt', 'insurance_premium_ipt_only'];
 
