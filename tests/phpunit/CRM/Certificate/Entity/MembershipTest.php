@@ -324,6 +324,29 @@ class CRM_Certificate_Entity_MembershipTest extends BaseHeadlessTest {
     $this->assertEquals(count($avaliableCertificates) > 0, $valid);
   }
 
+  /**
+   * Returns no configuration for a membership outside the validity window.
+   */
+  public function testCertificateConfigurationExcludesMembershipOutsideValidityWindow() {
+    $contact = CRM_Certificate_Test_Fabricator_Contact::fabricate();
+    $membership = $this->createMembership([
+      'contact_id' => $contact['id'],
+      'start_date' => $this->getDate('-3 years'),
+      'end_date'   => $this->getDate('-2 years'),
+    ]);
+    $this->createMembershipCertificate([
+      'linked_to' => [$membership['membership_type_id']],
+      'statuses'  => [$membership['status_id']],
+      'min_valid_from_date'    => $this->getDate('0 days'),
+      'max_valid_through_date' => $this->getDate('+1 year'),
+    ]);
+
+    $entity = new CRM_Certificate_Entity_Membership();
+    $configuration = $entity->getCertificateConfiguration($membership['id'], $contact['id']);
+
+    $this->assertFalse($configuration);
+  }
+
   private function createCertificate($values) {
     $values['type'] = CRM_Certificate_Enum_CertificateType::MEMBERSHIPS;
     $values['name'] = md5(mt_rand());

@@ -134,6 +134,58 @@ class api_v3_CompuCertificate_GetrelatedcontactcertificatesTest extends BaseHead
     $this->assertEquals($membership['id'], $results['values'][0]['membership_id']);
   }
 
+  /**
+   * Excludes a related membership that is outside the validity window.
+   */
+  public function testRelatedMembershipOutsideCertificateWindowIsExcluded() {
+    $relationshipType = RelationshipTypeFabricator::fabricate([
+      'name_a_b' => 'A Employee of',
+      'name_b_a' => 'A Employer of',
+    ]);
+    $contactA = ContactFabricator::fabricate();
+    $contactB = ContactFabricator::fabricate();
+    RelationshipFabricator::fabricate([
+      'contact_id_a' => $contactA['id'],
+      'contact_id_b' => $contactB['id'],
+      'relationship_type_id' => $relationshipType['id'],
+    ]);
+
+    $membershipType = CRM_Certificate_Test_Fabricator_MembershipType::fabricate(['is_active' => 1]);
+    $membershipStatus = CRM_Certificate_Test_Fabricator_MembershipStatus::fabricate(['is_active' => 1]);
+
+    $withinWindow = CRM_Certificate_Test_Fabricator_Membership::fabricate([
+      'contact_id' => $contactB['id'],
+      'membership_type_id' => $membershipType['id'],
+      'status_id' => $membershipStatus['id'],
+      'start_date' => $this->getDate('-1 month'),
+      'end_date' => $this->getDate('+1 year'),
+    ]);
+    $outsideWindow = CRM_Certificate_Test_Fabricator_Membership::fabricate([
+      'contact_id' => $contactB['id'],
+      'membership_type_id' => $membershipType['id'],
+      'status_id' => $membershipStatus['id'],
+      'start_date' => $this->getDate('-3 years'),
+      'end_date' => $this->getDate('-2 years'),
+    ]);
+
+    $this->createMembershipCertificate([
+      'linked_to' => [$membershipType['id']],
+      'statuses' => [$membershipStatus['id']],
+      'relationship_types' => [$relationshipType['id']],
+      'min_valid_from_date' => $this->getDate('-2 months'),
+      'max_valid_through_date' => $this->getDate('+2 years'),
+    ]);
+
+    $results = $this->callApiSuccess('CompuCertificate', 'getrelationshipcertificates', [
+      'entity' => 'membership',
+      'contact_id' => $contactA['id'],
+    ]);
+
+    $returnedMembershipIds = array_column($results['values'], 'membership_id');
+    $this->assertContains($withinWindow['id'], $returnedMembershipIds);
+    $this->assertNotContains($outsideWindow['id'], $returnedMembershipIds);
+  }
+
   public function tearDown(): void {
     $this->unregisterCurrentLoggedInContactFromSession();
     parent::tearDown();

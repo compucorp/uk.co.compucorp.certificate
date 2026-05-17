@@ -93,7 +93,7 @@ class CRM_Certificate_BAO_CompuCertificate extends CRM_Certificate_DAO_CompuCert
     $certificateBAO->whereAdd('contact_id_a = ' . $contactId);
     $certificateBAO->whereDateIsValid();
     $certificateBAO->selectAdd();
-    $certificateBAO->selectAdd(self::$_tableName . '.id as certificate_id, ' . self::$_tableName . '.start_date, ' . self::$_tableName . '.end_date, name, entity, entity_type_id, status_id, template_id, download_format, contact_id_b as related_contact, contact_id_a as contact');
+    $certificateBAO->selectAdd(self::$_tableName . '.id as certificate_id, ' . self::$_tableName . '.start_date, ' . self::$_tableName . '.end_date, ' . self::$_tableName . '.min_valid_from_date, ' . self::$_tableName . '.max_valid_through_date, name, entity, entity_type_id, status_id, template_id, download_format, contact_id_b as related_contact, contact_id_a as contact');
     $certificateBAO->find();
 
     $configuredCertificates = $certificateBAO->fetchAll();
