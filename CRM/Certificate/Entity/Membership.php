@@ -160,6 +160,9 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
       }
 
       array_walk($result['values'], function ($membership) use (&$certificates, $configuredCertificate, $contactId) {
+        if (!$this->membershipDatesOverlapCertificate($membership, $configuredCertificate['min_valid_from_date'] ?? NULL, $configuredCertificate['max_valid_through_date'] ?? NULL)) {
+          return;
+        }
         $certificate = [
           'membership_id' => $membership['id'],
           'name' => $configuredCertificate['name'],
@@ -176,6 +179,23 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
     }
 
     return $certificates;
+  }
+
+  /**
+   * Checks whether a membership's active period overlaps a certificate window.
+   */
+  private function membershipDatesOverlapCertificate(array $membership, $minValidFromDate, $maxValidThroughDate): bool {
+    $minFrom = !empty($minValidFromDate) ? strtotime($minValidFromDate) : NULL;
+    if ($minFrom && !empty($membership['end_date']) && strtotime($membership['end_date']) < $minFrom) {
+      return FALSE;
+    }
+
+    $maxThrough = !empty($maxValidThroughDate) ? strtotime($maxValidThroughDate) : NULL;
+    if ($maxThrough && !empty($membership['start_date']) && strtotime($membership['start_date']) > $maxThrough) {
+      return FALSE;
+    }
+
+    return TRUE;
   }
 
   /**
@@ -199,11 +219,23 @@ class CRM_Certificate_Entity_Membership extends CRM_Certificate_Entity_AbstractE
   /**
    * @inheritDoc
    */
-  protected function isCertificateValidForAnEntity(\CRM_Certificate_BAO_CompuCertificate $certificate, int $contactId) {
-    $membershipDates = (new CRM_Certificate_Service_CertificateMembership())->getMembershipDates($certificate->id, $contactId);
+  protected function isCertificateValidForAnEntity(\CRM_Certificate_BAO_CompuCertificate $certificate, int $contactId, int $entityId = NULL) {
+    if (empty($entityId)) {
+      return TRUE;
+    }
 
-    return ($membershipDates['startDate'] === NULL || $certificate->max_valid_through_date === NULL || $membershipDates['startDate'] <= $certificate->max_valid_through_date)
-      && ($membershipDates['endDate'] === NULL || $certificate->min_valid_from_date === NULL || $membershipDates['endDate'] >= $certificate->min_valid_from_date);
+    $membership = \Civi\Api4\Membership::get(FALSE)
+      ->addSelect('start_date', 'end_date')
+      ->addWhere('id', '=', $entityId)
+      ->addWhere('contact_id', '=', $contactId)
+      ->execute()
+      ->first();
+
+    if (empty($membership)) {
+      return FALSE;
+    }
+
+    return $this->membershipDatesOverlapCertificate($membership, $certificate->min_valid_from_date, $certificate->max_valid_through_date);
   }
 
 }

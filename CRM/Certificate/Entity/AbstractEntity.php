@@ -119,7 +119,7 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
 
       $results = [];
       while ($certificateBAO->fetch()) {
-        if (!empty($certificateBAO->id) && $this->isCertificateValidForAnEntity($certificateBAO, $contactId)) {
+        if (!empty($certificateBAO->id) && $this->isCertificateValidForAnEntity($certificateBAO, $contactId, $entityId)) {
           $results[] = clone $certificateBAO;
         }
       }
@@ -185,10 +185,12 @@ abstract class CRM_Certificate_Entity_AbstractEntity {
    *  Certificate.
    * @param int $contactId
    *  Contact id.
+   * @param int $entityId
+   *  Id of the specific entity the certificate is requested for.
    *
    * @return bool
    */
-  protected function isCertificateValidForAnEntity(\CRM_Certificate_BAO_CompuCertificate $certificate, int $contactId) {
+  protected function isCertificateValidForAnEntity(\CRM_Certificate_BAO_CompuCertificate $certificate, int $contactId, int $entityId = NULL) {
     return TRUE;
   }
 
