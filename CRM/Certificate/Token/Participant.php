@@ -1,5 +1,7 @@
 <?php
 
+use Civi\Api4\CustomField;
+use Civi\Api4\Participant;
 use Civi\Token\Event\TokenValueEvent;
 
 /**
@@ -100,8 +102,8 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
    * @param array &$resolvedTokens
    */
   private function resolveFields($participant, &$resolvedTokens) {
-    // Keep a copy before array_walk so custom field option lookups receive
-    // the unmodified value (array or VALUE_SEPARATOR string).
+    // Keep a copy before array_walk so custom field lookups receive the
+    // unmodified value.
     $originalParticipant = $participant;
 
     // Convert date fields to human readable format (2022-12-01 12:12:00 -> 1st December 2022 12:12 PM).
@@ -126,7 +128,7 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
       if ($fieldId = CRM_Core_BAO_CustomField::getKeyID($value)) {
         $originalValue = CRM_Utils_Array::value($value, $originalParticipant, '');
         $resolvedTokens[$value] = $this->getCustomFieldDisplayValue(
-          $fieldId, $originalValue
+          $fieldId, $originalValue, (int) $originalParticipant['id']
         );
       }
       else {
@@ -142,12 +144,16 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
    * @param int $fieldId
    *   Custom field ID.
    * @param mixed $value
-   *   Raw value (array or VALUE_SEPARATOR-delimited string).
+   *   Raw value from the api3 participant record.
+   * @param int $participantId
+   *   Participant ID.
    *
    * @return string
    *   Labels joined by <br> for option fields; raw value otherwise.
    */
-  private function getCustomFieldDisplayValue($fieldId, $value) {
+  private function getCustomFieldDisplayValue($fieldId, $value, $participantId) {
+    static $fieldSpecs = [];
+
     if (empty($value)) {
       return '';
     }
@@ -157,14 +163,27 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
       return is_array($value) ? implode('<br>', $value) : (string) $value;
     }
 
-    if (!is_array($value)) {
-      $value = CRM_Utils_Array::explodePadded($value);
+    // Resolve option labels through APIv4. The api3 value cannot be used:
+    // it holds form defaults ([option value => 1] for CheckBox), not the
+    // selected option values.
+    if (!array_key_exists($fieldId, $fieldSpecs)) {
+      $fieldSpecs[$fieldId] = CustomField::get(FALSE)
+        ->addSelect('name', 'custom_group_id.name')
+        ->addWhere('id', '=', $fieldId)
+        ->execute()
+        ->first();
     }
-
-    $options = CRM_Core_OptionGroup::valuesByID($field['option_group_id']);
-    $labels = array_filter(array_map(function ($v) use ($options) {
-      return $options[trim($v)] ?? NULL;
-    }, $value));
+    $fieldSpec = $fieldSpecs[$fieldId];
+    if (!$fieldSpec) {
+      return '';
+    }
+    $fieldName = $fieldSpec['custom_group_id.name'] . '.' . $fieldSpec['name'] . ':label';
+    $participant = Participant::get(FALSE)
+      ->addSelect($fieldName)
+      ->addWhere('id', '=', $participantId)
+      ->execute()
+      ->first();
+    $labels = array_filter((array) ($participant[$fieldName] ?? []));
 
     return implode('<br>', $labels);
   }
