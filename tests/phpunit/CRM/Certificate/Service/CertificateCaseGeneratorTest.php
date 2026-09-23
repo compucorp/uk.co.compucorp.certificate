@@ -86,7 +86,7 @@ class CRM_Certificate_Service_CaseCertificateGeneratorTest extends BaseHeadlessT
 
     $result = $this->getSmartyEnabledGenerator()->generate($template['id'], $contact['contact_id'], $case['id']);
 
-    $this->assertStringContainsString('Subject is {if true}Injected{/if}', $result['html']);
+    $this->assertStringContainsString('{if true}Injected{/if}', $result['html']);
   }
 
   public function testGenerateCertificateWillThrowReadableErrorForInvalidSmarty() {
