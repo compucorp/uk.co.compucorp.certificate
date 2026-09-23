@@ -45,6 +45,8 @@ A download button would be shown at the bottom of the Membership record view if 
 ### Certificate Template
 The standard CiviCRM message templates are used as the certificate template, which implies they can be designed and formatted as the user desires with support for custom entity tokens. Almost all fields for each entity are supported as a token, e.g. `{certificate_event.title}`, users can use the token dropdown in the message template editor to see available tokens.
 
+Smarty logic (e.g. `{if}`) in certificate templates follows CiviCRM's `CIVICRM_MAIL_SMARTY` constant, as core emails and PDF letters do. It is disabled by default; set `define('CIVICRM_MAIL_SMARTY', 1);` in `civicrm.settings.php` to enable it. Anyone who can edit message templates will then be able to run Smarty code, so only enable it if all template editors are trusted. If a certificate template contains invalid Smarty, the certificate is not generated and the user sees an error asking them to check the template.
+
 ![Certificate template](https://user-images.githubusercontent.com/85277674/197568662-233ad63a-fcef-4ddf-bfe5-8c2cfbc6aa2f.gif)
 
 
