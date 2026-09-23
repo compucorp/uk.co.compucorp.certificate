@@ -2,6 +2,7 @@
 
 use Civi\Api4\MessageTemplate;
 use Civi\Token\TokenProcessor;
+use CRM_Certificate_ExtensionUtil as E;
 
 class CRM_Certificate_Service_CertificateGenerator {
 
@@ -71,19 +72,28 @@ class CRM_Certificate_Service_CertificateGenerator {
    */
   private function renderMessageTemplate(array $content, $contactId, $entityId) {
     CRM_Core_Smarty::singleton()->pushScope([]);
-    $tokenProcessor = new TokenProcessor(\Civi::dispatcher(), ['smarty' => $this->isSmartyEnabled()]);
-    $tokenProcessor->addMessage('html', $content['html'], 'text/html');
-    $tokenProcessor->addMessage('text', $content['text'], 'text/plain');
-    $tokenProcessor->addMessage('subject', $content['subject'], 'text/plain');
-    $context = $this->buildContext((int) $contactId, (int) $entityId);
-    $tokenProcessor->addRow($context);
-    $tokenProcessor->evaluate();
-    foreach ($tokenProcessor->getRows() as $row) {
-      $content['html'] = $row->render('html');
-      $content['text'] = $row->render('text');
-      $content['subject'] = $row->render('subject');
+    try {
+      $tokenProcessor = new TokenProcessor(\Civi::dispatcher(), ['smarty' => $this->isSmartyEnabled()]);
+      $tokenProcessor->addMessage('html', $content['html'], 'text/html');
+      $tokenProcessor->addMessage('text', $content['text'], 'text/plain');
+      $tokenProcessor->addMessage('subject', $content['subject'], 'text/plain');
+      $context = $this->buildContext((int) $contactId, (int) $entityId);
+      $tokenProcessor->addRow($context);
+      $tokenProcessor->evaluate();
+      foreach ($tokenProcessor->getRows() as $row) {
+        $content['html'] = $row->render('html');
+        $content['text'] = $row->render('text');
+        $content['subject'] = $row->render('subject');
+      }
     }
-    CRM_Core_Smarty::singleton()->popScope();
+    catch (CRM_Core_Exception $e) {
+      // With Smarty enabled, a template that is not valid Smarty throws here.
+      Civi::log()->error('CRM_Certificate_Service_CertificateGenerator::renderMessageTemplate Exception: ' . $e->getMessage());
+      throw new CRM_Core_Exception(E::ts('The certificate could not be generated. Please check the certificate template for errors, such as invalid Smarty syntax.'), 0, [], $e);
+    }
+    finally {
+      CRM_Core_Smarty::singleton()->popScope();
+    }
     $content['subject'] = trim(preg_replace('/[\r\n]+/', ' ', $content['subject']));
     return $content;
   }

@@ -72,32 +72,43 @@ class CRM_Certificate_Service_CaseCertificateGeneratorTest extends BaseHeadlessT
   }
 
   public function testGenerateCertificateWillEvaluateSmartyWhenMailSmartyIsEnabled() {
-    $generatorService = new class() extends CRM_Certificate_Service_CertificateGenerator {
-
-      protected function isSmartyEnabled(): bool {
-        return TRUE;
-      }
-
-    };
-
-    [$result, $contact] = $this->generateWithSmartyLogic($generatorService);
+    [$result, $contact] = $this->generateWithSmartyLogic($this->getSmartyEnabledGenerator());
 
     $this->assertStringNotContainsString('Hidden', $result['html']);
     $this->assertStringContainsString('Shown', $result['html']);
     $this->assertStringContainsString($contact['display_name'], $result['html']);
   }
 
+  public function testGenerateCertificateWillThrowReadableErrorForInvalidSmarty() {
+    $this->expectException(CRM_Core_Exception::class);
+    $this->expectExceptionMessage('The certificate could not be generated.');
+
+    $this->generateWithSmartyLogic($this->getSmartyEnabledGenerator(), ' {if 1 > 2}Unclosed');
+  }
+
+  private function getSmartyEnabledGenerator() {
+    return new class() extends CRM_Certificate_Service_CertificateGenerator {
+
+      protected function isSmartyEnabled(): bool {
+        return TRUE;
+      }
+
+    };
+  }
+
   /**
    * Generates a case certificate whose template contains Smarty logic.
    *
    * @param CRM_Certificate_Service_CertificateGenerator $generatorService
+   * @param string $smarty
+   *   Smarty to append to the template.
    *
    * @return array
    *   The generated content and the case contact.
    */
-  private function generateWithSmartyLogic(CRM_Certificate_Service_CertificateGenerator $generatorService) {
+  private function generateWithSmartyLogic(CRM_Certificate_Service_CertificateGenerator $generatorService, $smarty = ' {if 1 > 2}Hidden{/if}Shown') {
     $content = $this->getMsgContent();
-    $content['msg_html'] = $content['msg_html'] . ' {if 1 > 2}Hidden{/if}Shown';
+    $content['msg_html'] = $content['msg_html'] . $smarty;
     $template = CRM_Certificate_Test_Fabricator_MessageTemplate::fabricate($content);
     $case = $this->createCase();
     $contact = array_shift($case['contacts']);
