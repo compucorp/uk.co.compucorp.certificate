@@ -71,7 +71,7 @@ class CRM_Certificate_Service_CertificateGenerator {
    */
   private function renderMessageTemplate(array $content, $contactId, $entityId) {
     CRM_Core_Smarty::singleton()->pushScope([]);
-    $tokenProcessor = new TokenProcessor(\Civi::dispatcher(), ['smarty' => !TRUE]);
+    $tokenProcessor = new TokenProcessor(\Civi::dispatcher(), ['smarty' => $this->isSmartyEnabled()]);
     $tokenProcessor->addMessage('html', $content['html'], 'text/html');
     $tokenProcessor->addMessage('text', $content['text'], 'text/plain');
     $tokenProcessor->addMessage('subject', $content['subject'], 'text/plain');
@@ -86,6 +86,17 @@ class CRM_Certificate_Service_CertificateGenerator {
     CRM_Core_Smarty::singleton()->popScope();
     $content['subject'] = trim(preg_replace('/[\r\n]+/', ' ', $content['subject']));
     return $content;
+  }
+
+  /**
+   * Whether Smarty is enabled for message templates on this site.
+   *
+   * Follows CIVICRM_MAIL_SMARTY, as core does for emails and PDF letters.
+   *
+   * @return bool
+   */
+  protected function isSmartyEnabled(): bool {
+    return (bool) CRM_Utils_Constant::value('CIVICRM_MAIL_SMARTY');
   }
 
   private function buildContext(int $contactId, int $entityId): array {
