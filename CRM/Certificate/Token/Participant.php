@@ -54,7 +54,7 @@ class CRM_Certificate_Token_Participant extends CRM_Certificate_Token_AbstractCe
       $tokens[$k] = ts($v['title']);
     });
 
-    $tokens = array_merge(CRM_Utils_Token::getCustomFieldTokens('Participant'), $tokens);
+    $tokens = array_merge(static::getCustomFieldTokens('Participant'), $tokens);
 
     return $tokens;
   }

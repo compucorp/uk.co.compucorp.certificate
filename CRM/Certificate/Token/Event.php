@@ -23,7 +23,7 @@ class CRM_Certificate_Token_Event extends CRM_Certificate_Token_AbstractCertific
    * @inheritDoc
    */
   public static function entityTokens() {
-    $eventCustomFields = CRM_Utils_Token::getCustomFieldTokens('Event');
+    $eventCustomFields = static::getCustomFieldTokens('Event');
     $eventTokens = [
       'event_type' => ts('Event Type'),
       'title' => ts('Event Title'),

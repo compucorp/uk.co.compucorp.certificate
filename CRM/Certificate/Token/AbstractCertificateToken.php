@@ -23,7 +23,29 @@ abstract class CRM_Certificate_Token_AbstractCertificateToken extends AbstractTo
    * @return bool
    */
   public function checkActive(\Civi\Token\TokenProcessor $processor) {
-    return !empty(array_intersect([static::TOKEN], \CRM_Utils_Token::getTokenCategories()));
+    // This extension always registers its token categories in certificate_civicrm_tokens(),
+    // so the previous check against CRM_Utils_Token::getTokenCategories() was always TRUE.
+    // That function is deprecated and writes a deprecation warning to the CiviCRM log on every
+    // call (once per subscriber per token evaluation), so it is no longer called here.
+    // Tokens a message does not use are still skipped by getActiveTokens().
+    return TRUE;
+  }
+
+  /**
+   * Custom field tokens for an entity, keyed 'custom_<id>' => '<label> :: <group title>'.
+   *
+   * Same output as core's deprecated CRM_Utils_Token::getCustomFieldTokens(), without the
+   * deprecation warning it logs on every call.
+   *
+   * @param string $entity
+   * @return array
+   */
+  protected static function getCustomFieldTokens($entity) {
+    $customTokens = [];
+    foreach (\CRM_Core_BAO_CustomField::getFields($entity) as $id => $info) {
+      $customTokens['custom_' . $id] = $info['label'] . ' :: ' . $info['groupTitle'];
+    }
+    return $customTokens;
   }
 
   /**

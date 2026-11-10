@@ -22,7 +22,7 @@ class CRM_Certificate_Token_Membership extends CRM_Certificate_Token_AbstractCer
    * @inheritDoc
    */
   public static function entityTokens() {
-    $membershipCustomFields = CRM_Utils_Token::getCustomFieldTokens('Membership');
+    $membershipCustomFields = static::getCustomFieldTokens('Membership');
     $membershipTokens = [
       '{membership.id}' => ts('Membership ID'),
       '{membership.status_id:label}' => ts('Status'),
