@@ -36,7 +36,7 @@ class CRM_Certificate_Token_Case extends CRM_Certificate_Token_AbstractCertifica
    * @inheritDoc
    */
   public static function entityTokens() {
-    $tokens = array_merge(static::caseFields, CRM_Utils_Token::getCustomFieldTokens('Case'));
+    $tokens = array_merge(static::caseFields, static::getCustomFieldTokens('Case'));
 
     return $tokens;
   }
