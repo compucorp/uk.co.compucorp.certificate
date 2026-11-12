@@ -46,20 +46,20 @@ class CRM_Certificate_Page_CertificateDownload extends CRM_Core_Page {
     try {
       $configurationId = CRM_Utils_Request::retrieve('ccid', 'Positive');
       $certificate = self::checkIfCertificateAvailable($contactId, $entityId, $certificateType, $configurationId);
+
+      $format = $certificate->download_format;
+      $overrideFormat = CRM_Utils_Request::retrieve('format', 'String');
+      if (!empty($overrideFormat) && $overrideFormat === 'html') {
+        $format = CRM_Certificate_Enum_DownloadFormat::HTML;
+      }
+
+      $certificateDownload = new CRM_Certificate_Service_CertificateDownloader($certificate, $contactId, $entityId, $format);
+      $certificateDownload->download();
     }
     catch (CRM_Core_Exception $e) {
       CRM_Core_Session::setStatus($e->getMessage(), 'Error', 'error');
       CRM_Utils_System::redirect('/civicrm?reset=1');
     }
-
-    $format = $certificate->download_format;
-    $overrideFormat = CRM_Utils_Request::retrieve('format', 'String');
-    if (!empty($overrideFormat) && $overrideFormat === 'html') {
-      $format = CRM_Certificate_Enum_DownloadFormat::HTML;
-    }
-
-    $certificateDownload = new CRM_Certificate_Service_CertificateDownloader($certificate, $contactId, $entityId, $format);
-    $certificateDownload->download();
   }
 
   /**
